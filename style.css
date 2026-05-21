@@ -448,6 +448,15 @@ body {
     padding:10px 0; 
 }
 
+/* Mobile Styles (Screens 768px wide or smaller) */
+@media (max-width: 768px) {
+    .announcement-sidebar {
+        width: 100%;       /* Force it to take up the full width of the mobile screen */
+        height: 250px;     /* Optional: Shrink the height slightly so it doesn't hoard screen space */
+        box-sizing: border-box; /* Ensures padding doesn't push it off the edge */
+    }
+}
+
 /* RESUME & STEPS */
 .official-resume { 
     background: white; 
