@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="javascript.js" defer></script>
+        <title>Barangay CINCO | Official Portal</title>
+        <!-- Linking the external CSS file -->
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+    <!-- NAVIGATION -->
+    <nav class="navbar">
+
+        <div class="nav-logo">Barangay CINCO</div>
+
+        <div class="menu-toggle" id="menuToggle">☰</div>
+
+        <div class="nav-links" id="navLinks">
+        <button id="link-history" onclick="showPage('history')">About</button>
+        <button id="link-announcements" onclick="showPage('announcements')">Announcements</button>
+        <button id="link-safety" onclick="showPage('safety')">Safety</button>
+        <button id="link-services" onclick="showPage('services')">Services</button>
+        <button id="link-officials" onclick="showPage('officials')">Officials</button>
+        </div>
+
+    </nav>
+
+    <!-- SECTION: OUR STORY -->
+    <article id="history" class="page-section">
+        <header class="hero-image-container">
+            <img src="bg1.png" alt="Banner" class="hero-img"></header>
+        <div class="logo-overlap">
+            <div class="logo-circle"><img src="4.png" alt="Logo"></div>
+            <span class="sub-logo-text">Compassion · Integrity · Nationalism · Commitment · Order</span>
+        </div>
+
+        <div class="blog-container">
+            <h1 class="main-title">A Humble Beginning</h1>
+            
+            <p class="drop-cap">L</p>
+            <p>ong before we transformed into a bustling modern community, the land where our barangay stands was a vast green space with lots of nature. Originally established as a small, quiet village reliant on agriculture and local trade, the community worked together closely, showing the true spirit of bayanihan by helping out its neighbors.</p>
+            <p>This growth turned our quiet provincial village into a busy and lively neighborhood where more people moved and migrated to live and work.</p><br><br>
+            
+            <h4 class="main-title">Growth, Resilience, and Progress</h4>
+
+            <p class="drop-cap">A</p>
+            <p>s years went by, our barangay faced many changes and challenges. We went through tough times, like strong typhoons and economic problems, but the people never gave up and always worked together to rebuild. Soon, the dirt roads were paved, schools were built, and small local businesses started opening up everywhere. This growth turned our quiet provincial village into a busy and lively neighborhood.</p><br><br>
+            
+            <h1 class="main-title">Present Day and Moving Forward</h1>
+            <p class="drop-cap">T</p>
+            <p>oday, our barangay stands proudly as a dynamic and inclusive community that balances rapid modernization with a deep respect for its historical roots. Under a succession of dedicated local leaders, the barangay has continually upgraded its infrastructure, digital capabilities, and public services to meet the demands of the modern day. While the landscape has evolved from fields to thriving residential and commercial spaces, the core values of Compassion, Integrity, Nationalism, Commitment, and Order continue to guide the barangay toward a bright and sustainable future.</p>
+            <div class="section-divider"></div>
+
+            <div class="story-grid">
+                <div class="story-card">
+                    <h3>Our Mission</h3>
+                    <p>Our mission is to serve every resident with Compassion and Integrity, ensuring public safety and Order through effective local governance. We are driven by a deep sense of Nationalism and an unwavering Commitment to uplifting lives by providing excellent public services, fostering sustainable development, and empowering our youth to become the next generation of leaders.</p>
+                </div>
+                <div class="story-card">
+                    <h3>Our Vision</h3>
+                    <p>To be a safe, progressive, and unified barangay where disciplined citizens thrive in a clean environment, guided by honest leadership and a shared love for our community and nation.</p>
+                </div>
+            </div>
+            <div class="corevalues-story-grid">
+                <div class="corevalues-story-card">
+                    <h3>CORE VALUES</h3>
+                    <p>Compassion: Serving every resident, especially those in need, with kindness, empathy, and active support.</p><br>
+                    <p>Integrity: Maintaining transparency, honesty, and accountability in all government transactions and leadership.</p><br>
+                    <p>Nationalism: Fostering unity and pride in our local heritage, culture, and love for the country.</p><br>
+                    <p>Commitment: Working dedicatedly to deliver consistent, dependable, and high-quality public services to the community.</p><br>
+                    <p>Order: Ensuring peace, safety, and proper discipline through fair implementation of local rules and ordinances.</p><br>
+                </div>
+            </div>
+
+            <div class="location-info">
+                <h3>📍 Location & Geography</h3>
+                <p style="margin-bottom: 20px;">Barangay CINCO is strategically located at the heart of <strong>Bacoor City, Cavite</strong>, providing residents with easy access to services.</p>
+                
+                <div class="map-responsive">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7729.0849421829225!2d120.9940229189937!3d14.39586316998338!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397d17bf195f9e9%3A0x46b4f28fdc45686c!2sQueen&#39;s%20Row%20East%20Barangay%20Hall!5e0!3m2!1sen!2sph!4v1778915686457!5m2!1sen!2sph"
+                        width="400"
+                        height="300"
+                        style="border:0;"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+            <br>
+            <br>
+            <section class="facilities">
+                <div class="dashboard-block">
+                    <h1>Barangay Community Facilities</h1>
+                    <div class="filter-buttons">
+                        <button class="btn active" onclick="filterSelection('all')">All</button>
+                        <button class="btn" onclick="filterSelection('hall')">Barangay Hall</button>
+                        <button class="btn" onclick="filterSelection('fire')">Fire Station</button>
+                        <button class="btn" onclick="filterSelection('sports')">Covered Court</button>
+                    </div>
+
+                    <div class="facility-grid">
+                        <div class="facility-card hall show">
+                            <img src="hall.jpg" alt="Barangay Hall" onclick="zoomImage(this)">
+                            <div class="overlay"><span>Barangay Hall</span></div>
+                        </div>
+                        <div class="facility-card fire show">
+                            <img src="fire station.jpg" alt="Fire Station" onclick="zoomImage(this)">
+                            <div class="overlay"><span>Fire Station</span></div>
+                        </div>
+                        <div class="facility-card sports show">
+                            <img src="court.jpg" alt="Covered Court" onclick="zoomImage(this)">
+                            <div class="overlay"><span>Multi-Purpose Hall</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="stats-container">
+
+            <div class="stat-card">
+                <div class="stat-number">12,543</div>
+                <div class="stat-label">Population</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-number">2,841</div>
+                <div class="stat-label">Households</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-number">8</div>
+                <div class="stat-label">Puroks</div>
+            </div>
+
+        </div>
+    </article>
+
+    <!-- SECTION: ANNOUNCEMENTS -->
+    <div id="announcements" class="page-section dashboard-page">
+        <main class="dashboard-content">
+            <div class="dashboard-block">
+                <h2>📢 Community Calendar (May 2026)</h2>
+                <div class="calendar-container">
+                    <div class="calendar-grid">
+                        <div class="cal-header">SUN</div><div class="cal-header">MON</div><div class="cal-header">TUE</div><div class="cal-header">WED</div><div class="cal-header">THU</div><div class="cal-header">FRI</div><div class="cal-header">SAT</div>
+                        <div class="cal-day"></div><div class="cal-day"></div><div class="cal-day"></div><div class="cal-day"></div><div class="cal-day"></div><div class="cal-day">1</div><div class="cal-day">2<br><span class="event-mark">Water</span></div>
+                        <div class="cal-day">3</div><div class="cal-day">4</div><div class="cal-day">5<br><span class="event-mark">Health</span></div><div class="cal-day">6</div><div class="cal-day">7</div><div class="cal-day">8</div><div class="cal-day">9</div>
+                        <div class="cal-day">10</div><div class="cal-day">11<br><span class="event-mark">Clean</span></div><div class="cal-day">12<br><span class="event-mark">Sports</span></div><div class="cal-day">13</div><div class="cal-day">14</div><div class="cal-day">15</div><div class="cal-day">16</div>
+                    </div>
+                    <div class="announcement-sidebar">
+                        <h4>Upcoming Events</h4>
+                        <p><strong>May 2:</strong> Water Main Maintenance (8AM-5PM)</p>
+                        <p><strong>May 5:</strong> Free Health Check-up @ Center</p>
+                        <p><strong>May 11:</strong> Community Clean-up Drive</p>
+                        <p><strong>May 12:</strong> Inter-Purok Sports Festival</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- SECTION: SAFETY -->
+    <div id="safety" class="page-section dashboard-page">
+        <main class="dashboard-content">
+            <div class="dashboard-block">
+                <h2>🛡️ Safety & Disaster Readiness</h2>
+                <div class="step-item"><div><h4>⛈️ Typhoons</h4><p>Prepare Go-Bags. Evacuate to Covered Court if river hits Yellow Marker.</p></div></div>
+                <div class="step-item"><div><h4>🫨 Earthquakes</h4><p>Drop, Cover, Hold. Exit to Plaza open field immediately after shaking.</p></div></div>
+            </div>
+            <div class="dashboard-block">
+                <h3>📡 Real-Time Environmental Monitoring</h3>
+                <p style="margin-bottom: 20px;">
+                    Stay updated with live weather patterns, wind speeds, and active typhoon tracks directly affecting Bacoor City and the surrounding Calabarzon region.
+                </p>
+                
+                <div class="map-responsive">
+                    <iframe 
+                        src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=11&overlay=satellite&product=satellite&level=surface&lat=14.457&lon=120.93&detailLat=14.459&detailLon=120.94&marker=true"
+                        frameborder="0"
+                        width="400"
+                        height="300"
+                        style="border:0;"
+                        allowfullscreen=""
+                        loading="lazy">
+                    </iframe>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- SECTION: SERVICES -->
+    <div id="services" class="page-section dashboard-page">
+        <main class="dashboard-content">
+            <div class="dashboard-block">
+                <h2>📄 Document Application Guide</h2>
+                <div class="step-item"><div><h4>Step 1: Requirements</h4><p>Bring valid ID and recent Cedula.</p></div></div>
+                <div class="step-item"><div><h4>Step 2: Payment</h4><p>Pay processing fees at the Treasurer's window.</p></div></div>
+            </div>
+            <form class="dashboard-block">
+                <h2>📞 Contact Us</h2>
+                <div class="fill-step-item">
+                    <label>First Name: </label><input type="text" id="firstname" placeholder="Enter your First Name" required>
+                    <label>Last Name: </label><input type="text" id="lastname" placeholder="Enter your Last Name" required>
+                    <label>Mobile:    </label><input type="tel" id="Mobile" placeholder="Enter your Mobile Number" required>
+                    <label>Email Address: </label><input type="email" id="Email" placeholder="Enter your Email Address" required>
+                    <label>Concern: </label>
+                    <textarea class="comment" placeholder="Tell us about your concern..." rows="2" cols="20" required></textarea>
+                </div>
+                <button class="btn">Submit</button>
+            </form>
+        </main>
+    </div>
+
+    <!-- SECTION: OFFICIALS -->
+    <div id="officials" class="page-section dashboard-page">
+        <main class="dashboard-content">
+            <div class="dashboard-block">
+                <h2>⚖️ Barangay Council</h2>
+                <div class="official-resume"><img class="official-image" src="bato.png" ><div class="resume-text"><h3>Hon. Ronald Marapon dela Rosa</h3><span class="role">Punong Barangay</span><p>Dedicated public servant with 15 years experience.</p></div></div>
+                <div class="official-resume"><img class="official-image" src="padilla.png" ><div class="resume-text"><h3>Hon. Robinhood Ferdinand Cariño Padilla</h3><span class="role">Secretary</span><p>Administrative expert for community records.</p></div></div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-column"><h3>Contact</h3><p>📞 (02) 8888-1234<br>📧 info@brgycinco.gov.ph</p></div>
+            <div class="footer-column"><h3>Office</h3><p>Mon-Fri | 8AM-5PM</p></div>
+            <div class="footer-column"><h3>Socials</h3><p>FB: /BarangayCincoOfficial</p></div>
+        </div>
+        <div class="footer-bottom"><p>&copy; 2026 Barangay CINCO Official Portal.</p></div>
+    </footer>
+</body>
+</html>
