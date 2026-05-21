@@ -603,3 +603,33 @@ textarea {
 .show { display: block; }
 .hide { display: none; }
 
+/* CONTACT FORM SUCCESS STATE */
+.success-container {
+    text-align: center;
+    padding: 20px 0;
+    animation: fadeIn var(--transition-speed) ease forwards;
+}
+
+.success-title {
+    color: var(--maroon);
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.success-message {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.success-subtext {
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 0.95rem;
+}
+
+/* Specific styling modifier if needed for center positioning */
+.btn-center {
+    display: inline-block;
+    margin: 0 auto;
+}

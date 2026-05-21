@@ -31,15 +31,39 @@ function showPage(pageId) {
 
 window.onload = () => showPage('history');
 
-// SHOW SERVICES OUTPUT
+// SHOW SERVICES OUTPUT AND HANDLING
+const contactForm = document.getElementById("services-form");
+const originalFormHTML = contactForm.innerHTML;
 
-document.getElementById("services").addEventListener("submit", function(event) {
+contactForm.addEventListener("submit", function(event) {
     event.preventDefault();
 
     const firstname = document.getElementById("firstname").value;
 
-    window.alert("Dear, " + firstname + ", thank you for bringing this to our attention. We appreciate your vigilance in our barangay.");
+    // Replace the inner inputs with our curated confirmation layout
+    contactForm.innerHTML = `
+        <div class="success-container">
+            <h2 class="success-title">✅ Concern Submitted Successfully</h2>
+            <p class="success-message">
+                Dear <strong>${firstname}</strong>, thank you for bringing this to our attention.
+            </p>
+            <p class="success-subtext">
+                Your concern has been securely transmitted to the official email of the barangay (<strong>info@brgycinco.gov.ph</strong>). We appreciate your vigilance in our community.
+            </p>
+            <button id="back-to-main-btn" class="btn btn-center">Go Back to Main Page</button>
+        </div>
+    `;
 
+    // Handle clicking the "Go Back" button
+    document.getElementById("back-to-main-btn").addEventListener("click", function() {
+        // Smoothly slide back to the History section using your existing function
+        showPage('history');
+        
+        // Reset the form in the background after the view changes
+        setTimeout(() => {
+            contactForm.innerHTML = originalFormHTML;
+        }, 500);
+    });
 });
 
 // MOBILE MENU TOGGLE
@@ -73,3 +97,4 @@ function filterSelection(category) {
 
 // Set 'All' as default on load
 filterSelection('all');
+
