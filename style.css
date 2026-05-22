@@ -23,16 +23,27 @@ body {
     overflow-x: hidden;
 }
 
-/* TOP ANNOUNCEMENT BAR */
-.announcement-bar {
+/* --- WRAPPER FOR SCROLL-HIDE MECHANISM --- */
+.header-wrapper {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
+    z-index: 1005;
+    transition: transform var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Toggled by JavaScript when scrolling downwards */
+.header-wrapper.scroll-hide {
+    transform: translateY(-100%);
+}
+
+/* TOP ANNOUNCEMENT BAR */
+.announcement-bar {
+    width: 100%;
     height: 35px;
     background: var(--maroon);
     color: var(--gold);
-    z-index: 1005;
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -49,7 +60,6 @@ body {
     animation: marquee 25s linear infinite;
 }
 
-/* Pause animation when user hovers so they can read important updates easily */
 .announcement-bar:hover .marquee-text {
     animation-play-state: paused;
 }
@@ -61,11 +71,7 @@ body {
 
 /* NAVBAR */
 .navbar {
-    position: fixed;
     width: 100%;
-    top: 35px; /* Shifted down to accommodate the announcement bar */
-    left: 0;
-    z-index: 1000;
     background: var(--black);
     display: flex;
     justify-content: space-between;
@@ -172,8 +178,8 @@ body {
     .nav-links.show {
         display: flex;
         flex-direction: column;
-        position: fixed;
-        top: 115px; /* Shifted down to cleanly align under the modified fixed header layout */
+        position: absolute;
+        top: 100%;
         right: 20px;
         width: 200px;
         height: auto;
@@ -227,7 +233,7 @@ body {
     height: 450px;
     width: 100%;
     overflow: hidden;
-    margin-top: 115px; /* Added spacing offset for history section top image under fixed components */
+    margin-top: 115px;
 }
 
 .hero-img {
@@ -406,7 +412,7 @@ body {
 
 /* DASHBOARD PAGES */
 .dashboard-page { 
-    padding-top: 155px; /* Increased from 120px to cleanly offset the taller combined header layout */
+    padding-top: 155px; 
     min-height: 80vh; 
 }
 

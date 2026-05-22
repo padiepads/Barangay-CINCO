@@ -10,25 +10,28 @@
 </head>
 <body>
 
-    <!-- MOVING ANNOUNCEMENT BAR -->
-    <div class="announcement-bar">
-        <div class="marquee-text">
-            📢 Community Notice: May 2 - Water Main Maintenance (8:00 AM – 5:00 PM) | May 4 - Senior Citizens Assembly (9:00 AM) | May 5 - Free Health Check-up @ Center | May 11 - Community Clean-up Drive | Stay safe and prepared!
+    <!-- SCROLL-CONTROLLED HEADER WRAPPER CONTAINER -->
+    <div class="header-wrapper">
+        <!-- MOVING ANNOUNCEMENT BAR -->
+        <div class="announcement-bar">
+            <div class="marquee-text">
+                📢 Community Notice: May 2 - Water Main Maintenance (8:00 AM – 5:00 PM) | May 4 - Senior Citizens Assembly (9:00 AM) | May 5 - Free Health Check-up @ Center | May 11 - Community Clean-up Drive | Stay safe and prepared!
+            </div>
         </div>
-    </div>
 
-    <!-- NAVIGATION -->
-    <nav class="navbar">
-        <div class="nav-logo">Barangay CINCO</div>
-        <div class="menu-toggle" id="menuToggle">☰</div>
-        <div class="nav-links" id="navLinks">
-            <button id="link-history" onclick="showPage('history')">About Us</button>
-            <button id="link-announcements" onclick="showPage('announcements')">Announcements</button>
-            <button id="link-safety" onclick="showPage('safety')">Preparedness</button>
-            <button id="link-services" onclick="showPage('services')">Services</button>
-            <button id="link-officials" onclick="showPage('officials')">Officials</button>
-        </div>
-    </nav>
+        <!-- NAVIGATION -->
+        <nav class="navbar">
+            <div class="nav-logo">Barangay CINCO</div>
+            <div class="menu-toggle" id="menuToggle">☰</div>
+            <div class="nav-links" id="navLinks">
+                <button id="link-history" onclick="showPage('history')">About Us</button>
+                <button id="link-announcements" onclick="showPage('announcements')">Announcements</button>
+                <button id="link-safety" onclick="showPage('safety')">Preparedness</button>
+                <button id="link-services" onclick="showPage('services')">Services</button>
+                <button id="link-officials" onclick="showPage('officials')">Officials</button>
+            </div>
+        </nav>
+    </div>
 
     <!-- SECTION: OUR STORY -->
     <article id="history" class="page-section">
@@ -228,7 +231,7 @@
                         <p><strong>May 18:</strong> Tree Planting Activity (🕖7:00 AM – 10:00 AM)</p>
                         <p><strong>May 21:</strong> SK Music and Dance Night (🕕6:00 PM – 10:00 PM)</p>
                         <p><strong>May 22:</strong> Nutrition Month Preparation Program (🕘9:00 AM – 11:00 AM)</p>
-                        <p><strong>May 25:</strong> Free Zumba and Wellness Activity (🕔5:00 AM – 7:00 AM)</p>
+                        <p><strong>May 25:</strong> Free Zumba and Wellness Activity (Lightbox🕔5:00 AM – 7:00 AM)</p>
                         <p><strong>May 31:</strong> Disaster Preparedness Drill (🕗8:00 AM – 12:00 PM)</p>
                     </div>
                 </div>
@@ -273,7 +276,6 @@
                 <div class="step-item"><div><h4>Step 1: Requirements</h4><p>Bring valid ID and recent Cedula.</p></div></div>
                 <div class="step-item"><div><h4>Step 2: Payment</h4><p>Pay processing fees at the Treasurer's window.</p></div></div>
             </div>
-            <!-- Form updated to unique ID 'services-form' -->
             <form id="services-form" class="dashboard-block">
                 <h2>📞 Contact Us</h2>
                 <div class="fill-step-item">

@@ -91,3 +91,31 @@ function filterSelection(category) {
 
 // Set 'All' as default on load
 filterSelection('all');
+
+
+// --- SCROLL-TO-HIDE SYSTEM IMPLEMENTATION ---
+let lastScrollTop = 0;
+const headerWrapper = document.querySelector('.header-wrapper');
+const mobileNavLinks = document.getElementById('navLinks');
+
+window.addEventListener('scroll', function() {
+    let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+
+    // Safety step: Ignore bouncy elastic scroll actions on iOS devices
+    if (currentScroll < 0) return;
+
+    if (currentScroll > lastScrollTop && currentScroll > 150) {
+        // Scrolling Down -> Hide Header
+        headerWrapper.classList.add('scroll-hide');
+        
+        // Auto-collapse mobile navigation dropdown menu if open
+        if (mobileNavLinks && mobileNavLinks.classList.contains('show')) {
+            mobileNavLinks.classList.remove('show');
+        }
+    } else {
+        // Scrolling Up -> Show Header
+        headerWrapper.classList.remove('scroll-hide');
+    }
+    
+    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+}, false);
