@@ -118,6 +118,7 @@ p {
     justify-content: space-between;
     align-items: center;
     padding: 18px 40px;
+    position: relative; /* Context parent container for mobile nav layer anchors */
 }
 
 .nav-logo {
@@ -160,11 +161,13 @@ p {
     color: var(--black) !important;
 }
 
+/* --- MENU TOGGLE BAR SETUP --- */
 .menu-toggle {
-    display: none;
+    display: none; /* Hidden setup frame layer tracking for desktop view widths */
     color: white;
     font-size: 1.5rem;
     cursor: pointer;
+    user-select: none;
 }
 
 /* --- SPA LAYOUT CONTAINMENT & MARGIN MANIPULATIONS --- */
@@ -241,13 +244,6 @@ p {
     font-family: system-ui, -apple-system, sans-serif;
     color: var(--subtext-color);
     line-height: 1.5;
-}
-
-@media screen and (max-width: 900px) {
-    .stats-disclaimer {
-        margin-top: 0px;
-        text-align: center;
-    }
 }
 
 .hero-image-container {
@@ -503,13 +499,12 @@ label {
     margin-bottom: 1px;
 }
 
-/* FADED BUT VISIBLE BORDERS WHEN NOT ACTIVE */
 input[type="text"], input[type="email"], input[type="tel"], textarea {
     width: 100%;
     padding: 11px 15px;
     margin-top: 1px;
     margin-bottom: 14px;
-    border: 2px solid rgba(85, 85, 85, 0.35); /* Soft fade effect */
+    border: 2px solid rgba(85, 85, 85, 0.35);
     background: var(--bg-color);
     color: var(--text-color);
     border-radius: 6px;
@@ -519,14 +514,12 @@ input[type="text"], input[type="email"], input[type="tel"], textarea {
     transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-/* DARKEN SHARPLY WHEN SELECTED (FOCUS STATE) */
 input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus, textarea:focus {
-    border-color: #111111; /* Maximum dark contrast */
+    border-color: #111111;
     outline: none;
     box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1);
 }
 
-/* Adaptive focus adjustments for Dark Theme Canvas */
 [data-theme="dark"] input[type="text"], [data-theme="dark"] input[type="email"], [data-theme="dark"] input[type="tel"], [data-theme="dark"] textarea {
     border-color: rgba(170, 170, 170, 0.4);
 }
@@ -540,7 +533,7 @@ textarea {
     resize: vertical;
 }
 
-/* --- GREEN FEEDBACK POPUP SYSTEM MODAL STYLES --- */
+/* --- SYSTEM MODAL POPUP --- */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -563,8 +556,8 @@ textarea {
 }
 
 .modal-box {
-    background: #f1f8e9; /* Light background */
-    border: 2px solid #1b5e20; /* Dark Green Border */
+    background: #f1f8e9;
+    border: 2px solid #1b5e20;
     padding: 35px;
     border-radius: 12px;
     max-width: 480px;
@@ -579,7 +572,7 @@ textarea {
 
 .modal-icon {
     font-size: 3rem;
-    color: #1b5e20 !important; /* Force Dark Green */
+    color: #1b5e20 !important;
     margin-bottom: 12px;
 }
 
@@ -602,10 +595,6 @@ textarea {
     border: none;
     border-radius: 6px;
     cursor: pointer;
-}
-
-.modal-close-btn:hover {
-    background: #1b5e20;
 }
 
 .main-footer {
@@ -678,14 +667,60 @@ textarea {
 .show { display: block; }
 .hide { display: none; }
 
+/* --- RESPONSIVE ADAPTATION INTERFACES --- */
 @media screen and (max-width: 900px) {
     .stats-container { flex-direction: column; }
+    .stats-disclaimer {
+        margin-top: 0px;
+        text-align: center;
+    }
 }
 
-/* --- MOBILE FIX FOR CALENDAR STACKING --- */
 @media screen and (max-width: 768px) {
+    /* Expose active menu layout switch triggers */
+    .menu-toggle {
+        display: block;
+    }
+
+    /* Convert horizontal links into a floating compact right-side menu card drawer */
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        right: 15px;      /* Anchors it 15px away from the right screen edge */
+        left: auto;       /* Overrides the original full-width stretch left coordinates */
+        width: 240px;     /* Small custom floating context width */
+        background: var(--black);
+        padding: 20px;
+        gap: 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px; /* Smooth rounded interface edges */
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        z-index: 1010;
+    }
+
+    /* Exposed view trigger activated via JavaScript implementation loops */
+    .nav-links.show {
+        display: flex;
+    }
+
+    /* Make buttons clean, compact lists inside the mini container */
+    .nav-links button {
+        width: 100%;
+        text-align: left;
+        padding: 8px 5px;
+        font-size: 0.95rem; /* Slightly smaller typography to feel cohesive */
+    }
+
+    .theme-switch-btn {
+        text-align: center !important;
+        border-radius: 6px;
+        margin-top: 5px;
+    }
+
     .calendar-container {
-        display: block !important; /* Force vertical flow */
+        display: block !important;
     }
     
     .calendar-grid {
@@ -697,12 +732,23 @@ textarea {
     }
 
     .cal-day {
-        height: 50px; /* Shortened on mobile to prevent layout overflow */
+        height: 50px;
         font-size: 0.7rem;
     }
 
     .announcement-sidebar {
         height: auto;
         width: 100%;
+    }
+
+    .story-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .official-resume {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 15px;
     }
 }
