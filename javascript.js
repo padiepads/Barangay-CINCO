@@ -1,79 +1,112 @@
+// --- CORE SINGLE PAGE ROUTER ENGINE ---
 function showPage(pageId) {
     const sections = document.querySelectorAll('.page-section');
-    const links = document.querySelectorAll('.nav-links button');
-    const navLinks = document.getElementById('navLinks'); 
-
-    sections.forEach(s => {
-        s.style.display = 'none';
-        s.classList.remove('active');
+    sections.forEach(section => {
+        section.classList.remove('active');
     });
 
     const activeSection = document.getElementById(pageId);
     if (activeSection) {
-        activeSection.style.display = 'block';
-        setTimeout(() => { activeSection.classList.add('active'); }, 10);
+        activeSection.classList.add('active');
     }
 
-    links.forEach(l => l.classList.remove('active-link'));
-    
-    const activeLink = document.getElementById('link-' + pageId);
-    if (activeLink) {
-        activeLink.classList.add('active-link');
+    const navButtons = document.querySelectorAll('.nav-links button');
+    navButtons.forEach(btn => {
+        btn.classList.remove('active-link');
+    });
+
+    const currentButton = document.getElementById(`link-${pageId}`);
+    if (currentButton) {
+        currentButton.classList.add('active-link');
     }
 
-    if (navLinks.classList.contains('show')) {
-        navLinks.classList.remove('show');
-    }
-
+    // Scroll cleanly up to the top view frame boundary
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-window.onload = () => showPage('history');
-
-// SHOW SERVICES OUTPUT AND HANDLING
-const contactForm = document.getElementById("services-form");
-const originalFormHTML = contactForm.innerHTML;
-
-contactForm.addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    const firstname = document.getElementById("firstname").value;
-
-    // Rewrite form inner HTML to present structured confirmation card
-    contactForm.innerHTML = `
-        <div class="success-container">
-            <h2 class="success-title">✅ Concern Submitted Successfully</h2>
-            <p class="success-message">
-                Dear <strong>${firstname}</strong>, thank you for bringing this to our attention.
-            </p>
-            <p class="success-subtext">
-                Your concern has been securely transmitted to the official email of the barangay (<strong>info@brgycinco.gov.ph</strong>). We appreciate your vigilance in our community.
-            </p>
-            <button id="back-to-main-btn" class="btn btn-center">Go Back to Main Page</button>
-        </div>
-    `;
-
-    // Add immediate action event map to the confirmation page button
-    document.getElementById("back-to-main-btn").addEventListener("click", function() {
-        // Run internal slide router back to general community board history section
-        showPage('history');
-        
-        // Quietly rebuild structural DOM contents post animation loop closure
-        setTimeout(() => {
-            contactForm.innerHTML = originalFormHTML;
-        }, 500);
-    });
+// Ensure primary home landing frame displays safely on execution initialization
+document.addEventListener("DOMContentLoaded", () => {
+    showPage('history');
+    
+    // Attach event interceptor loop for green service confirmation pop up modal
+    const servicesForm = document.getElementById('services-form');
+    if (servicesForm) {
+        servicesForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Hold form submission action
+            openModal();
+        });
+    }
 });
 
-// MOBILE MENU TOGGLE
+// --- TOGGLE MOBILE BURGER SELECTION MENU LAYER ---
 const menuToggle = document.getElementById('menuToggle');
 const navLinks = document.getElementById('navLinks');
 
-menuToggle.addEventListener('click', () => {
-    navLinks.classList.toggle('show');
+if (menuToggle && navLinks) {
+    menuToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('show');
+    });
+}
+
+// --- LIGHT & DARK MODE THEME CONFIG INTERFACE ---
+const themeToggleBtn = document.getElementById('theme-toggle');
+const currentSavedTheme = localStorage.getItem('theme') || 'light';
+
+if (currentSavedTheme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    if (themeToggleBtn) themeToggleBtn.textContent = "☀️ Light Mode";
+}
+
+if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', () => {
+        let currentActiveTheme = document.documentElement.getAttribute('data-theme');
+        if (currentActiveTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'light');
+            localStorage.setItem('theme', 'light');
+            themeToggleBtn.textContent = "🌙 Dark Mode";
+        } else {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+            themeToggleBtn.textContent = "☀️ Light Mode";
+        }
+    });
+}
+
+// --- GREEN SERVICE NOTIFICATION POPUP ACTION METHODS ---
+function openModal() {
+    const popupModal = document.getElementById('submissionModal');
+    if (popupModal) {
+        popupModal.classList.add('active');
+    }
+}
+
+function closeModal() {
+    const popupModal = document.getElementById('submissionModal');
+    if (popupModal) {
+        popupModal.classList.remove('active');
+        
+        // Reset original input elements inside document scope safely
+        const formElement = document.getElementById('services-form');
+        if (formElement) {
+            formElement.reset();
+        }
+    }
+}
+
+// --- SCROLL INTERSECTION REVEAL CONTROLLER ---
+const scrollObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('reveal-visible');
+        }
+    });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.scroll-fade').forEach(blockItem => {
+    scrollObserver.observe(blockItem);
 });
 
-// FACILITY FILTERING SYSTEM
+// --- SUB-FACILITY FILTER SELECTOR MODULE ---
 function filterSelection(category) {
     var cards = document.getElementsByClassName("facility-card");
     if (category == "all") category = "";
@@ -89,54 +122,24 @@ function filterSelection(category) {
     }
 }
 
-// Set 'All' as default on load
-filterSelection('all');
-
-
-// --- SCROLL-TO-HIDE SYSTEM IMPLEMENTATION ---
-let lastScrollTop = 0;
+// --- HIDE HEADER WRAPPER TRACKER WHILE SCROLLING DOWN ---
+let lastScrollTopPosition = 0;
 const headerWrapper = document.querySelector('.header-wrapper');
-const mobileNavLinks = document.getElementById('navLinks');
+const mobileNavMenu = document.getElementById('navLinks');
 
 window.addEventListener('scroll', function() {
-    let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+    let currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
 
-    // Safety step: Ignore bouncy elastic scroll actions on iOS devices
-    if (currentScroll < 0) return;
+    if (currentScrollY < 0) return;
 
-    if (currentScroll > lastScrollTop && currentScroll > 150) {
-        // Scrolling Down -> Hide Header
-        headerWrapper.classList.add('scroll-hide');
-        
-        // Auto-collapse mobile navigation dropdown menu if open
-        if (mobileNavLinks && mobileNavLinks.classList.contains('show')) {
-            mobileNavLinks.classList.remove('show');
+    if (currentScrollY > lastScrollTopPosition && currentScrollY > 150) {
+        if (headerWrapper) headerWrapper.classList.add('scroll-hide');
+        if (mobileNavMenu && mobileNavMenu.classList.contains('show')) {
+            mobileNavMenu.classList.remove('show');
         }
     } else {
-        // Scrolling Up -> Show Header
-        headerWrapper.classList.remove('scroll-hide');
+        if (headerWrapper) headerWrapper.classList.remove('scroll-hide');
     }
     
-    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+    lastScrollTopPosition = currentScrollY <= 0 ? 0 : currentScrollY;
 }, false);
-
-
-// --- SCROLL REVEAL ANIMATOR FOR MISSION, VISION, & CORE VALUES ---
-document.addEventListener("DOMContentLoaded", function () {
-    const scrollElements = document.querySelectorAll(".story-card, .corevalues-story-card");
-
-    const elementObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add("reveal");
-                // Stop observing once animated so it stays visible on scroll up
-                observer.unobserve(entry.target); 
-            }
-        });
-    }, {
-        root: null, // Default to browser viewport
-        threshold: 0.15 // Triggers animation when 15% of the card shows up on screen
-    });
-
-    scrollElements.forEach(el => elementObserver.observe(el));
-});
