@@ -295,11 +295,25 @@ body {
     margin: 40px 0; 
 }
 
-.story-card { 
+/* --- SCROLL ANIMATIONS FOR MISSION, VISION, & CORE VALUES --- */
+.story-card, .corevalues-story-card { 
     background: var(--gray); 
     padding: 30px; 
     border-radius: 8px; 
     border-top: 4px solid var(--maroon); 
+    
+    /* Initial state before scrolling into view */
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), 
+                transform 0.8s cubic-bezier(0.25, 1, 0.5, 1),
+                border-top-color 3s ease;
+}
+
+/* Trigger state added dynamically by IntersectionObserver */
+.story-card.reveal, .corevalues-story-card.reveal {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .story-card h3 { 
@@ -324,13 +338,6 @@ body {
     text-transform: uppercase; 
     letter-spacing: 1px; 
     text-align: center;
-}
-
-.corevalues-story-card { 
-    background: var(--gray); 
-    padding: 30px; 
-    border-radius: 8px; 
-    border-top: 4px solid var(--maroon); 
 }
 
 /* RESPONSIVE MAP CONTAINER */

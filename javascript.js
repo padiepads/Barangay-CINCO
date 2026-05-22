@@ -119,3 +119,24 @@ window.addEventListener('scroll', function() {
     
     lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
 }, false);
+
+
+// --- SCROLL REVEAL ANIMATOR FOR MISSION, VISION, & CORE VALUES ---
+document.addEventListener("DOMContentLoaded", function () {
+    const scrollElements = document.querySelectorAll(".story-card, .corevalues-story-card");
+
+    const elementObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("reveal");
+                // Stop observing once animated so it stays visible on scroll up
+                observer.unobserve(entry.target); 
+            }
+        });
+    }, {
+        root: null, // Default to browser viewport
+        threshold: 0.15 // Triggers animation when 15% of the card shows up on screen
+    });
+
+    scrollElements.forEach(el => elementObserver.observe(el));
+});
