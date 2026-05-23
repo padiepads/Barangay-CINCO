@@ -8,6 +8,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+
+    <!-- =====================================================
+         RECAPTCHA v2 — Replace YOUR_SITE_KEY with actual key
+         Get keys at: https://www.google.com/recaptcha/admin
+    ====================================================== -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
 
@@ -46,8 +52,8 @@
                 <div class="nav-dropdown" id="servicesDropdown">
                     <button id="link-services" role="menuitem" onclick="showPage('services')" class="nav-dropdown-trigger">Services ▾</button>
                     <div class="nav-dropdown-menu" id="servicesMenu">
-                        <button onclick="showPage('services'); scrollToSection('services-form-container')" class="dropdown-item">📞 Contact &amp; Concerns</button>
                         <button onclick="showPage('services'); scrollToSection('request-documents-section')" class="dropdown-item">📄 Request Documents</button>
+                        <button onclick="showPage('services'); scrollToSection('schedule-appointment-section')" class="dropdown-item">📅 Schedule Appointment</button>
                     </div>
                 </div>
                 <button id="link-officials" role="menuitem" onclick="showPage('officials')">Officials</button>
@@ -56,7 +62,7 @@
         </nav>
     </div>
 
-    <!-- SUCCESS MODAL -->
+    <!-- SUCCESS MODAL — Contact Form -->
     <div id="submissionModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
         <div class="modal-box">
             <div class="modal-icon-wrap" aria-hidden="true">
@@ -69,6 +75,26 @@
             <h3 id="modalTitle">Concern Submitted!</h3>
             <p>Your concern has been received at the Barangay desk. A representative will follow up with you shortly via phone or email.</p>
             <button class="modal-close-btn" onclick="closeModal()">Got it, thank you</button>
+        </div>
+    </div>
+
+    <!-- SUCCESS MODAL — Appointment -->
+    <div id="appointmentModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="apptModalTitle" aria-hidden="true">
+        <div class="modal-box">
+            <div class="modal-icon-wrap" aria-hidden="true">
+                <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                    <circle cx="28" cy="28" r="28" fill="#0277bd" opacity="0.10"/>
+                    <circle cx="28" cy="28" r="22" fill="#0277bd" opacity="0.12"/>
+                    <rect x="18" y="20" width="20" height="18" rx="2" stroke="#0277bd" stroke-width="2.5" fill="none"/>
+                    <line x1="23" y1="18" x2="23" y2="22" stroke="#0277bd" stroke-width="2.5" stroke-linecap="round"/>
+                    <line x1="33" y1="18" x2="33" y2="22" stroke="#0277bd" stroke-width="2.5" stroke-linecap="round"/>
+                    <line x1="18" y1="27" x2="38" y2="27" stroke="#0277bd" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M23 33l3 3 7-7" stroke="#0277bd" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <h3 id="apptModalTitle" style="color:#0277bd;">Appointment Scheduled!</h3>
+            <p>Your appointment request has been received. We will confirm your schedule via SMS or email. Please arrive 10 minutes before your scheduled time.</p>
+            <button class="modal-close-btn" style="background:#0277bd;" onclick="closeAppointmentModal()">Got it, thank you</button>
         </div>
     </div>
 
@@ -275,7 +301,7 @@
                 <h1 class="page-title">Announcements</h1>
             </div>
 
-            <!-- Upcoming Events — Modern Card Layout -->
+            <!-- Upcoming Events -->
             <div class="dashboard-block scroll-fade">
                 <h2 class="block-title"><span class="block-icon" aria-hidden="true">📅</span> Upcoming Events — May 2026</h2>
                 <p class="block-description">Stay up to date with the latest activities, programs, and gatherings happening in our barangay.</p>
@@ -434,7 +460,7 @@
         </main>
     </div>
 
-    <!-- ===== PAGE: SAFETY / PREPAREDNESS — DISASTER READINESS GUIDE ===== -->
+    <!-- ===== PAGE: SAFETY / PREPAREDNESS ===== -->
     <div id="safety" class="page-section dashboard-page">
         <main class="dashboard-content">
             <div class="page-header scroll-fade">
@@ -499,7 +525,7 @@
                         <span class="disaster-icon-wrap quake-bg">🫨</span>
                         <div>
                             <h2 class="disaster-title">Earthquake Safety</h2>
-                            <p class="disaster-subtitle">Drop, Cover, and Hold On — know your safe spots</p>
+                            <p class="disaster-subtitle">Drop, Cover, and Hold On — know what to do when the ground shakes</p>
                         </div>
                     </div>
                     <span class="disaster-chevron" aria-hidden="true">▸</span>
@@ -509,31 +535,31 @@
                         <div class="phase-col">
                             <div class="phase-label phase-before">Before</div>
                             <ul class="phase-list">
-                                <li>Identify safe spots in each room</li>
-                                <li>Secure heavy furniture and appliances</li>
-                                <li>Know how to turn off gas, water, and electricity</li>
-                                <li>Prepare emergency supplies and go-bag</li>
-                                <li>Practice "Drop, Cover, and Hold On" drill</li>
+                                <li>Secure heavy furniture and appliances to walls</li>
+                                <li>Know safe spots in every room (under sturdy tables)</li>
+                                <li>Prepare emergency kit and go-bag</li>
+                                <li>Learn how to turn off gas, water, and electricity</li>
+                                <li>Identify meeting points with family members</li>
                             </ul>
                         </div>
                         <div class="phase-col">
                             <div class="phase-label phase-during">During</div>
                             <ul class="phase-list">
-                                <li><strong>DROP</strong> — Get down on hands and knees</li>
-                                <li><strong>COVER</strong> — Protect head and neck under sturdy furniture</li>
-                                <li><strong>HOLD ON</strong> — Stay in position until shaking stops</li>
+                                <li><strong>DROP, COVER, and HOLD ON</strong></li>
+                                <li>Stay away from windows and exterior walls</li>
                                 <li>If outdoors, move away from buildings and power lines</li>
-                                <li>If in a vehicle, stop and stay inside</li>
+                                <li>Never use elevators</li>
+                                <li>If driving, pull over safely and stay in the vehicle</li>
                             </ul>
                         </div>
                         <div class="phase-col">
                             <div class="phase-label phase-after">After</div>
                             <ul class="phase-list">
-                                <li>Expect aftershocks</li>
-                                <li>Check for injuries and provide first aid</li>
-                                <li>Inspect home for damage before entering</li>
-                                <li>Do not use elevators</li>
-                                <li>Report emergencies to barangay authorities</li>
+                                <li>Expect and prepare for aftershocks</li>
+                                <li>Check for injuries and structural damage</li>
+                                <li>Do not use open flames — gas leaks may be present</li>
+                                <li>Listen to emergency radio broadcasts</li>
+                                <li>Stay away from damaged structures</li>
                             </ul>
                         </div>
                     </div>
@@ -708,22 +734,112 @@
                 </div>
             </div>
 
-            <!-- WHAT TO DO IN MIDST OF DISASTER -->
-            <div class="dashboard-block scroll-fade disaster-general-block">
-                <h2 class="block-title"><span class="block-icon">🆘</span> What To Do In The Midst of Disaster</h2>
-                <div class="general-tips-grid">
-                    <div class="general-tip-card">
-                        <span class="gtip-icon">📻</span>
-                        <p>Use battery-powered radio, phone alerts, or official government updates to get reliable information</p>
-                    </div>
-                    <div class="general-tip-card">
-                        <span class="gtip-icon">🎒</span>
-                        <p>Use emergency supplies wisely — water, food, flashlight, medicines, power bank, whistle, and first-aid kit</p>
-                    </div>
-                    <div class="general-tip-card">
-                        <span class="gtip-icon">🤝</span>
-                        <p>Assist children, elderly, injured neighbors, and persons with disabilities if it is safe to do so</p>
-                    </div>
+            <!-- ===== EMERGENCY HOTLINES — Bacoor, Cavite (REPLACES "What To Do In Midst of Disaster") ===== -->
+            <div class="dashboard-block scroll-fade emergency-hotlines-block">
+                <h2 class="block-title"><span class="block-icon">🚨</span> Emergency Hotlines — Bacoor, Cavite</h2>
+                <p class="block-description">In case of emergency, contact the appropriate authority immediately. Tap any number to call directly.</p>
+                <div class="hotlines-grid">
+
+                    <a href="tel:+6346-417-4199" class="hotline-card hotline-fire" aria-label="Call Bacoor Fire Department">
+                        <div class="hotline-icon-wrap fire-hotline-bg">
+                            <span class="hotline-emoji" aria-hidden="true">🚒</span>
+                        </div>
+                        <div class="hotline-info">
+                            <span class="hotline-category">Fire Department</span>
+                            <h3 class="hotline-name">Bacoor City Fire Station</h3>
+                            <div class="hotline-number">(046) 417-4199</div>
+                            <div class="hotline-alt">BFP Cavite · Available 24/7</div>
+                        </div>
+                        <div class="hotline-call-badge" aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            Tap to Call
+                        </div>
+                    </a>
+
+                    <a href="tel:+6346-417-6174" class="hotline-card hotline-police" aria-label="Call Bacoor Police Station">
+                        <div class="hotline-icon-wrap police-hotline-bg">
+                            <span class="hotline-emoji" aria-hidden="true">🚔</span>
+                        </div>
+                        <div class="hotline-info">
+                            <span class="hotline-category">Police Station</span>
+                            <h3 class="hotline-name">Bacoor City Police Station</h3>
+                            <div class="hotline-number">(046) 417-6174</div>
+                            <div class="hotline-alt">PNP Bacoor · Available 24/7</div>
+                        </div>
+                        <div class="hotline-call-badge" aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            Tap to Call
+                        </div>
+                    </a>
+
+                    <a href="tel:+911" class="hotline-card hotline-ambulance" aria-label="Call Emergency Ambulance">
+                        <div class="hotline-icon-wrap ambulance-hotline-bg">
+                            <span class="hotline-emoji" aria-hidden="true">🚑</span>
+                        </div>
+                        <div class="hotline-info">
+                            <span class="hotline-category">Ambulance / Rescue</span>
+                            <h3 class="hotline-name">Emergency Medical Response</h3>
+                            <div class="hotline-number">911</div>
+                            <div class="hotline-alt">National Emergency Hotline · 24/7</div>
+                        </div>
+                        <div class="hotline-call-badge" aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            Tap to Call
+                        </div>
+                    </a>
+
+                    <a href="tel:+6346-417-0000" class="hotline-card hotline-disaster" aria-label="Call Disaster Response Team">
+                        <div class="hotline-icon-wrap disaster-hotline-bg">
+                            <span class="hotline-emoji" aria-hidden="true">⛑️</span>
+                        </div>
+                        <div class="hotline-info">
+                            <span class="hotline-category">Disaster Response</span>
+                            <h3 class="hotline-name">Bacoor City CDRRMO</h3>
+                            <div class="hotline-number">(046) 417-0000</div>
+                            <div class="hotline-alt">City Disaster Risk Reduction · 24/7</div>
+                        </div>
+                        <div class="hotline-call-badge" aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            Tap to Call
+                        </div>
+                    </a>
+
+                    <a href="tel:+63-BRGY-CINCO" class="hotline-card hotline-barangay" aria-label="Call Barangay Emergency Hotline">
+                        <div class="hotline-icon-wrap barangay-hotline-bg">
+                            <span class="hotline-emoji" aria-hidden="true">🏛️</span>
+                        </div>
+                        <div class="hotline-info">
+                            <span class="hotline-category">Barangay Emergency</span>
+                            <h3 class="hotline-name">Barangay CINCO Hotline</h3>
+                            <div class="hotline-number">(02) 8888-1234</div>
+                            <div class="hotline-alt">Barangay Hall · Office Hours &amp; On-Call</div>
+                        </div>
+                        <div class="hotline-call-badge" aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            Tap to Call
+                        </div>
+                    </a>
+
+                    <a href="tel:+6346-417-5000" class="hotline-card hotline-hospital" aria-label="Call Hospital Emergency">
+                        <div class="hotline-icon-wrap hospital-hotline-bg">
+                            <span class="hotline-emoji" aria-hidden="true">🏥</span>
+                        </div>
+                        <div class="hotline-info">
+                            <span class="hotline-category">Hospital Emergency</span>
+                            <h3 class="hotline-name">Bacoor Doctors Hospital</h3>
+                            <div class="hotline-number">(046) 417-5000</div>
+                            <div class="hotline-alt">Emergency Room · Open 24/7</div>
+                        </div>
+                        <div class="hotline-call-badge" aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            Tap to Call
+                        </div>
+                    </a>
+
+                </div>
+                <div class="hotlines-note">
+                    <span>⚠️</span>
+                    <p>For life-threatening emergencies, always call <strong>911</strong> first. Verify current hotline numbers with the Barangay Hall as they may be updated periodically.</p>
                 </div>
             </div>
 
@@ -884,59 +1000,120 @@
                 </div>
             </div>
 
-            <!-- Contact & Concerns Form -->
-            <div class="dashboard-block scroll-fade" id="services-form-container">
-                <h2 class="block-title"><span class="block-icon" aria-hidden="true">📞</span> Contact &amp; Concerns</h2>
-                <p class="block-description">Have a concern or inquiry? Fill out the form below and a barangay representative will get back to you.</p>
-                <form id="services-form" novalidate>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="firstname">First Name <span class="required" aria-hidden="true">*</span></label>
-                            <input type="text" id="firstname" name="firstname" placeholder="Juan" required autocomplete="given-name">
-                        </div>
-                        <div class="form-group">
-                            <label for="lastname">Last Name <span class="required" aria-hidden="true">*</span></label>
-                            <input type="text" id="lastname" name="lastname" placeholder="dela Cruz" required autocomplete="family-name">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="Mobile">Mobile Number <span class="required" aria-hidden="true">*</span></label>
-                            <input type="tel" id="Mobile" name="mobile" placeholder="09XX-XXX-XXXX" required autocomplete="tel">
-                        </div>
-                        <div class="form-group">
-                            <label for="Email">Email Address <span class="required" aria-hidden="true">*</span></label>
-                            <input type="email" id="Email" name="email" placeholder="juan@example.com" required autocomplete="email">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="concern-box">Your Concern <span class="required" aria-hidden="true">*</span></label>
-                        <textarea id="concern-box" name="concern" placeholder="Please describe your concern or inquiry in detail..." required></textarea>
-                    </div>
+            <!-- ===== SCHEDULE APPOINTMENT SECTION ===== -->
+            <div class="dashboard-block scroll-fade" id="schedule-appointment-section">
+                <h2 class="block-title"><span class="block-icon" aria-hidden="true">📅</span> Schedule an Appointment</h2>
+                <p class="block-description">Book your visit in advance to reduce wait time at the Barangay Hall. Fill out the form below and we will confirm your appointment via SMS or email.</p>
 
-                    <!-- Image Upload (Optional) -->
-                    <div class="form-group">
-                        <label for="concern-image">Attach Image <span class="optional-label">(Optional)</span></label>
-                        <div class="image-upload-area" id="imageUploadArea" onclick="document.getElementById('concern-image').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
-                            <input type="file" id="concern-image" name="concern_image" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
-                            <div class="upload-placeholder" id="uploadPlaceholder">
-                                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                                <p>Click to upload or drag &amp; drop an image</p>
-                                <span>JPG, PNG, GIF up to 10MB</span>
+                <form id="appointment-form" class="appointment-form" novalidate>
+
+                    <div class="appt-form-section">
+                        <h3 class="appt-section-heading">
+                            <span class="appt-step-badge">1</span>
+                            Appointment Details
+                        </h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="appt-type">Request Type <span class="required" aria-hidden="true">*</span></label>
+                                <div class="select-wrapper">
+                                    <select id="appt-type" name="appt_type" required onchange="handleApptTypeChange(this.value)">
+                                        <option value="" disabled selected>— Select a request type —</option>
+                                        <option value="Barangay Clearance">Barangay Clearance</option>
+                                        <option value="Certificate of Residency">Certificate of Residency</option>
+                                        <option value="Barangay Indigency">Barangay Indigency</option>
+                                        <option value="Business Permit Clearance">Business Permit Clearance</option>
+                                        <option value="Barangay ID">Barangay ID</option>
+                                        <option value="Cedula">Cedula / Community Tax Certificate</option>
+                                        <option value="Other Concern">Other Concern</option>
+                                    </select>
+                                    <span class="select-arrow" aria-hidden="true">▾</span>
+                                </div>
                             </div>
-                            <div class="upload-preview" id="uploadPreview" style="display:none">
-                                <img id="previewImg" src="" alt="Attached image preview">
-                                <button type="button" class="remove-image-btn" onclick="removeImage(event)" aria-label="Remove image">✕ Remove</button>
+                            <div class="form-group" id="appt-other-group" style="display:none;">
+                                <label for="appt-other-concern">Describe Your Concern <span class="required" aria-hidden="true">*</span></label>
+                                <textarea id="appt-other-concern" name="appt_other_concern" placeholder="Please describe your concern or purpose of visit in detail..." rows="3"></textarea>
                             </div>
                         </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="appt-date">Preferred Date <span class="required" aria-hidden="true">*</span></label>
+                                <input type="date" id="appt-date" name="appt_date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="appt-time">Preferred Time <span class="required" aria-hidden="true">*</span></label>
+                                <div class="select-wrapper">
+                                    <select id="appt-time" name="appt_time" required>
+                                        <option value="" disabled selected>— Select a time slot —</option>
+                                        <option value="8:00 AM">8:00 AM</option>
+                                        <option value="8:30 AM">8:30 AM</option>
+                                        <option value="9:00 AM">9:00 AM</option>
+                                        <option value="9:30 AM">9:30 AM</option>
+                                        <option value="10:00 AM">10:00 AM</option>
+                                        <option value="10:30 AM">10:30 AM</option>
+                                        <option value="11:00 AM">11:00 AM</option>
+                                        <option value="11:30 AM">11:30 AM</option>
+                                        <option value="1:00 PM">1:00 PM</option>
+                                        <option value="1:30 PM">1:30 PM</option>
+                                        <option value="2:00 PM">2:00 PM</option>
+                                        <option value="2:30 PM">2:30 PM</option>
+                                        <option value="3:00 PM">3:00 PM</option>
+                                        <option value="3:30 PM">3:30 PM</option>
+                                        <option value="4:00 PM">4:00 PM</option>
+                                        <option value="4:30 PM">4:30 PM</option>
+                                    </select>
+                                    <span class="select-arrow" aria-hidden="true">▾</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <button class="submit-btn" type="submit">
-                        <span>Submit Concern</span>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                    </button>
+                    <div class="appt-form-section">
+                        <h3 class="appt-section-heading">
+                            <span class="appt-step-badge">2</span>
+                            Your Information
+                        </h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="appt-name">Full Name <span class="required" aria-hidden="true">*</span></label>
+                                <input type="text" id="appt-name" name="appt_name" placeholder="Juan dela Cruz" required autocomplete="name">
+                            </div>
+                            <div class="form-group">
+                                <label for="appt-contact">Contact Number <span class="required" aria-hidden="true">*</span></label>
+                                <input type="tel" id="appt-contact" name="appt_contact" placeholder="09XX-XXX-XXXX" required autocomplete="tel">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="appt-email">Email Address <span class="optional-label">(Optional)</span></label>
+                                <input type="email" id="appt-email" name="appt_email" placeholder="juan@example.com" autocomplete="email">
+                            </div>
+                            <div class="form-group">
+                                <label for="appt-notes">Additional Notes <span class="optional-label">(Optional)</span></label>
+                                <textarea id="appt-notes" name="appt_notes" placeholder="Any special instructions or additional information..." rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- reCAPTCHA v2 — Replace YOUR_SITE_KEY with actual key from https://www.google.com/recaptcha/admin -->
+                    <div class="recaptcha-wrapper">
+                        <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY" data-theme="light"></div>
+                        <p class="recaptcha-note">Complete the reCAPTCHA to confirm you are not a robot.</p>
+                    </div>
+
+                    <div class="appt-form-footer">
+                        <div class="appt-notice">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            Office hours: <strong>Mon–Fri, 8:00 AM – 5:00 PM</strong>. Appointments are subject to availability and confirmation.
+                        </div>
+                        <button class="submit-btn appt-submit-btn" type="submit">
+                            <span>Confirm Appointment</span>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        </button>
+                    </div>
                 </form>
             </div>
+
         </main>
     </div>
 
@@ -1003,6 +1180,67 @@
                     </div>
                 </div>
             </div>
+
+            <!-- ===== CONTACT & CONCERNS — Moved to bottom of Officials page ===== -->
+            <div class="dashboard-block scroll-fade" id="services-form-container">
+                <h2 class="block-title"><span class="block-icon" aria-hidden="true">📞</span> Contact &amp; Concerns</h2>
+                <p class="block-description">Have a concern or inquiry? Fill out the form below and a barangay representative will get back to you.</p>
+                <form id="services-form" novalidate>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstname">First Name <span class="required" aria-hidden="true">*</span></label>
+                            <input type="text" id="firstname" name="firstname" placeholder="Juan" required autocomplete="given-name">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname">Last Name <span class="required" aria-hidden="true">*</span></label>
+                            <input type="text" id="lastname" name="lastname" placeholder="dela Cruz" required autocomplete="family-name">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="Mobile">Mobile Number <span class="required" aria-hidden="true">*</span></label>
+                            <input type="tel" id="Mobile" name="mobile" placeholder="09XX-XXX-XXXX" required autocomplete="tel">
+                        </div>
+                        <div class="form-group">
+                            <label for="Email">Email Address <span class="required" aria-hidden="true">*</span></label>
+                            <input type="email" id="Email" name="email" placeholder="juan@example.com" required autocomplete="email">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="concern-box">Your Concern <span class="required" aria-hidden="true">*</span></label>
+                        <textarea id="concern-box" name="concern" placeholder="Please describe your concern or inquiry in detail..." required></textarea>
+                    </div>
+
+                    <!-- Image Upload (Optional) -->
+                    <div class="form-group">
+                        <label for="concern-image">Attach Image <span class="optional-label">(Optional)</span></label>
+                        <div class="image-upload-area" id="imageUploadArea" onclick="document.getElementById('concern-image').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+                            <input type="file" id="concern-image" name="concern_image" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
+                            <div class="upload-placeholder" id="uploadPlaceholder">
+                                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                <p>Click to upload or drag &amp; drop an image</p>
+                                <span>JPG, PNG, GIF up to 10MB</span>
+                            </div>
+                            <div class="upload-preview" id="uploadPreview" style="display:none">
+                                <img id="previewImg" src="" alt="Attached image preview">
+                                <button type="button" class="remove-image-btn" onclick="removeImage(event)" aria-label="Remove image">✕ Remove</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- reCAPTCHA v2 — Replace YOUR_SITE_KEY with actual key from https://www.google.com/recaptcha/admin -->
+                    <div class="recaptcha-wrapper">
+                        <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY" data-theme="light"></div>
+                        <p class="recaptcha-note">Complete the reCAPTCHA to confirm you are not a robot.</p>
+                    </div>
+
+                    <button class="submit-btn" type="submit">
+                        <span>Submit Concern</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    </button>
+                </form>
+            </div>
+
         </main>
     </div>
 
