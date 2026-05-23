@@ -24,9 +24,54 @@ function showPage(pageId) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// --- NEWS & UPDATES SLIDESHOW IMPLEMENTATION ENGINE ---
+let activeSlideIndex = 1;
+
+function initializeNewsSlideshow() {
+    renderSlides(activeSlideIndex);
+    
+    // Auto rotation routine - changes slides clean every 7 seconds
+    setInterval(() => {
+        moveSlides(1);
+    }, 7000);
+}
+
+function moveSlides(offset) {
+    renderSlides(activeSlideIndex += offset);
+}
+
+function setCurrentSlide(slideTargetNum) {
+    renderSlides(activeSlideIndex = slideTargetNum);
+}
+
+function renderSlides(targetIndex) {
+    let loopIdx;
+    const slidesDomArray = document.getElementsByClassName("news-slide");
+    const dotsDomArray = document.getElementsByClassName("slide-dot");
+    
+    if (!slidesDomArray.length) return; // Prevent break runtime errors if changing pages
+    
+    if (targetIndex > slidesDomArray.length) { activeSlideIndex = 1; }
+    if (targetIndex < 1) { activeSlideIndex = slidesDomArray.length; }
+    
+    for (loopIdx = 0; loopIdx < slidesDomArray.length; loopIdx++) {
+        slidesDomArray[loopIdx].style.display = "none";
+    }
+    
+    for (loopIdx = 0; loopIdx < dotsDomArray.length; loopIdx++) {
+        dotsDomArray[loopIdx].className = dotsDomArray[loopIdx].className.replace(" slide-active", "");
+    }
+    
+    slidesDomArray[activeSlideIndex - 1].style.display = "block";
+    if (dotsDomArray[activeSlideIndex - 1]) {
+        dotsDomArray[activeSlideIndex - 1].className += " slide-active";
+    }
+}
+
 // Ensure primary home landing frame displays safely on execution initialization
 document.addEventListener("DOMContentLoaded", () => {
     showPage('history');
+    initializeNewsSlideshow(); // Boot up slideshow functions safely
     
     // Attach event interceptor loop for green service confirmation pop up modal
     const servicesForm = document.getElementById('services-form');

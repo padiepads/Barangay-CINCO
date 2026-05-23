@@ -6,6 +6,7 @@
     --gray: #f4f4f4;
     --footer-text: #bbb;
     --transition-speed: 0.4s;
+    
     /* Light Mode Configurations */
     --bg-color: var(--white);
     --text-color: #333333;
@@ -118,7 +119,7 @@ p {
     justify-content: space-between;
     align-items: center;
     padding: 18px 40px;
-    position: relative; /* Context parent container for mobile nav layer anchors */
+    position: relative;
 }
 
 .nav-logo {
@@ -163,7 +164,7 @@ p {
 
 /* --- MENU TOGGLE BAR SETUP --- */
 .menu-toggle {
-    display: none; /* Hidden setup frame layer tracking for desktop view widths */
+    display: none;
     color: white;
     font-size: 1.5rem;
     cursor: pointer;
@@ -266,10 +267,13 @@ p {
     z-index: 5;
 }
 
+/* UPDATED: Absolute scaling bounds injected to prevent transparency & image growth leaks */
 .logo-circle {
     width: 150px; 
     height: 150px; 
-    background: transparent; 
+    max-width: 150px;
+    max-height: 150px;
+    background: #ffffff;
     border-radius: 50%;
     margin: 0 auto;
     display: flex; 
@@ -277,13 +281,22 @@ p {
     align-items: center;
     overflow: hidden; 
     box-shadow: 0 10px 20px rgba(0,0,0,0.15); 
+    flex-shrink: 0;
 }
 
 .logo-circle img { 
     width: 100%; 
     height: 100%;
+    max-width: 100%;
+    max-height: 100%;
     object-fit: cover;
     mix-blend-mode: multiply; 
+    display: block;
+}
+
+/* Guard theme safety against disappearing backgrounds */
+[data-theme="dark"] .logo-circle {
+    background: #ffffff; 
 }
 
 .sub-logo-text {
@@ -395,11 +408,19 @@ p {
     gap: 30px;
 }
 
+.calendar-grid-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 6px;
+}
+
 .calendar-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(100px, 1fr));
     background: var(--border-color);
     gap: 1px;
+    width: 100%;
 }
 
 .cal-header {
@@ -480,7 +501,6 @@ p {
     border: 1px solid var(--border-color);
 }
 
-/* --- CONTACT FORM DESIGN REFINEMENTS --- */
 .fill-step-item {
     display: flex;
     flex-direction: column;
@@ -515,7 +535,7 @@ input[type="text"], input[type="email"], input[type="tel"], textarea {
 }
 
 input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus, textarea:focus {
-    border-color: #111111;
+    border-color: var(--heading-color);
     outline: none;
     box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1);
 }
@@ -533,7 +553,6 @@ textarea {
     resize: vertical;
 }
 
-/* --- SYSTEM MODAL POPUP --- */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -564,6 +583,8 @@ textarea {
     width: 90%;
     text-align: center;
     box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
 }
 
 .modal-overlay.active .modal-box {
@@ -667,7 +688,130 @@ textarea {
 .show { display: block; }
 .hide { display: none; }
 
-/* --- RESPONSIVE ADAPTATION INTERFACES --- */
+.news-subtitle {
+    text-align: center;
+    margin-top: -15px;
+    margin-bottom: 30px;
+    font-family: sans-serif;
+    color: var(--subtext-color);
+    font-size: 1.05rem;
+}
+
+.slideshow-container {
+    max-width: 1000px;
+    position: relative;
+    margin: 0 auto;
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 35px 60px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.news-slide {
+    display: none;
+}
+
+.slide-content {
+    text-align: center;
+    padding: 10px 0;
+}
+
+.news-tag {
+    display: inline-block;
+    font-family: sans-serif;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+    color: #ffffff;
+}
+
+.news-tag.announcement { background: #0288d1; }
+.news-tag.traffic { background: #f57c00; }
+.news-tag.business { background: #388e3c; }
+.news-tag.sk-youth { background: #7b1fa2; }
+
+.slide-content h3 {
+    font-size: 1.7rem;
+    color: var(--maroon);
+    margin-bottom: 15px;
+    font-family: sans-serif;
+}
+
+.slide-content p {
+    color: var(--text-color);
+    margin-bottom: 25px;
+    line-height: 1.7;
+}
+
+.news-readmore-btn {
+    display: inline-block;
+    font-family: sans-serif;
+    color: var(--maroon);
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.news-readmore-btn:hover {
+    color: var(--heading-color);
+    transform: translateX(3px);
+}
+
+.slide-prev, .slide-next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: auto;
+    padding: 16px;
+    color: var(--maroon);
+    font-weight: bold;
+    font-size: 1.5rem;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+    transition: 0.3s ease;
+}
+
+.slide-prev { left: 10px; border-radius: 3px 0 0 3px; }
+.slide-next { right: 10px; border-radius: 0 3px 3px 0; }
+.slide-prev:hover, .slide-next:hover { color: var(--heading-color); }
+
+.slideshow-dots-container {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.slide-dot {
+    cursor: pointer;
+    height: 12px;
+    width: 12px;
+    margin: 0 5px;
+    background-color: rgba(128, 0, 0, 0.2);
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+
+.slide-dot.slide-active, .slide-dot:hover {
+    background-color: var(--maroon);
+}
+
+.fade {
+    animation-name: fadeAnimation;
+    animation-duration: 0.5s;
+}
+
+@keyframes fadeAnimation {
+    from { opacity: 0.4; } 
+    to { opacity: 1; }
+}
+
 @media screen and (max-width: 900px) {
     .stats-container { flex-direction: column; }
     .stats-disclaimer {
@@ -677,40 +821,36 @@ textarea {
 }
 
 @media screen and (max-width: 768px) {
-    /* Expose active menu layout switch triggers */
     .menu-toggle {
         display: block;
     }
 
-    /* Convert horizontal links into a floating compact right-side menu card drawer */
     .nav-links {
         display: none;
         flex-direction: column;
         position: absolute;
         top: 100%;
-        right: 15px;      /* Anchors it 15px away from the right screen edge */
-        left: auto;       /* Overrides the original full-width stretch left coordinates */
-        width: 240px;     /* Small custom floating context width */
+        right: 15px;
+        left: auto;
+        width: 240px;
         background: var(--black);
         padding: 20px;
         gap: 15px;
         border: 1px solid var(--border-color);
-        border-radius: 8px; /* Smooth rounded interface edges */
+        border-radius: 8px;
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         z-index: 1010;
     }
 
-    /* Exposed view trigger activated via JavaScript implementation loops */
     .nav-links.show {
         display: flex;
     }
 
-    /* Make buttons clean, compact lists inside the mini container */
     .nav-links button {
         width: 100%;
         text-align: left;
         padding: 8px 5px;
-        font-size: 0.95rem; /* Slightly smaller typography to feel cohesive */
+        font-size: 0.95rem;
     }
 
     .theme-switch-btn {
@@ -725,15 +865,14 @@ textarea {
     
     .calendar-grid {
         display: grid;
-        grid-template-columns: repeat(7, 1fr);
+        grid-template-columns: repeat(7, minmax(85px, 1fr)); 
         margin-bottom: 20px;
         width: 100%;
-        overflow-x: auto;
     }
 
     .cal-day {
-        height: 50px;
-        font-size: 0.7rem;
+        height: 65px;
+        font-size: 0.75rem;
     }
 
     .announcement-sidebar {
@@ -750,5 +889,17 @@ textarea {
         align-items: center;
         text-align: center;
         gap: 15px;
+    }
+
+    .slideshow-container {
+        padding: 35px 25px;
+    }
+    
+    .slide-prev, .slide-next {
+        display: none;
+    }
+    
+    .slide-content h3 {
+        font-size: 1.35rem;
     }
 }
