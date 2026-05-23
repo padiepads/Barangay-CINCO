@@ -1121,11 +1121,11 @@ button {
 }
 
 .slide-img-wrap {
-    margin: 16px auto 20px;
     border-radius: var(--radius-sm);
     overflow: hidden;
     max-width: 480px;
     box-shadow: var(--shadow-sm);
+    margin: 16px auto 20px;
 }
 
 .slideshow-img {
@@ -1462,42 +1462,197 @@ button {
     margin-top: 1px;
 }
 
-/* General Disaster Tips */
-.disaster-general-block {
-    border-top-color: var(--gold);
+/* ============================================
+   EMERGENCY HOTLINES SECTION
+============================================ */
+.emergency-hotlines-block {
+    border-top-color: #c62828 !important;
 }
 
-.general-tips-grid {
+.hotlines-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 16px;
+    margin-bottom: 24px;
 }
 
-.general-tip-card {
+.hotline-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
     background: var(--surface-alt);
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
     border-radius: var(--radius-md);
-    padding: 24px 20px;
-    text-align: center;
-    transition: box-shadow var(--speed-mid) ease, transform var(--speed-mid) var(--ease-out);
+    padding: 20px 22px;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: box-shadow var(--speed-mid) ease,
+                transform var(--speed-mid) var(--ease-out),
+                border-color var(--speed-fast) ease,
+                background var(--speed-fast) ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.general-tip-card:hover {
+.hotline-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity var(--speed-fast) ease;
+    pointer-events: none;
+}
+
+.hotline-card:hover {
     box-shadow: var(--shadow-md);
     transform: translateY(-3px);
 }
 
-.gtip-icon {
-    font-size: 2.2rem;
-    display: block;
-    margin-bottom: 14px;
+/* Per-type accent colors on hover */
+.hotline-fire:hover        { border-color: #e65100; background: rgba(230, 81, 0, 0.04); }
+.hotline-police:hover      { border-color: #0277bd; background: rgba(2, 119, 189, 0.04); }
+.hotline-ambulance:hover   { border-color: #c62828; background: rgba(198, 40, 40, 0.04); }
+.hotline-disaster:hover    { border-color: #558b2f; background: rgba(85, 139, 47, 0.04); }
+.hotline-barangay:hover    { border-color: var(--maroon); background: rgba(123, 13, 30, 0.04); }
+.hotline-hospital:hover    { border-color: #006064; background: rgba(0, 96, 100, 0.04); }
+
+.hotline-icon-wrap {
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    transition: transform var(--speed-fast) var(--ease-out);
+}
+
+.hotline-card:hover .hotline-icon-wrap {
+    transform: scale(1.1);
+}
+
+/* Icon backgrounds */
+.fire-hotline-bg       { background: rgba(230, 81, 0, 0.12); }
+.police-hotline-bg     { background: rgba(2, 119, 189, 0.12); }
+.ambulance-hotline-bg  { background: rgba(198, 40, 40, 0.12); }
+.disaster-hotline-bg   { background: rgba(85, 139, 47, 0.12); }
+.barangay-hotline-bg   { background: rgba(123, 13, 30, 0.12); }
+.hospital-hotline-bg   { background: rgba(0, 96, 100, 0.12); }
+
+[data-theme="dark"] .fire-hotline-bg       { background: rgba(230, 81, 0, 0.18); }
+[data-theme="dark"] .police-hotline-bg     { background: rgba(2, 119, 189, 0.18); }
+[data-theme="dark"] .ambulance-hotline-bg  { background: rgba(198, 40, 40, 0.18); }
+[data-theme="dark"] .disaster-hotline-bg   { background: rgba(85, 139, 47, 0.18); }
+[data-theme="dark"] .barangay-hotline-bg   { background: rgba(123, 13, 30, 0.18); }
+[data-theme="dark"] .hospital-hotline-bg   { background: rgba(0, 96, 100, 0.18); }
+
+.hotline-emoji {
     line-height: 1;
 }
 
-.general-tip-card p {
-    font-size: 0.9rem;
+.hotline-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.hotline-category {
+    display: inline-block;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.hotline-name {
+    font-family: var(--font-display);
+    font-size: 0.975rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    line-height: 1.3;
+    margin-bottom: 5px;
+}
+
+.hotline-number {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: var(--maroon);
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    margin-bottom: 4px;
+}
+
+[data-theme="dark"] .hotline-number {
+    color: var(--gold-light);
+}
+
+.hotline-alt {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.hotline-call-badge {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    transition: background var(--speed-fast) ease, color var(--speed-fast) ease,
+                border-color var(--speed-fast) ease;
+}
+
+.hotline-card:hover .hotline-call-badge {
+    background: var(--maroon);
+    border-color: var(--maroon);
+    color: var(--white);
+}
+
+[data-theme="dark"] .hotline-card:hover .hotline-call-badge {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--ink);
+}
+
+.hotlines-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: rgba(198, 40, 40, 0.06);
+    border: 1px solid rgba(198, 40, 40, 0.2);
+    border-left: 4px solid #c62828;
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    font-size: 0.875rem;
     color: var(--text-secondary);
     line-height: 1.65;
+}
+
+[data-theme="dark"] .hotlines-note {
+    background: rgba(198, 40, 40, 0.08);
+    border-color: rgba(198, 40, 40, 0.3);
+}
+
+.hotlines-note span {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.hotlines-note p strong {
+    color: var(--text-heading);
 }
 
 /* ============================================
@@ -1710,7 +1865,218 @@ button {
     box-shadow: 0 4px 12px rgba(123, 13, 30, 0.3) !important;
 }
 
-/* Form */
+/* ============================================
+   SCHEDULE APPOINTMENT SECTION
+============================================ */
+.appointment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.appt-form-section {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    transition: box-shadow var(--speed-fast) ease;
+}
+
+.appt-form-section:hover {
+    box-shadow: var(--shadow-sm);
+}
+
+.appt-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    margin-bottom: 22px;
+}
+
+.appt-step-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: var(--maroon);
+    color: var(--white);
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 900;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+[data-theme="dark"] .appt-step-badge {
+    background: var(--gold);
+    color: var(--ink);
+}
+
+/* Select wrapper with custom arrow */
+.select-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.select-wrapper select {
+    width: 100%;
+    padding: 12px 40px 12px 16px;
+    background: var(--surface-alt);
+    color: var(--text-primary);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    transition: border-color var(--speed-fast) ease, box-shadow var(--speed-fast) ease;
+    outline: none;
+}
+
+.select-wrapper select:focus {
+    border-color: var(--maroon);
+    box-shadow: 0 0 0 3px rgba(123, 13, 30, 0.1);
+    background: var(--surface);
+}
+
+[data-theme="dark"] .select-wrapper select:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(200, 147, 42, 0.15);
+}
+
+.select-arrow {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    transition: color var(--speed-fast) ease;
+}
+
+.select-wrapper:focus-within .select-arrow {
+    color: var(--maroon);
+}
+
+[data-theme="dark"] .select-wrapper:focus-within .select-arrow {
+    color: var(--gold);
+}
+
+/* Date input styling */
+input[type="date"] {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--surface-alt);
+    color: var(--text-primary);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    transition: border-color var(--speed-fast) ease, box-shadow var(--speed-fast) ease;
+    outline: none;
+    cursor: pointer;
+}
+
+input[type="date"]:focus {
+    border-color: var(--maroon);
+    box-shadow: 0 0 0 3px rgba(123, 13, 30, 0.1);
+    background: var(--surface);
+}
+
+[data-theme="dark"] input[type="date"]:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(200, 147, 42, 0.15);
+}
+
+input[type="date"].field-error {
+    border-color: #c62828;
+    box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.12);
+}
+
+.select-wrapper select.field-error {
+    border-color: #c62828;
+    box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.12);
+}
+
+/* Other concern field animation */
+#appt-other-group {
+    animation: fadeSlideIn 0.3s var(--ease-out) both;
+}
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: none; }
+}
+
+.appt-form-footer {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding-top: 8px;
+}
+
+.appt-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 500px;
+    flex: 1;
+}
+
+.appt-notice svg {
+    flex-shrink: 0;
+    margin-top: 3px;
+    color: var(--gold);
+}
+
+.appt-notice strong {
+    color: var(--text-heading);
+}
+
+.appt-submit-btn {
+    flex-shrink: 0;
+}
+
+/* ============================================
+   RECAPTCHA STYLING
+============================================ */
+.recaptcha-wrapper {
+    margin: 8px 0 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.recaptcha-note {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* Dark mode reCAPTCHA — switch to dark theme if desired */
+[data-theme="dark"] .g-recaptcha {
+    filter: brightness(0.9) invert(0.05);
+}
+
+/* ============================================
+   FORM — Shared Styles
+============================================ */
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -2157,8 +2523,8 @@ textarea.field-error {
         grid-template-columns: 1fr;
     }
 
-    .general-tips-grid {
-        grid-template-columns: 1fr 1fr;
+    .hotlines-grid {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -2185,12 +2551,18 @@ textarea.field-error {
         grid-template-columns: 1fr;
     }
 
-    .general-tips-grid {
+    .phase-grid {
         grid-template-columns: 1fr;
     }
 
-    .phase-grid {
-        grid-template-columns: 1fr;
+    .appt-form-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .appt-submit-btn {
+        width: 100%;
+        justify-content: center;
     }
 }
 
@@ -2315,6 +2687,28 @@ textarea.field-error {
         padding: 0 20px 20px;
     }
 
+    /* Emergency Hotlines */
+    .hotlines-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hotline-card {
+        padding: 16px 18px;
+    }
+
+    .hotline-call-badge {
+        display: none;
+    }
+
+    .hotline-number {
+        font-size: 1.15rem;
+    }
+
+    /* Appointment form */
+    .appt-form-section {
+        padding: 22px 20px;
+    }
+
     /* Doc cards */
     .doc-request-grid {
         grid-template-columns: 1fr;
@@ -2395,16 +2789,23 @@ textarea.field-error {
         gap: 24px;
     }
 
-    .general-tips-grid {
-        grid-template-columns: 1fr;
-    }
-
     .events-grid {
         grid-template-columns: 1fr;
     }
 
     .heat-tips-grid {
         grid-template-columns: 1fr;
+    }
+
+    .hotline-icon-wrap {
+        width: 48px;
+        height: 48px;
+        font-size: 1.4rem;
+    }
+
+    .recaptcha-wrapper .g-recaptcha {
+        transform: scale(0.88);
+        transform-origin: left top;
     }
 }
 
