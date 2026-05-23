@@ -1,8 +1,3 @@
-/**
- * Barangay CINCO — Digital Community Portal
- * Improved JavaScript — Optimized & Accessible
- */
-
 'use strict';
 
 // ============================================================
@@ -25,14 +20,26 @@ function showPage(pageId) {
         target.classList.add('active');
     }
 
-    // Update nav active state
+    // Update nav active state for regular buttons
     document.querySelectorAll('.nav-links button[id^="link-"]').forEach(btn => {
         btn.classList.remove('active-link');
         btn.removeAttribute('aria-current');
     });
 
+    // Update dropdown trigger active state
+    const dropdownTrigger = document.getElementById('link-services');
+    if (dropdownTrigger) {
+        if (pageId === 'services') {
+            dropdownTrigger.classList.add('active-link');
+            dropdownTrigger.setAttribute('aria-current', 'page');
+        } else {
+            dropdownTrigger.classList.remove('active-link');
+            dropdownTrigger.removeAttribute('aria-current');
+        }
+    }
+
     const activeBtn = document.getElementById(`link-${pageId}`);
-    if (activeBtn) {
+    if (activeBtn && pageId !== 'services') {
         activeBtn.classList.add('active-link');
         activeBtn.setAttribute('aria-current', 'page');
     }
@@ -49,6 +56,21 @@ function showPage(pageId) {
 
     // Re-run scroll observer for newly visible elements
     setTimeout(observeScrollElements, 80);
+}
+
+/**
+ * Scroll to a specific section within the current page.
+ * @param {string} sectionId
+ */
+function scrollToSection(sectionId) {
+    setTimeout(() => {
+        const el = document.getElementById(sectionId);
+        if (el) {
+            const offset = 120;
+            const top = el.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top, behavior: 'smooth' });
+        }
+    }, 150);
 }
 
 
@@ -79,7 +101,7 @@ function stopSlideshowTimer() {
 
 function moveSlides(offset) {
     renderSlides(activeSlideIndex += offset);
-    startSlideshowTimer(); // Reset timer on manual navigation
+    startSlideshowTimer();
 }
 
 function setCurrentSlide(slideNum) {
@@ -93,24 +115,20 @@ function renderSlides(targetIndex) {
 
     if (!slides.length) return;
 
-    // Wrap around
     if (targetIndex > slides.length) activeSlideIndex = 1;
     if (targetIndex < 1)             activeSlideIndex = slides.length;
 
-    // Hide all, remove active dots
     Array.from(slides).forEach(s => { s.style.display = 'none'; });
     Array.from(dots).forEach(d => {
         d.classList.remove('slide-active');
         d.removeAttribute('aria-selected');
     });
 
-    // Show active
     const activeSlide = slides[activeSlideIndex - 1];
     if (activeSlide) {
         activeSlide.style.display = 'block';
-        // Restart fade animation
         activeSlide.classList.remove('fade');
-        void activeSlide.offsetWidth; // reflow
+        void activeSlide.offsetWidth;
         activeSlide.classList.add('fade');
     }
 
@@ -120,7 +138,6 @@ function renderSlides(targetIndex) {
     }
 }
 
-// Pause slideshow when tab/window is hidden (performance)
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
         stopSlideshowTimer();
@@ -145,7 +162,6 @@ function initMobileNav() {
         menuToggle.setAttribute('aria-expanded', String(isOpen));
     });
 
-    // Close on outside click
     document.addEventListener('click', (e) => {
         if (!menuToggle.contains(e.target) && !navLinks.contains(e.target)) {
             navLinks.classList.remove('show');
@@ -153,7 +169,6 @@ function initMobileNav() {
         }
     });
 
-    // Close on Escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && navLinks.classList.contains('show')) {
             navLinks.classList.remove('show');
@@ -202,7 +217,6 @@ function openModal() {
     if (modal) {
         modal.classList.add('active');
         modal.setAttribute('aria-hidden', 'false');
-        // Focus trap: move focus into modal
         const closeBtn = modal.querySelector('.modal-close-btn');
         if (closeBtn) setTimeout(() => closeBtn.focus(), 60);
     }
@@ -215,24 +229,197 @@ function closeModal() {
         modal.setAttribute('aria-hidden', 'true');
         const form = document.getElementById('services-form');
         if (form) form.reset();
+        // Also clear image preview on reset
+        resetImageUpload();
     }
 }
 
-// Close modal on backdrop click
 document.addEventListener('click', (e) => {
     const modal = document.getElementById('submissionModal');
     if (modal && modal.classList.contains('active') && e.target === modal) {
         closeModal();
     }
-});
-
-// Close modal on Escape key
-document.addEventListener('keydown', (e) => {
-    const modal = document.getElementById('submissionModal');
-    if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
-        closeModal();
+    const docModal = document.getElementById('docRequestModal');
+    if (docModal && docModal.classList.contains('active') && e.target === docModal) {
+        closeDocModal();
     }
 });
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('submissionModal');
+        if (modal && modal.classList.contains('active')) closeModal();
+        const docModal = document.getElementById('docRequestModal');
+        if (docModal && docModal.classList.contains('active')) closeDocModal();
+    }
+});
+
+
+// ============================================================
+// DOCUMENT REQUEST MODAL
+// ============================================================
+
+const docInfo = {
+    clearance: {
+        title: '📋 Barangay Clearance',
+        body: `Requirements:\n• Valid Government-Issued ID (1 original + 1 photocopy)\n• Community Tax Certificate (Cedula) — current year\n• Duly accomplished request form (available at the hall)\n\nProcessing Time: 15–30 minutes\nFee: ₱50.00\n\nNote: The applicant must be physically present and a registered resident of Barangay CINCO.`
+    },
+    residency: {
+        title: '🏠 Certificate of Residency',
+        body: `Requirements:\n• Valid Government-Issued ID with current address\n• Community Tax Certificate (Cedula) — current year\n• Proof of residency (e.g. utility bill, lease contract)\n\nProcessing Time: 15–30 minutes\nFee: ₱50.00\n\nNote: Must show proof that you have lived in Barangay CINCO for at least 6 months.`
+    },
+    indigency: {
+        title: '📑 Barangay Indigency Certificate',
+        body: `Requirements:\n• Valid Government-Issued ID\n• Proof of financial need or recommendation from Purok Leader\n• Community Tax Certificate (Cedula)\n\nProcessing Time: 20–30 minutes\nFee: FREE (for qualified individuals)\n\nNote: Certificate is issued to residents who cannot financially afford certain services. Subject to barangay evaluation.`
+    },
+    business: {
+        title: '🏢 Business Permit Clearance',
+        body: `Requirements:\n• DTI / SEC / CDA Registration\n• Lease contract or proof of business address within Barangay CINCO\n• Valid Government-Issued ID of proprietor\n• Previous year's barangay clearance (for renewal)\n\nProcessing Time: 30–60 minutes\nFee: Varies by business type (₱200.00 – ₱500.00)\n\nNote: Required annually for all businesses operating within the barangay.`
+    },
+    moral: {
+        title: '🎖️ Certificate of Good Moral Character',
+        body: `Requirements:\n• Valid Government-Issued ID\n• Community Tax Certificate (Cedula)\n• No pending cases within the barangay\n\nProcessing Time: 15–20 minutes\nFee: ₱50.00\n\nNote: For employment, scholarship, or travel purposes. The barangay reserves the right to verify the applicant's record.`
+    },
+    id: {
+        title: '🪪 Barangay ID Request',
+        body: `Requirements:\n• 2x2 ID photo (white background, 2 copies)\n• Valid Government-Issued ID\n• Proof of residency in Barangay CINCO\n• Community Tax Certificate (Cedula)\n\nProcessing Time: 3–5 working days\nFee: ₱100.00\n\nNote: The Barangay ID is recognized as a valid alternate identification. Claim date will be provided upon filing.`
+    },
+    cedula: {
+        title: '📜 Cedula / Community Tax Certificate',
+        body: `Requirements:\n• Valid Government-Issued ID\n• Previous year's Cedula (for renewal reference)\n• Proof of income (optional, for tax computation)\n\nProcessing Time: 10–20 minutes\nFee: Based on income (minimum ₱5.00 + additional tax)\n\nNote: Cedula is required for most government and legal transactions. Must be renewed every year.`
+    }
+};
+
+function openDocInfo(docType) {
+    const info = docInfo[docType];
+    if (!info) return;
+
+    const modal    = document.getElementById('docRequestModal');
+    const title    = document.getElementById('docModalTitle');
+    const body     = document.getElementById('docModalBody');
+
+    if (!modal || !title || !body) return;
+
+    title.textContent = info.title;
+    body.textContent  = info.body;
+
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+
+    const closeBtn = modal.querySelector('.modal-close-btn');
+    if (closeBtn) setTimeout(() => closeBtn.focus(), 60);
+}
+
+function closeDocModal() {
+    const modal = document.getElementById('docRequestModal');
+    if (modal) {
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+}
+
+
+// ============================================================
+// DISASTER ACCORDION TOGGLE
+// ============================================================
+
+function toggleDisaster(id) {
+    const card = document.getElementById(`disaster-${id}`);
+    if (!card) return;
+
+    const isOpen = card.classList.contains('is-open');
+    const btn    = card.querySelector('.disaster-header');
+
+    // Close all others
+    document.querySelectorAll('.disaster-card.is-open').forEach(c => {
+        if (c !== card) {
+            c.classList.remove('is-open');
+            const b = c.querySelector('.disaster-header');
+            if (b) b.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    if (isOpen) {
+        card.classList.remove('is-open');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+    } else {
+        card.classList.add('is-open');
+        if (btn) btn.setAttribute('aria-expanded', 'true');
+    }
+}
+
+
+// ============================================================
+// IMAGE UPLOAD — Contact Form
+// ============================================================
+
+function handleImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    displayImagePreview(file);
+}
+
+function displayImagePreview(file) {
+    if (!file.type.startsWith('image/')) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const placeholder = document.getElementById('uploadPlaceholder');
+        const preview     = document.getElementById('uploadPreview');
+        const previewImg  = document.getElementById('previewImg');
+
+        if (placeholder) placeholder.style.display = 'none';
+        if (preview)     preview.style.display = 'block';
+        if (previewImg)  previewImg.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeImage(event) {
+    event.stopPropagation(); // Prevent re-opening file dialog
+    resetImageUpload();
+}
+
+function resetImageUpload() {
+    const fileInput  = document.getElementById('concern-image');
+    const placeholder = document.getElementById('uploadPlaceholder');
+    const preview    = document.getElementById('uploadPreview');
+    const previewImg = document.getElementById('previewImg');
+
+    if (fileInput)    fileInput.value = '';
+    if (previewImg)   previewImg.src = '';
+    if (placeholder)  placeholder.style.display = 'block';
+    if (preview)      preview.style.display = 'none';
+}
+
+function handleDragOver(event) {
+    event.preventDefault();
+    const area = document.getElementById('imageUploadArea');
+    if (area) area.classList.add('drag-over');
+}
+
+function handleDragLeave(event) {
+    const area = document.getElementById('imageUploadArea');
+    if (area) area.classList.remove('drag-over');
+}
+
+function handleDrop(event) {
+    event.preventDefault();
+    const area = document.getElementById('imageUploadArea');
+    if (area) area.classList.remove('drag-over');
+
+    const file = event.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+        const fileInput = document.getElementById('concern-image');
+        if (fileInput) {
+            // Create a DataTransfer to assign file to input
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            fileInput.files = dt.files;
+        }
+        displayImagePreview(file);
+    }
+}
 
 
 // ============================================================
@@ -243,7 +430,6 @@ let scrollObserver = null;
 
 function observeScrollElements() {
     if (scrollObserver) {
-        // Observe any newly-visible unfaded elements
         document.querySelectorAll('.scroll-fade:not(.reveal-visible)').forEach(el => {
             scrollObserver.observe(el);
         });
@@ -254,7 +440,7 @@ function observeScrollElements() {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('reveal-visible');
-                scrollObserver.unobserve(entry.target); // Observe once
+                scrollObserver.unobserve(entry.target);
             }
         });
     }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
@@ -281,8 +467,7 @@ function initScrollHeader() {
 
                 if (currentY > lastY && currentY > 140) {
                     header.classList.add('scroll-hide');
-                    // Also close mobile nav when hiding header
-                    const navLinks = document.getElementById('navLinks');
+                    const navLinks   = document.getElementById('navLinks');
                     const menuToggle = document.getElementById('menuToggle');
                     if (navLinks && navLinks.classList.contains('show')) {
                         navLinks.classList.remove('show');
@@ -302,7 +487,7 @@ function initScrollHeader() {
 
 
 // ============================================================
-// FACILITY FILTER (kept for future use / re-enabling filter buttons)
+// FACILITY FILTER
 // ============================================================
 
 function filterSelection(category) {
@@ -332,7 +517,6 @@ function initContactForm() {
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        // Basic client-side validation
         let valid = true;
         const required = form.querySelectorAll('[required]');
 
@@ -347,13 +531,11 @@ function initContactForm() {
         if (valid) {
             openModal();
         } else {
-            // Focus first invalid field
             const first = form.querySelector('.field-error');
             if (first) first.focus();
         }
     });
 
-    // Remove error styling on input
     form.querySelectorAll('input, textarea').forEach(field => {
         field.addEventListener('input', () => field.classList.remove('field-error'));
     });
@@ -365,10 +547,8 @@ function initContactForm() {
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Boot default page
     showPage('history');
 
-    // Initialise all modules
     initTheme();
     initMobileNav();
     initScrollHeader();

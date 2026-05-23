@@ -43,7 +43,13 @@
                 <button id="link-history" role="menuitem" onclick="showPage('history')" aria-current="page">About Us</button>
                 <button id="link-announcements" role="menuitem" onclick="showPage('announcements')">Announcements</button>
                 <button id="link-safety" role="menuitem" onclick="showPage('safety')">Preparedness</button>
-                <button id="link-services" role="menuitem" onclick="showPage('services')">Services</button>
+                <div class="nav-dropdown" id="servicesDropdown">
+                    <button id="link-services" role="menuitem" onclick="showPage('services')" class="nav-dropdown-trigger">Services ▾</button>
+                    <div class="nav-dropdown-menu" id="servicesMenu">
+                        <button onclick="showPage('services'); scrollToSection('services-form-container')" class="dropdown-item">📞 Contact &amp; Concerns</button>
+                        <button onclick="showPage('services'); scrollToSection('request-documents-section')" class="dropdown-item">📄 Request Documents</button>
+                    </div>
+                </div>
                 <button id="link-officials" role="menuitem" onclick="showPage('officials')">Officials</button>
                 <button id="theme-toggle" class="theme-switch-btn" aria-label="Toggle dark mode">🌙 Dark Mode</button>
             </div>
@@ -63,6 +69,25 @@
             <h3 id="modalTitle">Concern Submitted!</h3>
             <p>Your concern has been received at the Barangay desk. A representative will follow up with you shortly via phone or email.</p>
             <button class="modal-close-btn" onclick="closeModal()">Got it, thank you</button>
+        </div>
+    </div>
+
+    <!-- DOC REQUEST MODAL -->
+    <div id="docRequestModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="docModalTitle" aria-hidden="true">
+        <div class="modal-box modal-box--doc">
+            <div class="modal-icon-wrap" aria-hidden="true">
+                <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                    <circle cx="28" cy="28" r="28" fill="#7b0d1e" opacity="0.1"/>
+                    <circle cx="28" cy="28" r="22" fill="#7b0d1e" opacity="0.12"/>
+                    <path d="M20 16h10l6 6v18H20V16z" stroke="#7b0d1e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M30 16v6h6" stroke="#7b0d1e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="24" y1="27" x2="32" y2="27" stroke="#7b0d1e" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="24" y1="32" x2="32" y2="32" stroke="#7b0d1e" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h3 id="docModalTitle" class="doc-modal-title"></h3>
+            <p id="docModalBody" class="doc-modal-body"></p>
+            <button class="modal-close-btn modal-close-btn--maroon" onclick="closeDocModal()">Close</button>
         </div>
     </div>
 
@@ -250,86 +275,99 @@
                 <h1 class="page-title">Announcements</h1>
             </div>
 
+            <!-- Upcoming Events — Modern Card Layout -->
             <div class="dashboard-block scroll-fade">
-                <h2 class="block-title"><span class="block-icon" aria-hidden="true">📅</span> Community Calendar — May 2026</h2>
-                <div class="calendar-container">
-                    <div class="calendar-wrap">
-                        <div class="calendar-grid">
-                            <div class="cal-header">SUN</div>
-                            <div class="cal-header">MON</div>
-                            <div class="cal-header">TUE</div>
-                            <div class="cal-header">WED</div>
-                            <div class="cal-header">THU</div>
-                            <div class="cal-header">FRI</div>
-                            <div class="cal-header">SAT</div>
-
-                            <div class="cal-day empty"></div>
-                            <div class="cal-day empty"></div>
-                            <div class="cal-day empty"></div>
-                            <div class="cal-day empty"></div>
-                            <div class="cal-day empty"></div>
-                            <div class="cal-day"><span class="cal-num">1</span></div>
-                            <div class="cal-day has-event"><span class="cal-num">2</span><span class="event-mark">Water</span></div>
-
-                            <div class="cal-day"><span class="cal-num">3</span></div>
-                            <div class="cal-day has-event"><span class="cal-num">4</span><span class="event-mark">Senior</span></div>
-                            <div class="cal-day has-event"><span class="cal-num">5</span><span class="event-mark">Health</span></div>
-                            <div class="cal-day"><span class="cal-num">6</span></div>
-                            <div class="cal-day"><span class="cal-num">7</span></div>
-                            <div class="cal-day"><span class="cal-num">8</span></div>
-                            <div class="cal-day"><span class="cal-num">9</span></div>
-
-                            <div class="cal-day has-event"><span class="cal-num">10</span><span class="event-mark">Feeding</span></div>
-                            <div class="cal-day has-event"><span class="cal-num">11</span><span class="event-mark">Clean</span></div>
-                            <div class="cal-day has-event"><span class="cal-num">12</span><span class="event-mark">Sports</span></div>
-                            <div class="cal-day"><span class="cal-num">13</span></div>
-                            <div class="cal-day"><span class="cal-num">14</span></div>
-                            <div class="cal-day"><span class="cal-num">15</span></div>
-                            <div class="cal-day"><span class="cal-num">16</span></div>
-
-                            <div class="cal-day has-event"><span class="cal-num">17</span><span class="event-mark">Council</span></div>
-                            <div class="cal-day has-event"><span class="cal-num">18</span><span class="event-mark">Tree</span></div>
-                            <div class="cal-day"><span class="cal-num">19</span></div>
-                            <div class="cal-day"><span class="cal-num">20</span></div>
-                            <div class="cal-day has-event"><span class="cal-num">21</span><span class="event-mark">Music</span></div>
-                            <div class="cal-day has-event"><span class="cal-num">22</span><span class="event-mark">Nutri</span></div>
-                            <div class="cal-day today"><span class="cal-num">23</span></div>
-
-                            <div class="cal-day"><span class="cal-num">24</span></div>
-                            <div class="cal-day has-event"><span class="cal-num">25</span><span class="event-mark">Zumba</span></div>
-                            <div class="cal-day"><span class="cal-num">26</span></div>
-                            <div class="cal-day"><span class="cal-num">27</span></div>
-                            <div class="cal-day"><span class="cal-num">28</span></div>
-                            <div class="cal-day"><span class="cal-num">29</span></div>
-                            <div class="cal-day"><span class="cal-num">30</span></div>
-
-                            <div class="cal-day has-event"><span class="cal-num">31</span><span class="event-mark">Drill</span></div>
-                            <div class="cal-day empty"></div>
-                            <div class="cal-day empty"></div>
-                            <div class="cal-day empty"></div>
-                            <div class="cal-day empty"></div>
-                            <div class="cal-day empty"></div>
-                            <div class="cal-day empty"></div>
+                <h2 class="block-title"><span class="block-icon" aria-hidden="true">📅</span> Upcoming Events — May 2026</h2>
+                <p class="block-description">Stay up to date with the latest activities, programs, and gatherings happening in our barangay.</p>
+                <div class="events-grid">
+                    <div class="event-card">
+                        <div class="event-date-badge"><span class="ev-month">MAY</span><span class="ev-day">2</span></div>
+                        <div class="event-details">
+                            <span class="event-tag event-tag--blue">Maintenance</span>
+                            <h4>Water Main Maintenance</h4>
+                            <p>8:00 AM – 5:00 PM · Expect temporary water interruption</p>
                         </div>
                     </div>
-
-                    <aside class="announcement-sidebar" aria-label="Upcoming Events">
-                        <h4>📌 Upcoming Events</h4>
-                        <ul class="event-list">
-                            <li><strong>May 2:</strong> Water Main Maintenance (8:00 AM – 5:00 PM)</li>
-                            <li><strong>May 4:</strong> Senior Citizens Assembly (9:00 AM – 12:00 PM)</li>
-                            <li><strong>May 5:</strong> Free Health Check-up @ Center</li>
-                            <li><strong>May 10:</strong> Community Feeding Program (9:00 AM – 12:00 PM)</li>
-                            <li><strong>May 11:</strong> Community Clean-up Drive</li>
-                            <li><strong>May 12:</strong> Inter-Purok Sports Festival</li>
-                            <li><strong>May 17:</strong> Barangay Council Meeting (3:00 PM – 5:00 PM)</li>
-                            <li><strong>May 18:</strong> Tree Planting Activity (7:00 AM – 10:00 AM)</li>
-                            <li><strong>May 21:</strong> SK Music and Dance Night (6:00 PM – 10:00 PM)</li>
-                            <li><strong>May 22:</strong> Nutrition Month Preparation Program (9:00 AM – 11:00 AM)</li>
-                            <li><strong>May 25:</strong> Free Zumba and Wellness Activity (5:00 AM – 7:00 AM)</li>
-                            <li><strong>May 31:</strong> Disaster Preparedness Drill (8:00 AM – 12:00 PM)</li>
-                        </ul>
-                    </aside>
+                    <div class="event-card">
+                        <div class="event-date-badge"><span class="ev-month">MAY</span><span class="ev-day">4</span></div>
+                        <div class="event-details">
+                            <span class="event-tag event-tag--green">Assembly</span>
+                            <h4>Senior Citizens Assembly</h4>
+                            <p>9:00 AM – 12:00 PM · Barangay Hall</p>
+                        </div>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-date-badge"><span class="ev-month">MAY</span><span class="ev-day">5</span></div>
+                        <div class="event-details">
+                            <span class="event-tag event-tag--red">Health</span>
+                            <h4>Free Health Check-up</h4>
+                            <p>All day · Health Center · Open to all residents</p>
+                        </div>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-date-badge"><span class="ev-month">MAY</span><span class="ev-day">10</span></div>
+                        <div class="event-details">
+                            <span class="event-tag event-tag--orange">Program</span>
+                            <h4>Community Feeding Program</h4>
+                            <p>9:00 AM – 12:00 PM · Multi-Purpose Hall</p>
+                        </div>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-date-badge"><span class="ev-month">MAY</span><span class="ev-day">11</span></div>
+                        <div class="event-details">
+                            <span class="event-tag event-tag--green">Environment</span>
+                            <h4>Community Clean-up Drive</h4>
+                            <p>7:00 AM – 11:00 AM · All Puroks</p>
+                        </div>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-date-badge"><span class="ev-month">MAY</span><span class="ev-day">12</span></div>
+                        <div class="event-details">
+                            <span class="event-tag event-tag--purple">Sports</span>
+                            <h4>Inter-Purok Sports Festival</h4>
+                            <p>8:00 AM · Covered Court</p>
+                        </div>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-date-badge"><span class="ev-month">MAY</span><span class="ev-day">17</span></div>
+                        <div class="event-details">
+                            <span class="event-tag event-tag--blue">Governance</span>
+                            <h4>Barangay Council Meeting</h4>
+                            <p>3:00 PM – 5:00 PM · Session Hall</p>
+                        </div>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-date-badge"><span class="ev-month">MAY</span><span class="ev-day">18</span></div>
+                        <div class="event-details">
+                            <span class="event-tag event-tag--green">Environment</span>
+                            <h4>Tree Planting Activity</h4>
+                            <p>7:00 AM – 10:00 AM · Community Park</p>
+                        </div>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-date-badge"><span class="ev-month">MAY</span><span class="ev-day">21</span></div>
+                        <div class="event-details">
+                            <span class="event-tag event-tag--purple">SK Youth</span>
+                            <h4>SK Music and Dance Night</h4>
+                            <p>6:00 PM – 10:00 PM · Covered Court</p>
+                        </div>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-date-badge"><span class="ev-month">MAY</span><span class="ev-day">25</span></div>
+                        <div class="event-details">
+                            <span class="event-tag event-tag--red">Wellness</span>
+                            <h4>Free Zumba &amp; Wellness Activity</h4>
+                            <p>5:00 AM – 7:00 AM · Plaza</p>
+                        </div>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-date-badge"><span class="ev-month">MAY</span><span class="ev-day">31</span></div>
+                        <div class="event-details">
+                            <span class="event-tag event-tag--orange">Safety</span>
+                            <h4>Disaster Preparedness Drill</h4>
+                            <p>8:00 AM – 12:00 PM · All Puroks</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -360,7 +398,7 @@
                                 <div class="slide-img-wrap">
                                     <img src="Images/news&updates/Pre-Independence Day Job Fair 2026.jpg" width="50%" height="50%" alt="Pre-Independence Day Job Fair 2026" class="slideshow-img">
                                 </div>
-                                <a href="https://bacoor.gov.ph/announcement/pre-independence-day-job-fair-2026/" width="50%" height="50%" target="_blank" rel="noopener noreferrer" class="news-readmore-btn">Read Official Report →</a>
+                                <a href="https://bacoor.gov.ph/announcement/pre-independence-day-job-fair-2026/" target="_blank" rel="noopener noreferrer" class="news-readmore-btn">Read Official Report →</a>
                             </div>
                         </div>
 
@@ -396,48 +434,300 @@
         </main>
     </div>
 
-    <!-- ===== PAGE: SAFETY / PREPAREDNESS ===== -->
+    <!-- ===== PAGE: SAFETY / PREPAREDNESS — DISASTER READINESS GUIDE ===== -->
     <div id="safety" class="page-section dashboard-page">
         <main class="dashboard-content">
             <div class="page-header scroll-fade">
                 <div class="section-label">Community Safety</div>
-                <h1 class="page-title">Safety &amp; Preparedness</h1>
+                <h1 class="page-title">Disaster Readiness Guide</h1>
+                <p class="page-subtitle">Know what to do before, during, and after a disaster strikes.</p>
             </div>
 
-            <div class="dashboard-block scroll-fade">
-                <h2 class="block-title"><span class="block-icon" aria-hidden="true">🛡️</span> Disaster Readiness Guide</h2>
-                <div class="safety-cards">
-                    <div class="safety-card">
-                        <div class="safety-icon" aria-hidden="true">⛈️</div>
-                        <div class="safety-content">
-                            <h4>Typhoon Protocol</h4>
-                            <p>Prepare Go-Bags with essentials. Evacuate to the Covered Court if the river reaches the Yellow Marker. Tune in to official weather advisories.</p>
+            <!-- TYPHOON -->
+            <div class="disaster-card scroll-fade" id="disaster-typhoon">
+                <button class="disaster-header" onclick="toggleDisaster('typhoon')" aria-expanded="false" aria-controls="typhoon-body">
+                    <div class="disaster-header-left">
+                        <span class="disaster-icon-wrap typhoon-bg">⛈️</span>
+                        <div>
+                            <h2 class="disaster-title">Typhoon Preparedness</h2>
+                            <p class="disaster-subtitle">Prepare before the storm, stay safe during, and recover after</p>
                         </div>
                     </div>
-                    <div class="safety-card">
-                        <div class="safety-icon" aria-hidden="true">🫨</div>
-                        <div class="safety-content">
-                            <h4>Earthquake Protocol</h4>
-                            <p>Drop, Cover, and Hold On. After shaking stops, immediately exit to the Plaza open field and await further instructions from barangay officials.</p>
+                    <span class="disaster-chevron" aria-hidden="true">▸</span>
+                </button>
+                <div class="disaster-body" id="typhoon-body">
+                    <div class="phase-grid">
+                        <div class="phase-col">
+                            <div class="phase-label phase-before">Before</div>
+                            <ul class="phase-list">
+                                <li>Monitor weather updates from PAGASA</li>
+                                <li>Prepare emergency kit (food, water, flashlight, first aid)</li>
+                                <li>Secure your home — reinforce windows and doors</li>
+                                <li>Store important documents in waterproof containers</li>
+                                <li>Charge all communication devices</li>
+                                <li>Know your evacuation center location</li>
+                            </ul>
                         </div>
-                    </div>
-                    <div class="safety-card">
-                        <div class="safety-icon" aria-hidden="true">🔥</div>
-                        <div class="safety-content">
-                            <h4>Fire Emergency</h4>
-                            <p>Alert neighbors and call BFP immediately. Evacuate calmly using designated exit routes. Do not use elevators. Assemble at designated gathering point.</p>
+                        <div class="phase-col">
+                            <div class="phase-label phase-during">During</div>
+                            <ul class="phase-list">
+                                <li>Stay indoors and away from windows</li>
+                                <li>Turn off main electrical switch if flooding occurs</li>
+                                <li>Avoid using candles; use flashlights instead</li>
+                                <li>Listen to official announcements</li>
+                                <li>Evacuate immediately if instructed</li>
+                            </ul>
                         </div>
-                    </div>
-                    <div class="safety-card">
-                        <div class="safety-icon" aria-hidden="true">🌊</div>
-                        <div class="safety-content">
-                            <h4>Flood Warning</h4>
-                            <p>Move to higher ground immediately. Avoid walking through floodwater. Unplug electrical appliances. Contact the barangay hotline for rescue assistance.</p>
+                        <div class="phase-col">
+                            <div class="phase-label phase-after">After</div>
+                            <ul class="phase-list">
+                                <li>Wait for official "all clear" announcement</li>
+                                <li>Check for injuries and damage</li>
+                                <li>Avoid downed power lines and flooded areas</li>
+                                <li>Document damage for insurance purposes</li>
+                                <li>Help neighbors, especially elderly and disabled</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- EARTHQUAKE -->
+            <div class="disaster-card scroll-fade" id="disaster-earthquake">
+                <button class="disaster-header" onclick="toggleDisaster('earthquake')" aria-expanded="false" aria-controls="earthquake-body">
+                    <div class="disaster-header-left">
+                        <span class="disaster-icon-wrap quake-bg">🫨</span>
+                        <div>
+                            <h2 class="disaster-title">Earthquake Safety</h2>
+                            <p class="disaster-subtitle">Drop, Cover, and Hold On — know your safe spots</p>
+                        </div>
+                    </div>
+                    <span class="disaster-chevron" aria-hidden="true">▸</span>
+                </button>
+                <div class="disaster-body" id="earthquake-body">
+                    <div class="phase-grid">
+                        <div class="phase-col">
+                            <div class="phase-label phase-before">Before</div>
+                            <ul class="phase-list">
+                                <li>Identify safe spots in each room</li>
+                                <li>Secure heavy furniture and appliances</li>
+                                <li>Know how to turn off gas, water, and electricity</li>
+                                <li>Prepare emergency supplies and go-bag</li>
+                                <li>Practice "Drop, Cover, and Hold On" drill</li>
+                            </ul>
+                        </div>
+                        <div class="phase-col">
+                            <div class="phase-label phase-during">During</div>
+                            <ul class="phase-list">
+                                <li><strong>DROP</strong> — Get down on hands and knees</li>
+                                <li><strong>COVER</strong> — Protect head and neck under sturdy furniture</li>
+                                <li><strong>HOLD ON</strong> — Stay in position until shaking stops</li>
+                                <li>If outdoors, move away from buildings and power lines</li>
+                                <li>If in a vehicle, stop and stay inside</li>
+                            </ul>
+                        </div>
+                        <div class="phase-col">
+                            <div class="phase-label phase-after">After</div>
+                            <ul class="phase-list">
+                                <li>Expect aftershocks</li>
+                                <li>Check for injuries and provide first aid</li>
+                                <li>Inspect home for damage before entering</li>
+                                <li>Do not use elevators</li>
+                                <li>Report emergencies to barangay authorities</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FLOOD -->
+            <div class="disaster-card scroll-fade" id="disaster-flood">
+                <button class="disaster-header" onclick="toggleDisaster('flood')" aria-expanded="false" aria-controls="flood-body">
+                    <div class="disaster-header-left">
+                        <span class="disaster-icon-wrap flood-bg">🌊</span>
+                        <div>
+                            <h2 class="disaster-title">Flood Preparedness</h2>
+                            <p class="disaster-subtitle">Move to higher ground and stay informed</p>
+                        </div>
+                    </div>
+                    <span class="disaster-chevron" aria-hidden="true">▸</span>
+                </button>
+                <div class="disaster-body" id="flood-body">
+                    <div class="phase-grid">
+                        <div class="phase-col">
+                            <div class="phase-label phase-before">Before</div>
+                            <ul class="phase-list">
+                                <li>Know if your area is flood-prone</li>
+                                <li>Elevate electrical appliances and valuables</li>
+                                <li>Clear drainage systems and waterways</li>
+                                <li>Prepare waterproof containers</li>
+                                <li>Stock up on clean drinking water</li>
+                            </ul>
+                        </div>
+                        <div class="phase-col">
+                            <div class="phase-label phase-during">During</div>
+                            <ul class="phase-list">
+                                <li>Move to higher ground immediately</li>
+                                <li>Never walk or drive through floodwaters</li>
+                                <li>Avoid contact with floodwater</li>
+                                <li>Turn off electricity at the main breaker</li>
+                                <li>Stay away from power lines and electrical wires</li>
+                            </ul>
+                        </div>
+                        <div class="phase-col">
+                            <div class="phase-label phase-after">After</div>
+                            <ul class="phase-list">
+                                <li>Return home only when authorities say it's safe</li>
+                                <li>Clean and disinfect everything touched by floodwater</li>
+                                <li>Throw away contaminated food</li>
+                                <li>Watch for weakened structures and hazards</li>
+                                <li>Report damage to barangay authorities</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FIRE -->
+            <div class="disaster-card scroll-fade" id="disaster-fire">
+                <button class="disaster-header" onclick="toggleDisaster('fire')" aria-expanded="false" aria-controls="fire-body">
+                    <div class="disaster-header-left">
+                        <span class="disaster-icon-wrap fire-bg">🔥</span>
+                        <div>
+                            <h2 class="disaster-title">Fire Safety</h2>
+                            <p class="disaster-subtitle">Prevent, evacuate, and never return to a burning building</p>
+                        </div>
+                    </div>
+                    <span class="disaster-chevron" aria-hidden="true">▸</span>
+                </button>
+                <div class="disaster-body" id="fire-body">
+                    <div class="phase-grid">
+                        <div class="phase-col">
+                            <div class="phase-label phase-before">Prevention</div>
+                            <ul class="phase-list">
+                                <li>Check electrical wiring regularly</li>
+                                <li>Never leave cooking unattended</li>
+                                <li>Keep flammable materials away from heat sources</li>
+                                <li>Install smoke detectors and fire extinguishers</li>
+                                <li>Create and practice a fire escape plan</li>
+                            </ul>
+                        </div>
+                        <div class="phase-col">
+                            <div class="phase-label phase-during">During a Fire</div>
+                            <ul class="phase-list">
+                                <li>Alert everyone and evacuate immediately</li>
+                                <li>Crawl low under smoke</li>
+                                <li>Feel doors before opening</li>
+                                <li>Use stairs, never elevators</li>
+                                <li>Call emergency hotline once safely outside</li>
+                                <li>Never go back inside a burning building</li>
+                            </ul>
+                        </div>
+                        <div class="phase-col">
+                            <div class="phase-label phase-after">If Caught in Fire</div>
+                            <ul class="phase-list">
+                                <li><strong>STOP, DROP, and ROLL</strong></li>
+                                <li>Cover nose and mouth with wet cloth</li>
+                                <li>Stay close to the ground</li>
+                                <li>Signal for help from a window if trapped</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LANDSLIDE -->
+            <div class="disaster-card scroll-fade" id="disaster-landslide">
+                <button class="disaster-header" onclick="toggleDisaster('landslide')" aria-expanded="false" aria-controls="landslide-body">
+                    <div class="disaster-header-left">
+                        <span class="disaster-icon-wrap landslide-bg">⛰️</span>
+                        <div>
+                            <h2 class="disaster-title">Landslide Safety</h2>
+                            <p class="disaster-subtitle">Watch for warning signs and evacuate immediately</p>
+                        </div>
+                    </div>
+                    <span class="disaster-chevron" aria-hidden="true">▸</span>
+                </button>
+                <div class="disaster-body" id="landslide-body">
+                    <div class="phase-grid">
+                        <div class="phase-col">
+                            <div class="phase-label phase-before">Before</div>
+                            <ul class="phase-list">
+                                <li>Pack an emergency go-bag</li>
+                                <li>Identify evacuation routes</li>
+                                <li>Avoid building near steep slopes</li>
+                                <li>Watch for warning signs like ground cracks</li>
+                                <li>Prepare emergency supplies and documents</li>
+                            </ul>
+                        </div>
+                        <div class="phase-col">
+                            <div class="phase-label phase-during">During</div>
+                            <ul class="phase-list">
+                                <li>Evacuate immediately to higher ground</li>
+                                <li>Avoid bridges and muddy roads</li>
+                                <li>Seek shelter under sturdy furniture if trapped indoors</li>
+                                <li>Protect head and neck if trapped outdoors</li>
+                            </ul>
+                        </div>
+                        <div class="phase-col">
+                            <div class="phase-label phase-after">After</div>
+                            <ul class="phase-list">
+                                <li>Do not return immediately</li>
+                                <li>Watch for flooding and additional slides</li>
+                                <li>Report damaged roads and utilities</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HEAT WAVE -->
+            <div class="disaster-card scroll-fade" id="disaster-heatwave">
+                <button class="disaster-header" onclick="toggleDisaster('heatwave')" aria-expanded="false" aria-controls="heatwave-body">
+                    <div class="disaster-header-left">
+                        <span class="disaster-icon-wrap heat-bg">☀️</span>
+                        <div>
+                            <h2 class="disaster-title">Heat Wave Preparedness</h2>
+                            <p class="disaster-subtitle">Stay hydrated, limit exposure, and check on vulnerable neighbors</p>
+                        </div>
+                    </div>
+                    <span class="disaster-chevron" aria-hidden="true">▸</span>
+                </button>
+                <div class="disaster-body" id="heatwave-body">
+                    <div class="heat-tips-grid">
+                        <div class="heat-tip"><span>💧</span> Stay hydrated before, during, and after heat wave</div>
+                        <div class="heat-tip"><span>🕶️</span> Limit sun exposure during peak hours (10AM–4PM)</div>
+                        <div class="heat-tip"><span>🏠</span> Prepare cooling measures at home</div>
+                        <div class="heat-tip"><span>🌡️</span> Learn symptoms of heat exhaustion and heat stroke</div>
+                        <div class="heat-tip"><span>🚿</span> Use cool showers and wet towels to reduce body temperature</div>
+                        <div class="heat-tip"><span>🥤</span> Drink plenty of water — avoid caffeinated and alcoholic drinks</div>
+                        <div class="heat-tip"><span>🏋️</span> Avoid heavy activities during the hottest hours of the day</div>
+                        <div class="heat-tip"><span>🪟</span> Open windows only when outdoor temperature drops</div>
+                        <div class="heat-tip"><span>👴</span> Check on elderly and sick people regularly</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WHAT TO DO IN MIDST OF DISASTER -->
+            <div class="dashboard-block scroll-fade disaster-general-block">
+                <h2 class="block-title"><span class="block-icon">🆘</span> What To Do In The Midst of Disaster</h2>
+                <div class="general-tips-grid">
+                    <div class="general-tip-card">
+                        <span class="gtip-icon">📻</span>
+                        <p>Use battery-powered radio, phone alerts, or official government updates to get reliable information</p>
+                    </div>
+                    <div class="general-tip-card">
+                        <span class="gtip-icon">🎒</span>
+                        <p>Use emergency supplies wisely — water, food, flashlight, medicines, power bank, whistle, and first-aid kit</p>
+                    </div>
+                    <div class="general-tip-card">
+                        <span class="gtip-icon">🤝</span>
+                        <p>Assist children, elderly, injured neighbors, and persons with disabilities if it is safe to do so</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real-Time Map -->
             <div class="dashboard-block scroll-fade">
                 <h2 class="block-title"><span class="block-icon" aria-hidden="true">📡</span> Real-Time Environmental Monitoring</h2>
                 <p class="block-description">Stay updated with live weather patterns, wind speeds, and active typhoon tracks directly affecting Bacoor City and the surrounding Calabarzon region.</p>
@@ -461,6 +751,7 @@
                 <h1 class="page-title">Barangay Services</h1>
             </div>
 
+            <!-- How to Get Documents -->
             <div class="dashboard-block scroll-fade">
                 <h2 class="block-title"><span class="block-icon" aria-hidden="true">📄</span> Document Application Guide</h2>
                 <div class="steps-list">
@@ -495,6 +786,105 @@
                 </div>
             </div>
 
+            <!-- REQUEST DOCUMENTS SECTION -->
+            <div class="dashboard-block scroll-fade" id="request-documents-section">
+                <h2 class="block-title"><span class="block-icon" aria-hidden="true">🗂️</span> Request Documents</h2>
+                <p class="block-description">Select a document type below to view requirements, processing time, and to start your request.</p>
+                <div class="doc-request-grid">
+
+                    <div class="doc-card" onclick="openDocInfo('clearance')">
+                        <div class="doc-card-icon">📋</div>
+                        <div class="doc-card-body">
+                            <h4>Barangay Clearance</h4>
+                            <p>Proof of good standing in the barangay. Required for employment, permits, and other applications.</p>
+                        </div>
+                        <div class="doc-card-footer">
+                            <span class="doc-badge doc-badge--available">Available</span>
+                            <span class="doc-time">⏱ 15–30 mins</span>
+                        </div>
+                    </div>
+
+                    <div class="doc-card" onclick="openDocInfo('residency')">
+                        <div class="doc-card-icon">🏠</div>
+                        <div class="doc-card-body">
+                            <h4>Certificate of Residency</h4>
+                            <p>Confirms that a person is a registered resident of Barangay CINCO.</p>
+                        </div>
+                        <div class="doc-card-footer">
+                            <span class="doc-badge doc-badge--available">Available</span>
+                            <span class="doc-time">⏱ 15–30 mins</span>
+                        </div>
+                    </div>
+
+                    <div class="doc-card" onclick="openDocInfo('indigency')">
+                        <div class="doc-card-icon">📑</div>
+                        <div class="doc-card-body">
+                            <h4>Barangay Indigency Certificate</h4>
+                            <p>Certifies financial need for individuals applying for government aid or free services.</p>
+                        </div>
+                        <div class="doc-card-footer">
+                            <span class="doc-badge doc-badge--available">Available</span>
+                            <span class="doc-time">⏱ 20–30 mins</span>
+                        </div>
+                    </div>
+
+                    <div class="doc-card" onclick="openDocInfo('business')">
+                        <div class="doc-card-icon">🏢</div>
+                        <div class="doc-card-body">
+                            <h4>Business Permit Clearance</h4>
+                            <p>Required for new and renewing businesses operating within the barangay jurisdiction.</p>
+                        </div>
+                        <div class="doc-card-footer">
+                            <span class="doc-badge doc-badge--available">Available</span>
+                            <span class="doc-time">⏱ 30–60 mins</span>
+                        </div>
+                    </div>
+
+                    <div class="doc-card" onclick="openDocInfo('moral')">
+                        <div class="doc-card-icon">🎖️</div>
+                        <div class="doc-card-body">
+                            <h4>Certificate of Good Moral</h4>
+                            <p>Attests to the good character and behavior of a barangay resident.</p>
+                        </div>
+                        <div class="doc-card-footer">
+                            <span class="doc-badge doc-badge--available">Available</span>
+                            <span class="doc-time">⏱ 15–20 mins</span>
+                        </div>
+                    </div>
+
+                    <div class="doc-card" onclick="openDocInfo('id')">
+                        <div class="doc-card-icon">🪪</div>
+                        <div class="doc-card-body">
+                            <h4>Barangay ID Request</h4>
+                            <p>Official Barangay ID as an alternate government-recognized identification document.</p>
+                        </div>
+                        <div class="doc-card-footer">
+                            <span class="doc-badge doc-badge--processing">3–5 Days</span>
+                            <span class="doc-time">⏱ Processing</span>
+                        </div>
+                    </div>
+
+                    <div class="doc-card" onclick="openDocInfo('cedula')">
+                        <div class="doc-card-icon">📜</div>
+                        <div class="doc-card-body">
+                            <h4>Cedula / Community Tax Certificate</h4>
+                            <p>Annual community tax certification required for legal and civic transactions.</p>
+                        </div>
+                        <div class="doc-card-footer">
+                            <span class="doc-badge doc-badge--available">Available</span>
+                            <span class="doc-time">⏱ 10–20 mins</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="doc-request-note">
+                    <span>ℹ️</span>
+                    <p>All document requests must be processed in person at the Barangay Hall. Office hours: <strong>Monday – Friday, 8:00 AM – 5:00 PM</strong>. Bring one (1) valid government-issued ID and a completed request form.</p>
+                </div>
+            </div>
+
+            <!-- Contact & Concerns Form -->
             <div class="dashboard-block scroll-fade" id="services-form-container">
                 <h2 class="block-title"><span class="block-icon" aria-hidden="true">📞</span> Contact &amp; Concerns</h2>
                 <p class="block-description">Have a concern or inquiry? Fill out the form below and a barangay representative will get back to you.</p>
@@ -523,6 +913,24 @@
                         <label for="concern-box">Your Concern <span class="required" aria-hidden="true">*</span></label>
                         <textarea id="concern-box" name="concern" placeholder="Please describe your concern or inquiry in detail..." required></textarea>
                     </div>
+
+                    <!-- Image Upload (Optional) -->
+                    <div class="form-group">
+                        <label for="concern-image">Attach Image <span class="optional-label">(Optional)</span></label>
+                        <div class="image-upload-area" id="imageUploadArea" onclick="document.getElementById('concern-image').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+                            <input type="file" id="concern-image" name="concern_image" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
+                            <div class="upload-placeholder" id="uploadPlaceholder">
+                                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                <p>Click to upload or drag &amp; drop an image</p>
+                                <span>JPG, PNG, GIF up to 10MB</span>
+                            </div>
+                            <div class="upload-preview" id="uploadPreview" style="display:none">
+                                <img id="previewImg" src="" alt="Attached image preview">
+                                <button type="button" class="remove-image-btn" onclick="removeImage(event)" aria-label="Remove image">✕ Remove</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <button class="submit-btn" type="submit">
                         <span>Submit Concern</span>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
