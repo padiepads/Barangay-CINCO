@@ -1,3 +1,8 @@
+/**
+ * Barangay CINCO — Digital Community Portal
+ * Improved JavaScript — Optimized & Accessible
+ */
+
 'use strict';
 
 // ============================================================
