@@ -3,303 +3,392 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="javascript.js" defer></script>
-    <title>Barangay CINCO | Digital Community Board</title>
+    <title>Barangay CINCO | Digital Community Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="header-wrapper">
-        <div class="announcement-bar">
-            <div class="marquee-text">
-                📢 Community Notice: May 2 - Water Main Maintenance (8:00 AM – 5:00 PM) | May 4 - Senior Citizens Assembly (9:00 AM) | May 5 - Free Health Check-up @ Center | May 11 - Community Clean-up Drive | Stay safe and prepared!
+    <!-- HEADER WRAPPER -->
+    <div class="header-wrapper" id="headerWrapper">
+        <div class="announcement-bar" aria-label="Community Notices">
+            <div class="marquee-track">
+                <span class="marquee-content">
+                    📢 Community Notice: May 2 — Water Main Maintenance (8:00 AM – 5:00 PM)&nbsp;&nbsp;|&nbsp;&nbsp;May 4 — Senior Citizens Assembly (9:00 AM)&nbsp;&nbsp;|&nbsp;&nbsp;May 5 — Free Health Check-up @ Center&nbsp;&nbsp;|&nbsp;&nbsp;May 11 — Community Clean-up Drive&nbsp;&nbsp;|&nbsp;&nbsp;Stay safe and prepared!
+                </span>
+                <span class="marquee-content" aria-hidden="true">
+                    📢 Community Notice: May 2 — Water Main Maintenance (8:00 AM – 5:00 PM)&nbsp;&nbsp;|&nbsp;&nbsp;May 4 — Senior Citizens Assembly (9:00 AM)&nbsp;&nbsp;|&nbsp;&nbsp;May 5 — Free Health Check-up @ Center&nbsp;&nbsp;|&nbsp;&nbsp;May 11 — Community Clean-up Drive&nbsp;&nbsp;|&nbsp;&nbsp;Stay safe and prepared!
+                </span>
             </div>
         </div>
 
-        <nav class="navbar">
-            <div class="nav-logo">Barangay CINCO</div>
-            <div class="menu-toggle" id="menuToggle">☰</div>
-            <div class="nav-links" id="navLinks">
-                <button id="link-history" onclick="showPage('history')">About Us</button>
-                <button id="link-announcements" onclick="showPage('announcements')">Announcements</button>
-                <button id="link-safety" onclick="showPage('safety')">Preparedness</button>
-                <button id="link-services" onclick="showPage('services')">Services</button>
-                <button id="link-officials" onclick="showPage('officials')">Officials</button>
-                <button id="theme-toggle" class="theme-switch-btn">🌙 Dark Mode</button>
+        <nav class="navbar" role="navigation" aria-label="Main Navigation">
+            <div class="nav-brand">
+                <div class="nav-seal" aria-hidden="true">🏛</div>
+                <div class="nav-logo-text">
+                    <span class="nav-title">Barangay CINCO</span>
+                    <span class="nav-subtitle">Bacoor City, Cavite</span>
+                </div>
+            </div>
+
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">
+                <span class="hamburger-bar"></span>
+                <span class="hamburger-bar"></span>
+                <span class="hamburger-bar"></span>
+            </button>
+
+            <div class="nav-links" id="navLinks" role="menubar">
+                <button id="link-history" role="menuitem" onclick="showPage('history')" aria-current="page">About Us</button>
+                <button id="link-announcements" role="menuitem" onclick="showPage('announcements')">Announcements</button>
+                <button id="link-safety" role="menuitem" onclick="showPage('safety')">Preparedness</button>
+                <button id="link-services" role="menuitem" onclick="showPage('services')">Services</button>
+                <button id="link-officials" role="menuitem" onclick="showPage('officials')">Officials</button>
+                <button id="theme-toggle" class="theme-switch-btn" aria-label="Toggle dark mode">🌙 Dark Mode</button>
             </div>
         </nav>
     </div>
 
-    <div id="submissionModal" class="modal-overlay">
+    <!-- SUCCESS MODAL -->
+    <div id="submissionModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
         <div class="modal-box">
-            <div class="modal-icon">✔️</div>
-            <h3>Concern Submitted Successfully</h3>
-            <p>Your concern has been submitted to the barangay desk. Please wait for our formal feedback message or an active follow-up phone call.</p>
-            <button class="modal-close-btn" onclick="closeModal()">Go Back</button>
+            <div class="modal-icon-wrap" aria-hidden="true">
+                <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="28" cy="28" r="28" fill="#1b5e20" opacity="0.1"/>
+                    <circle cx="28" cy="28" r="22" fill="#2e7d32" opacity="0.15"/>
+                    <path d="M18 28L24 34L38 20" stroke="#1b5e20" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <h3 id="modalTitle">Concern Submitted!</h3>
+            <p>Your concern has been received at the Barangay desk. A representative will follow up with you shortly via phone or email.</p>
+            <button class="modal-close-btn" onclick="closeModal()">Got it, thank you</button>
         </div>
     </div>
 
+    <!-- ===== PAGE: ABOUT / HISTORY ===== -->
     <article id="history" class="page-section">
-        <header class="hero-image-container scroll-fade">
-            <img src="Images/Barangay_hall.png" alt="Banner" class="hero-img">
+        <header class="hero-section scroll-fade">
+            <div class="hero-image-container">
+                <img src="Images/Barangay_hall.png" alt="Barangay CINCO Hall" class="hero-img">
+                <div class="hero-overlay" aria-hidden="true"></div>
+            </div>
+            <div class="hero-caption">
+                <h1>Welcome to Barangay CINCO</h1>
+                <p>A community built on compassion, integrity, and service</p>
+            </div>
         </header>
+
         <div class="logo-overlap scroll-fade">
-            <div class="logo-circle"><img src="Images/Logo.png" alt="Logo"></div>
+            <div class="logo-circle">
+                <img src="Images/Logo.png" alt="Barangay CINCO Official Seal">
+            </div>
             <span class="sub-logo-text">Compassion · Integrity · Nationalism · Commitment · Order</span>
         </div>
 
-        <div class="blog-container scroll-fade">
-            <h1 class="main-title">A Humble Beginning</h1>
-            <p class="drop-cap">L</p>
-            <p class="justified-text">ong before we transformed into a bustling modern community, the land where our barangay stands was a vast green space with lots of nature. Originally established as a small, quiet village reliant on agriculture and local trade, the community worked together closely, showing the true spirit of bayanihan by helping out its neighbors.</p>
-            <p class="justified-text">This growth turned our quiet provincial village into a busy and lively neighborhood where more people moved and migrated to live and work.</p><br><br>
-            
-            <h4 class="main-title">Growth, Resilience, and Progress</h4>
-            <p class="drop-cap">A</p>
-            <p class="justified-text">s years went by, our barangay faced many changes and challenges. We went through tough times, like strong typhoons and economic problems, but the people never gave up and always worked together to rebuild. Soon, the dirt roads were paved, schools were built, and small local businesses started opening up everywhere. This growth turned our quiet provincial village into a busy and lively neighborhood.</p><br><br>
-            
-            <h1 class="main-title">Present Day and Moving Forward</h1>
-            <p class="drop-cap">T</p>
-            <p class="justified-text">oday, our barangay stands proudly as a dynamic and inclusive community that balances rapid modernization with a deep respect for its historical roots. Under a succession of dedicated local leaders, the barangay has continually upgraded its infrastructure, digital capabilities, and public services to meet the demands of the modern day. While the landscape has evolved from fields to thriving residential and commercial spaces, the core values of Compassion, Integrity, Nationalism, Commitment, and Order continue to guide the barangay toward a bright and sustainable future.</p>
-            
-            <div class="section-divider"></div>
+        <div class="blog-container">
+            <section class="history-section scroll-fade">
+                <div class="section-label">Our Story</div>
+                <h1 class="main-title">A Humble Beginning</h1>
+                <div class="article-body">
+                    <p class="drop-cap-wrap"><span class="drop-cap">L</span>ong before we transformed into a bustling modern community, the land where our barangay stands was a vast green space full of nature. Originally established as a small, quiet village reliant on agriculture and local trade, the community worked together closely, showing the true spirit of bayanihan by helping out its neighbors. This growth turned our quiet provincial village into a busy and lively neighborhood where more people moved and migrated to live and work.</p>
+                </div>
+            </section>
 
-            <div class="story-grid">
-                <div class="story-card scroll-fade">
+            <section class="history-section scroll-fade">
+                <div class="section-label">Heritage</div>
+                <h2 class="main-title">Growth, Resilience, and Progress</h2>
+                <div class="article-body">
+                    <p class="drop-cap-wrap"><span class="drop-cap">A</span>s years went by, our barangay faced many changes and challenges. We went through tough times, like strong typhoons and economic problems, but the people never gave up and always worked together to rebuild. Soon, the dirt roads were paved, schools were built, and small local businesses started opening up everywhere. This growth turned our quiet provincial village into a busy and lively neighborhood.</p>
+                </div>
+            </section>
+
+            <section class="history-section scroll-fade">
+                <div class="section-label">Today</div>
+                <h2 class="main-title">Present Day and Moving Forward</h2>
+                <div class="article-body">
+                    <p class="drop-cap-wrap"><span class="drop-cap">T</span>oday, our barangay stands proudly as a dynamic and inclusive community that balances rapid modernization with a deep respect for its historical roots. Under a succession of dedicated local leaders, the barangay has continually upgraded its infrastructure, digital capabilities, and public services to meet the demands of the modern day. While the landscape has evolved from fields to thriving residential and commercial spaces, the core values of Compassion, Integrity, Nationalism, Commitment, and Order continue to guide the barangay toward a bright and sustainable future.</p>
+                </div>
+            </section>
+
+            <div class="ornament-divider scroll-fade" aria-hidden="true">
+                <span></span><span class="diamond">◆</span><span></span>
+            </div>
+
+            <!-- Mission & Vision -->
+            <div class="mv-grid scroll-fade">
+                <div class="mv-card">
+                    <div class="mv-icon" aria-hidden="true">🎯</div>
                     <h3>Our Mission</h3>
-                    <p class="justified-text">Our mission is to serve every resident with Compassion and Integrity, ensuring public safety and Order through effective local governance. We are driven by a deep sense of Nationalism and an unwavering Commitment to uplifting lives by providing excellent public services, fostering sustainable development, and empowering our youth to become the next generation of leaders.</p>
+                    <p>To serve every resident with Compassion and Integrity, ensuring public safety and Order through effective local governance. We are driven by a deep sense of Nationalism and an unwavering Commitment to uplifting lives by providing excellent public services, fostering sustainable development, and empowering our youth to become the next generation of leaders.</p>
                 </div>
-                <div class="story-card scroll-fade">
+                <div class="mv-card">
+                    <div class="mv-icon" aria-hidden="true">👁</div>
                     <h3>Our Vision</h3>
-                    <p class="justified-text">To be a safe, progressive, and unified barangay where disciplined citizens thrive in a clean environment, guided by honest leadership and a shared love for our community and nation.</p>
-                </div>
-            </div>
-            
-            <div class="corevalues-story-grid">
-                <div class="corevalues-story-card scroll-fade">
-                    <h3>CORE VALUES</h3>
-                    <p class="justified-text"><strong>Compassion:</strong> Serving every resident, especially those in need, with kindness, empathy, and active support.</p><br>
-                    <p class="justified-text"><strong>Integrity:</strong> Maintaining transparency, honesty, and accountability in all government transactions and leadership.</p><br>
-                    <p class="justified-text"><strong>Nationalism:</strong> Fostering unity and pride in our local heritage, culture, and love for the country.</p><br>
-                    <p class="justified-text"><strong>Commitment:</strong> Working dedicatedly to deliver consistent, dependable, and high-quality public services to the community.</p><br>
-                    <p class="justified-text"><strong>Order:</strong> Ensuring peace, safety, and proper discipline through fair implementation of local rules and ordinances.</p><br>
+                    <p>To be a safe, progressive, and unified barangay where disciplined citizens thrive in a clean environment, guided by honest leadership and a shared love for our community and nation.</p>
                 </div>
             </div>
 
+            <!-- Core Values -->
+            <div class="corevalues-block scroll-fade">
+                <h3 class="corevalues-title">Core Values</h3>
+                <div class="corevalues-grid">
+                    <div class="cv-item">
+                        <div class="cv-icon" aria-hidden="true">❤️</div>
+                        <h4>Compassion</h4>
+                        <p>Serving every resident, especially those in need, with kindness, empathy, and active support.</p>
+                    </div>
+                    <div class="cv-item">
+                        <div class="cv-icon" aria-hidden="true">⚖️</div>
+                        <h4>Integrity</h4>
+                        <p>Maintaining transparency, honesty, and accountability in all government transactions and leadership.</p>
+                    </div>
+                    <div class="cv-item">
+                        <div class="cv-icon" aria-hidden="true">🇵🇭</div>
+                        <h4>Nationalism</h4>
+                        <p>Fostering unity and pride in our local heritage, culture, and love for the country.</p>
+                    </div>
+                    <div class="cv-item">
+                        <div class="cv-icon" aria-hidden="true">🤝</div>
+                        <h4>Commitment</h4>
+                        <p>Working dedicatedly to deliver consistent, dependable, and high-quality public services.</p>
+                    </div>
+                    <div class="cv-item">
+                        <div class="cv-icon" aria-hidden="true">📋</div>
+                        <h4>Order</h4>
+                        <p>Ensuring peace, safety, and proper discipline through fair implementation of local rules and ordinances.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location -->
             <div class="location-info scroll-fade">
-                <h3>📍 Location & Geography</h3>
-                <p style="margin-bottom: 20px;" class="justified-text">Barangay CINCO is strategically located at the heart of <strong>Bacoor City, Cavite</strong>, providing residents with easy access to services.</p>
-                
+                <div class="location-header">
+                    <span class="section-label">Find Us</span>
+                    <h3>📍 Location &amp; Geography</h3>
+                </div>
+                <p>Barangay CINCO is strategically located at the heart of <strong>Bacoor City, Cavite</strong>, providing residents with easy access to services.</p>
                 <div class="map-responsive">
                     <iframe 
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3863.93104250858!2d120.9681719!3d14.4311375!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397d21386171d05%3A0xf7d5f7f358ed6d9d!2sBacoor%20City%20Hall!5e0!3m2!1sen!2sph!4v1779353247786!5m2!1sen!2sph"
-                        width="400"
-                        height="300"
-                        style="border:0;"
+                        title="Barangay CINCO Location Map"
                         allowfullscreen=""
                         loading="lazy"
                         referrerpolicy="no-referrer-when-downgrade">
                     </iframe>
                 </div>
             </div>
-            <br><br>
-            
-            <section class="facilities scroll-fade">
-                <div class="dashboard-block">
-                    <h1>Barangay Community Facilities</h1>
-                    <div class="facility-grid">
-                        <div class="facility-card hall show">
-                            <img src="Images/Barangay_hall.png" alt="Barangay Hall" onclick="zoomImage(this)">
-                            <div class="overlay"><span>Barangay Hall</span></div>
-                        </div>
-                        <div class="facility-card fire show">
-                            <img src="Images/Conference_hall.png" alt="Conference Hall" onclick="zoomImage(this)">
-                            <div class="overlay"><span>Conference/Session Hall</span></div>
-                        </div>
-                        <div class="facility-card sports show">
-                            <img src="Images/Covered_court.png" alt="Covered Court" onclick="zoomImage(this)">
-                            <div class="overlay"><span>Multi-Purpose Hall</span></div>
-                        </div>
-                        <div class="facility-card health show">
-                            <img src="Images/Health_center.png" alt="Health Center" onclick="zoomImage(this)">
-                            <div class="overlay"><span>Health Center</span></div>
-                        </div>
-                        <div class="facility-card amenities show">
-                            <img src="Images/Day_care.png" alt="Day_care" onclick="zoomImage(this)">
-                            <div class="overlay"><span>Daycare Center</span></div>
-                        </div>
-                        <div class="facility-card information show">
-                            <img src="Images/Receiving_desk.png" alt="Information & Receiving Desk" onclick="zoomImage(this)">
-                            <div class="overlay"><span>Information & Receiving Desk</span></div>
-                        </div>
-                        <div class="facility-card outpost show">
-                            <img src="Images/Tanod_outpost.png" alt="Tanod Outpost / Security Office" onclick="zoomImage(this)">
-                            <div class="overlay"><span>Tanod Outpost / Security Office</span></div>
-                        </div>
-                        <div class="facility-card sk show">
-                            <img src="Images/SK_office.png" alt="Sangguniang Kabataan (SK) Office" onclick="zoomImage(this)">
-                            <div class="overlay"><span>Sangguniang Kabataan (SK) Office</span></div>
-                        </div>
+
+            <!-- Facilities -->
+            <section class="facilities-section scroll-fade">
+                <div class="section-label">Infrastructure</div>
+                <h2 class="main-title">Community Facilities</h2>
+                <div class="facility-grid">
+                    <div class="facility-card hall show">
+                        <img src="Images/Barangay_hall.png" alt="Barangay Hall">
+                        <div class="facility-overlay"><span>Barangay Hall</span></div>
+                    </div>
+                    <div class="facility-card fire show">
+                        <img src="Images/Conference_hall.png" alt="Conference Hall">
+                        <div class="facility-overlay"><span>Conference / Session Hall</span></div>
+                    </div>
+                    <div class="facility-card sports show">
+                        <img src="Images/Covered_court.png" alt="Covered Court">
+                        <div class="facility-overlay"><span>Multi-Purpose Hall</span></div>
+                    </div>
+                    <div class="facility-card health show">
+                        <img src="Images/Health_center.png" alt="Health Center">
+                        <div class="facility-overlay"><span>Health Center</span></div>
+                    </div>
+                    <div class="facility-card amenities show">
+                        <img src="Images/Day_care.png" alt="Day Care Center">
+                        <div class="facility-overlay"><span>Day Care Center</span></div>
+                    </div>
+                    <div class="facility-card information show">
+                        <img src="Images/Receiving_desk.png" alt="Information & Receiving Desk">
+                        <div class="facility-overlay"><span>Information &amp; Receiving Desk</span></div>
+                    </div>
+                    <div class="facility-card outpost show">
+                        <img src="Images/Tanod_outpost.png" alt="Tanod Outpost">
+                        <div class="facility-overlay"><span>Tanod Outpost / Security Office</span></div>
+                    </div>
+                    <div class="facility-card sk show">
+                        <img src="Images/SK_office.png" alt="SK Office">
+                        <div class="facility-overlay"><span>Sangguniang Kabataan (SK) Office</span></div>
                     </div>
                 </div>
             </section>
         </div>
-        
-        <div class="stats-container scroll-fade">
-            <div class="stat-card">
-                <div class="stat-number">5,420</div>
-                <div class="stat-label">Population</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">1,205</div>
-                <div class="stat-label">Households</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">6</div>
-                <div class="stat-label">Puroks</div>
-            </div>
-        </div>
-        <p class="stats-disclaimer scroll-fade">
-            *Data is based on the latest official local community census and demographic surveys conducted by the Barangay Council. Figures are updated periodically to ensure accurate resource allocation and public service mapping.
-        </p>
-    </article>
 
-    <div id="announcements" class="page-section dashboard-page">
-        <main class="dashboard-content scroll-fade">
-            <div class="dashboard-block">
-                <h2>📢 Community Calendar (May 2026)</h2>
-                <div class="calendar-container">
-                    <div class="calendar-grid">
-                        <div class="cal-header">SUN</div>
-                        <div class="cal-header">MON</div>
-                        <div class="cal-header">TUE</div>
-                        <div class="cal-header">WED</div>
-                        <div class="cal-header">THU</div>
-                        <div class="cal-header">FRI</div>
-                        <div class="cal-header">SAT</div>
-                        
-                        <div class="cal-day"></div>
-                        <div class="cal-day"></div>
-                        <div class="cal-day"></div>
-                        <div class="cal-day"></div>
-                        <div class="cal-day"></div>
-                        <div class="cal-day">1</div>
-                        <div class="cal-day">2<br><span class="event-mark">Water</span></div>
-
-                        <div class="cal-day">3</div>
-                        <div class="cal-day">4<br><span class="event-mark">Senior</span></div>
-                        <div class="cal-day">5<br><span class="event-mark">Health</span></div>
-                        <div class="cal-day">6</div>
-                        <div class="cal-day">7</div>
-                        <div class="cal-day">8</div>
-                        <div class="cal-day">9</div>
-
-                        <div class="cal-day">10<br><span class="event-mark">Feeding</span></div>
-                        <div class="cal-day">11<br><span class="event-mark">Clean</span></div>
-                        <div class="cal-day">12<br><span class="event-mark">Sports</span></div>
-                        <div class="cal-day">13</div>
-                        <div class="cal-day">14</div>
-                        <div class="cal-day">15</div>
-                        <div class="cal-day">16</div>
-
-                        <div class="cal-day">17<br><span class="event-mark">Council</span></div>
-                        <div class="cal-day">18<br><span class="event-mark">Tree</span></div>
-                        <div class="cal-day">19</div>
-                        <div class="cal-day">20</div>
-                        <div class="cal-day">21<br><span class="event-mark">Music</span></div>
-                        <div class="cal-day">22<br><span class="event-mark">Nutri</span></div>
-                        <div class="cal-day">23</div>
-
-                        <div class="cal-day">24</div>
-                        <div class="cal-day">25<br><span class="event-mark">Zumba</span></div>
-                        <div class="cal-day">26</div>
-                        <div class="cal-day">27</div>
-                        <div class="cal-day">28</div>
-                        <div class="cal-day">29</div>
-                        <div class="cal-day">30</div>
-
-                        <div class="cal-day">31<br><span class="event-mark">Drill</span></div>
-                        <div class="cal-day"></div>
-                        <div class="cal-day"></div>
-                        <div class="cal-day"></div>
-                        <div class="cal-day"></div>
-                        <div class="cal-day"></div>
-                        <div class="cal-day"></div>
-                    </div>
-
-                    <div class="announcement-sidebar">
-                        <h4>Upcoming Events</h4>
-                        <p><strong>May 2:</strong> Water Main Maintenance (8:00 AM – 5:00 PM)</p>
-                        <p><strong>May 4:</strong> Senior Citizens Assembly (9:00 AM – 12:00 PM)</p>
-                        <p><strong>May 5:</strong> Free Health Check-up @ Center</p>
-                        <p><strong>May 10:</strong> Community Feeding Program (9:00 AM – 12:00 PM)</p>
-                        <p><strong>May 11:</strong> Community Clean-up Drive</p>
-                        <p><strong>May 12:</strong> Inter-Purok Sports Festival</p>
-                        <p><strong>May 17:</strong> Barangay Council Meeting (3:00 PM – 5:00 PM)</p>
-                        <p><strong>May 18:</strong> Tree Planting Activity (7:00 AM – 10:00 AM)</p>
-                        <p><strong>May 21:</strong> SK Music and Dance Night (6:00 PM – 10:00 PM)</p>
-                        <p><strong>May 22:</strong> Nutrition Month Preparation Program (9:00 AM – 11:00 AM)</p>
-                        <p><strong>May 25:</strong> Free Zumba and Wellness Activity (5:00 AM – 7:00 AM)</p>
-                        <p><strong>May 31:</strong> Disaster Preparedness Drill (8:00 AM – 12:00 PM)</p>
-                    </div>
+        <!-- Stats -->
+        <div class="stats-band scroll-fade" aria-label="Community Statistics">
+            <div class="stats-inner">
+                <div class="stat-item">
+                    <div class="stat-number" data-target="5420">5,420</div>
+                    <div class="stat-label">Population</div>
+                </div>
+                <div class="stat-divider" aria-hidden="true"></div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="1205">1,205</div>
+                    <div class="stat-label">Households</div>
+                </div>
+                <div class="stat-divider" aria-hidden="true"></div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="6">6</div>
+                    <div class="stat-label">Puroks</div>
                 </div>
             </div>
-                        <!-- NEWS & UPDATES SLIDESHOW MODULE -->
-            <section class="news-updates-section scroll-fade">
+            <p class="stats-disclaimer">* Data based on the latest official local community census and demographic surveys. Figures are updated periodically to ensure accurate resource allocation and public service mapping.</p>
+        </div>
+    </article>
+
+    <!-- ===== PAGE: ANNOUNCEMENTS ===== -->
+    <div id="announcements" class="page-section dashboard-page">
+        <main class="dashboard-content">
+            <div class="page-header scroll-fade">
+                <div class="section-label">Stay Informed</div>
+                <h1 class="page-title">Announcements</h1>
+            </div>
+
+            <div class="dashboard-block scroll-fade">
+                <h2 class="block-title"><span class="block-icon" aria-hidden="true">📅</span> Community Calendar — May 2026</h2>
+                <div class="calendar-container">
+                    <div class="calendar-wrap">
+                        <div class="calendar-grid">
+                            <div class="cal-header">SUN</div>
+                            <div class="cal-header">MON</div>
+                            <div class="cal-header">TUE</div>
+                            <div class="cal-header">WED</div>
+                            <div class="cal-header">THU</div>
+                            <div class="cal-header">FRI</div>
+                            <div class="cal-header">SAT</div>
+
+                            <div class="cal-day empty"></div>
+                            <div class="cal-day empty"></div>
+                            <div class="cal-day empty"></div>
+                            <div class="cal-day empty"></div>
+                            <div class="cal-day empty"></div>
+                            <div class="cal-day"><span class="cal-num">1</span></div>
+                            <div class="cal-day has-event"><span class="cal-num">2</span><span class="event-mark">Water</span></div>
+
+                            <div class="cal-day"><span class="cal-num">3</span></div>
+                            <div class="cal-day has-event"><span class="cal-num">4</span><span class="event-mark">Senior</span></div>
+                            <div class="cal-day has-event"><span class="cal-num">5</span><span class="event-mark">Health</span></div>
+                            <div class="cal-day"><span class="cal-num">6</span></div>
+                            <div class="cal-day"><span class="cal-num">7</span></div>
+                            <div class="cal-day"><span class="cal-num">8</span></div>
+                            <div class="cal-day"><span class="cal-num">9</span></div>
+
+                            <div class="cal-day has-event"><span class="cal-num">10</span><span class="event-mark">Feeding</span></div>
+                            <div class="cal-day has-event"><span class="cal-num">11</span><span class="event-mark">Clean</span></div>
+                            <div class="cal-day has-event"><span class="cal-num">12</span><span class="event-mark">Sports</span></div>
+                            <div class="cal-day"><span class="cal-num">13</span></div>
+                            <div class="cal-day"><span class="cal-num">14</span></div>
+                            <div class="cal-day"><span class="cal-num">15</span></div>
+                            <div class="cal-day"><span class="cal-num">16</span></div>
+
+                            <div class="cal-day has-event"><span class="cal-num">17</span><span class="event-mark">Council</span></div>
+                            <div class="cal-day has-event"><span class="cal-num">18</span><span class="event-mark">Tree</span></div>
+                            <div class="cal-day"><span class="cal-num">19</span></div>
+                            <div class="cal-day"><span class="cal-num">20</span></div>
+                            <div class="cal-day has-event"><span class="cal-num">21</span><span class="event-mark">Music</span></div>
+                            <div class="cal-day has-event"><span class="cal-num">22</span><span class="event-mark">Nutri</span></div>
+                            <div class="cal-day today"><span class="cal-num">23</span></div>
+
+                            <div class="cal-day"><span class="cal-num">24</span></div>
+                            <div class="cal-day has-event"><span class="cal-num">25</span><span class="event-mark">Zumba</span></div>
+                            <div class="cal-day"><span class="cal-num">26</span></div>
+                            <div class="cal-day"><span class="cal-num">27</span></div>
+                            <div class="cal-day"><span class="cal-num">28</span></div>
+                            <div class="cal-day"><span class="cal-num">29</span></div>
+                            <div class="cal-day"><span class="cal-num">30</span></div>
+
+                            <div class="cal-day has-event"><span class="cal-num">31</span><span class="event-mark">Drill</span></div>
+                            <div class="cal-day empty"></div>
+                            <div class="cal-day empty"></div>
+                            <div class="cal-day empty"></div>
+                            <div class="cal-day empty"></div>
+                            <div class="cal-day empty"></div>
+                            <div class="cal-day empty"></div>
+                        </div>
+                    </div>
+
+                    <aside class="announcement-sidebar" aria-label="Upcoming Events">
+                        <h4>📌 Upcoming Events</h4>
+                        <ul class="event-list">
+                            <li><strong>May 2:</strong> Water Main Maintenance (8:00 AM – 5:00 PM)</li>
+                            <li><strong>May 4:</strong> Senior Citizens Assembly (9:00 AM – 12:00 PM)</li>
+                            <li><strong>May 5:</strong> Free Health Check-up @ Center</li>
+                            <li><strong>May 10:</strong> Community Feeding Program (9:00 AM – 12:00 PM)</li>
+                            <li><strong>May 11:</strong> Community Clean-up Drive</li>
+                            <li><strong>May 12:</strong> Inter-Purok Sports Festival</li>
+                            <li><strong>May 17:</strong> Barangay Council Meeting (3:00 PM – 5:00 PM)</li>
+                            <li><strong>May 18:</strong> Tree Planting Activity (7:00 AM – 10:00 AM)</li>
+                            <li><strong>May 21:</strong> SK Music and Dance Night (6:00 PM – 10:00 PM)</li>
+                            <li><strong>May 22:</strong> Nutrition Month Preparation Program (9:00 AM – 11:00 AM)</li>
+                            <li><strong>May 25:</strong> Free Zumba and Wellness Activity (5:00 AM – 7:00 AM)</li>
+                            <li><strong>May 31:</strong> Disaster Preparedness Drill (8:00 AM – 12:00 PM)</li>
+                        </ul>
+                    </aside>
+                </div>
+            </div>
+
+            <!-- News & Updates Slideshow -->
+            <section class="news-section scroll-fade" aria-label="News and Updates">
                 <div class="dashboard-block">
-                    <h2 class="main-title">📰 News & Updates</h2>
-                    <p class="news-subtitle">Latest local government alerts and announcements directly from Bacoor City</p>
-                    
-                    <div class="slideshow-container">
-                        <!-- Slide 1 -->
+                    <h2 class="block-title"><span class="block-icon" aria-hidden="true">📰</span> News &amp; Updates</h2>
+                    <p class="news-subtitle">Latest alerts and announcements from Bacoor City Government</p>
+
+                    <div class="slideshow-container" role="region" aria-label="News slideshow" aria-live="polite">
                         <div class="news-slide fade">
                             <div class="slide-content">
                                 <span class="news-tag announcement">Announcement</span>
-                                <h3>ICYMI: Crafting the City of Bacoor Cooperative Development Plan: Adopting the Philippines Cooperative Plan 2025-2026</h3>
-                                <p class="justified-text">The City Government of Bacoor formally moves forward with organizing localized strategic guidelines designed to boost community cooperatives, maximize financial sustainability, and integrate local progress blueprints with nationwide micro-economic goals.</p>
-                                <img src="Images/news&updates/ICYMI_Crafting the City of Bacoor Cooperative Development Plan_Adopting the Philippines Cooperative Plan_2025-2026.jpg" width="50%" height="50%" alt="Community Update 1" class="slideshow-img"><br>
-                                <a href="https://bacoor.gov.ph/latest-news/68943/" target="_blank" class="news-readmore-btn">Read Official Report →</a>
+                                <h3>ICYMI: Crafting the City of Bacoor Cooperative Development Plan: Adopting the Philippines Cooperative Plan 2025–2026</h3>
+                                <p>The City Government of Bacoor formally moves forward with organizing localized strategic guidelines designed to boost community cooperatives, maximize financial sustainability, and integrate local progress blueprints with nationwide micro-economic goals.</p>
+                                <div class="slide-img-wrap">
+                                    <img src="Images/news&updates/ICYMI_Crafting the City of Bacoor Cooperative Development Plan_Adopting the Philippines Cooperative Plan_2025-2026.jpg" alt="Bacoor Cooperative Development Plan" class="slideshow-img">
+                                </div>
+                                <a href="https://bacoor.gov.ph/latest-news/68943/" target="_blank" rel="noopener noreferrer" class="news-readmore-btn">Read Official Report →</a>
                             </div>
                         </div>
 
-                        <!-- Slide 2 -->
                         <div class="news-slide fade">
                             <div class="slide-content">
                                 <span class="news-tag business">Career Opportunities</span>
                                 <h3>Pre-Independence Day Job Fair 2026</h3>
-                                <p class="justified-text">Local residents looking for new employment pathways are invited to participate in the upcoming career assembly. Multiple corporate and local business sectors will hold open desks for direct on-site processing and career placements.</p>
-                                <img src="Images/news&updates/Pre-Independence Day Job Fair 2026.jpg" width="50%" height="50%" alt="Community Update 2" class="slideshow-img"><br>
-                                <a href="https://bacoor.gov.ph/announcement/pre-independence-day-job-fair-2026/" target="_blank" class="news-readmore-btn">Read Official Report →</a>
+                                <p>Local residents looking for new employment pathways are invited to participate in the upcoming career assembly. Multiple corporate and local business sectors will hold open desks for direct on-site processing and career placements.</p>
+                                <div class="slide-img-wrap">
+                                    <img src="Images/news&updates/Pre-Independence Day Job Fair 2026.jpg" alt="Pre-Independence Day Job Fair 2026" class="slideshow-img">
+                                </div>
+                                <a href="https://bacoor.gov.ph/announcement/pre-independence-day-job-fair-2026/" target="_blank" rel="noopener noreferrer" class="news-readmore-btn">Read Official Report →</a>
                             </div>
                         </div>
 
-                        <!-- Slide 3 -->
                         <div class="news-slide fade">
                             <div class="slide-content">
-                                <span class="news-tag traffic">Weather Alert</span>
-                                <h3>Heat Index reached 43 degrees celsius in Bacoor City</h3>
-                                <p class="justified-text">Public warning advisories are active as severe localized heat values surge across residential areas. Everyone is strongly encouraged to limit outdoor exposure, secure regular hydration, and implement necessary safety protocols against extreme temperatures.</p>
-                                <img src="Images/news&updates/Heat Index reached 43 degrees celsius in Bacoor City.jpg" width="50%" height="50%" alt="Community Update 3" class="slideshow-img"><br>
-                                <a href="https://bacoor.gov.ph/announcement/heat-index-reached-43-degrees-celsius-in-bacoor-city/" target="_blank" class="news-readmore-btn">Read Official Report →</a>
+                                <span class="news-tag alert">Weather Alert</span>
+                                <h3>Heat Index Reached 43°C in Bacoor City</h3>
+                                <p>Public warning advisories are active as severe localized heat values surge across residential areas. Everyone is strongly encouraged to limit outdoor exposure, secure regular hydration, and implement necessary safety protocols against extreme temperatures.</p>
+                                <div class="slide-img-wrap">
+                                    <img src="Images/news&updates/Heat Index reached 43 degrees celsius in Bacoor City.jpg" alt="Heat Index Warning Bacoor City" class="slideshow-img">
+                                </div>
+                                <a href="https://bacoor.gov.ph/announcement/heat-index-reached-43-degrees-celsius-in-bacoor-city/" target="_blank" rel="noopener noreferrer" class="news-readmore-btn">Read Official Report →</a>
                             </div>
                         </div>
 
-                        <!-- Navigation Arrows -->
-                        <a class="slide-prev" onclick="moveSlides(-1)">&#10094;</a>
-                        <a class="slide-next" onclick="moveSlides(1)">&#10095;</a>
+                        <button class="slide-prev" onclick="moveSlides(-1)" aria-label="Previous slide">&#10094;</button>
+                        <button class="slide-next" onclick="moveSlides(1)" aria-label="Next slide">&#10095;</button>
 
-                        <!-- Dot Indicators -->
-                        <div class="slideshow-dots-container">
-                            <span class="slide-dot" onclick="setCurrentSlide(1)"></span>
-                            <span class="slide-dot" onclick="setCurrentSlide(2)"></span>
-                            <span class="slide-dot" onclick="setCurrentSlide(3)"></span>
+                        <div class="slideshow-dots-container" role="tablist" aria-label="Slide indicators">
+                            <button class="slide-dot" onclick="setCurrentSlide(1)" role="tab" aria-label="Slide 1"></button>
+                            <button class="slide-dot" onclick="setCurrentSlide(2)" role="tab" aria-label="Slide 2"></button>
+                            <button class="slide-dot" onclick="setCurrentSlide(3)" role="tab" aria-label="Slide 3"></button>
                         </div>
                     </div>
 
-                    <!-- Main Portal Link Hub -->
-                    <div style="text-align: center; margin-top: 25px;">
-                        <a href="https://bacoor.gov.ph/category/latest-news/" target="_blank" class="news-readmore-btn" style="display: inline-block; padding: 10px 24px; font-weight: bold;">
-                            🌐 View All Bacoor City News & Announcements
+                    <div class="news-portal-link">
+                        <a href="https://bacoor.gov.ph/category/latest-news/" target="_blank" rel="noopener noreferrer" class="portal-btn">
+                            🌐 View All Bacoor City News &amp; Announcements
                         </a>
                     </div>
                 </div>
@@ -307,24 +396,55 @@
         </main>
     </div>
 
+    <!-- ===== PAGE: SAFETY / PREPAREDNESS ===== -->
     <div id="safety" class="page-section dashboard-page">
         <main class="dashboard-content">
-            <div class="dashboard-block scroll-fade">
-                <h2>🛡️ Safety & Disaster Readiness</h2>
-                <div class="step-item"><div><h4>⛈️ Typhoons</h4><p class="justified-text">Prepare Go-Bags. Evacuate to Covered Court if river hits Yellow Marker.</p></div></div>
-                <div class="step-item"><div><h4>🫨 Earthquakes</h4><p class="justified-text">Drop, Cover, Hold. Exit to Plaza open field immediately after shaking.</p></div></div>
+            <div class="page-header scroll-fade">
+                <div class="section-label">Community Safety</div>
+                <h1 class="page-title">Safety &amp; Preparedness</h1>
             </div>
+
             <div class="dashboard-block scroll-fade">
-                <h3>📡 Real-Time Environmental Monitoring</h3>
-                <p style="margin-bottom: 20px;" class="justified-text">Stay updated with live weather patterns, wind speeds, and active typhoon tracks directly affecting Bacoor City and the surrounding Calabarzon region.</p>
-                
+                <h2 class="block-title"><span class="block-icon" aria-hidden="true">🛡️</span> Disaster Readiness Guide</h2>
+                <div class="safety-cards">
+                    <div class="safety-card">
+                        <div class="safety-icon" aria-hidden="true">⛈️</div>
+                        <div class="safety-content">
+                            <h4>Typhoon Protocol</h4>
+                            <p>Prepare Go-Bags with essentials. Evacuate to the Covered Court if the river reaches the Yellow Marker. Tune in to official weather advisories.</p>
+                        </div>
+                    </div>
+                    <div class="safety-card">
+                        <div class="safety-icon" aria-hidden="true">🫨</div>
+                        <div class="safety-content">
+                            <h4>Earthquake Protocol</h4>
+                            <p>Drop, Cover, and Hold On. After shaking stops, immediately exit to the Plaza open field and await further instructions from barangay officials.</p>
+                        </div>
+                    </div>
+                    <div class="safety-card">
+                        <div class="safety-icon" aria-hidden="true">🔥</div>
+                        <div class="safety-content">
+                            <h4>Fire Emergency</h4>
+                            <p>Alert neighbors and call BFP immediately. Evacuate calmly using designated exit routes. Do not use elevators. Assemble at designated gathering point.</p>
+                        </div>
+                    </div>
+                    <div class="safety-card">
+                        <div class="safety-icon" aria-hidden="true">🌊</div>
+                        <div class="safety-content">
+                            <h4>Flood Warning</h4>
+                            <p>Move to higher ground immediately. Avoid walking through floodwater. Unplug electrical appliances. Contact the barangay hotline for rescue assistance.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-block scroll-fade">
+                <h2 class="block-title"><span class="block-icon" aria-hidden="true">📡</span> Real-Time Environmental Monitoring</h2>
+                <p class="block-description">Stay updated with live weather patterns, wind speeds, and active typhoon tracks directly affecting Bacoor City and the surrounding Calabarzon region.</p>
                 <div class="map-responsive">
                     <iframe 
                         src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=11&overlay=satellite&product=satellite&level=surface&lat=14.457&lon=120.93&detailLat=14.459&detailLon=120.94&marker=true"
-                        frameborder="0"
-                        width="400"
-                        height="300"
-                        style="border:0;"
+                        title="Live Weather Map — Bacoor City"
                         allowfullscreen=""
                         loading="lazy">
                     </iframe>
@@ -333,57 +453,183 @@
         </main>
     </div>
 
+    <!-- ===== PAGE: SERVICES ===== -->
     <div id="services" class="page-section dashboard-page">
         <main class="dashboard-content">
-            <div class="dashboard-block scroll-fade">
-                <h2>📄 Document Application Guide</h2>
-                <div class="step-item"><div><h4>Step 1: Requirements</h4><p class="justified-text">Bring valid ID and recent Cedula.</p></div></div>
-                <div class="step-item"><div><h4>Step 2: Payment</h4><p class="justified-text">Pay processing fees at the Treasurer's window.</p></div></div>
+            <div class="page-header scroll-fade">
+                <div class="section-label">Citizen Services</div>
+                <h1 class="page-title">Barangay Services</h1>
             </div>
-            
-            <form id="services-form" class="dashboard-block scroll-fade">
-                <h2>📞 Contact Us</h2>
-                <div class="fill-step-item">
-                    <label for="firstname">First Name:</label>
-                    <input type="text" id="firstname" placeholder="Enter your First Name" required>
-                    
-                    <label for="lastname">Last Name:</label>
-                    <input type="text" id="lastname" placeholder="Enter your Last Name" required>
-                    
-                    <label for="Mobile">Mobile Number:</label>
-                    <input type="tel" id="Mobile" placeholder="Enter your Mobile Number" required>
-                    
-                    <label for="Email">Email Address:</label>
-                    <input type="email" id="Email" placeholder="Enter your Email Address" required>
-                    
-                    <label for="concern-box">Concern:</label>
-                    <textarea id="concern-box" class="comment" placeholder="Tell us about your concern..." required></textarea>
+
+            <div class="dashboard-block scroll-fade">
+                <h2 class="block-title"><span class="block-icon" aria-hidden="true">📄</span> Document Application Guide</h2>
+                <div class="steps-list">
+                    <div class="step-item">
+                        <div class="step-number" aria-hidden="true">01</div>
+                        <div class="step-body">
+                            <h4>Prepare Requirements</h4>
+                            <p>Bring a valid government-issued ID and your current year's Community Tax Certificate (Cedula) before visiting the barangay hall.</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number" aria-hidden="true">02</div>
+                        <div class="step-body">
+                            <h4>Payment of Fees</h4>
+                            <p>Proceed to the Treasurer's window to pay the applicable processing fees for your requested document.</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number" aria-hidden="true">03</div>
+                        <div class="step-body">
+                            <h4>Document Processing</h4>
+                            <p>Submit your requirements and official receipt at the Records Section. Processing typically takes 15–30 minutes during regular hours.</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number" aria-hidden="true">04</div>
+                        <div class="step-body">
+                            <h4>Release &amp; Signing</h4>
+                            <p>Claim your signed document from the releasing window. Ensure all details are correct before leaving the premises.</p>
+                        </div>
+                    </div>
                 </div>
-                <button class="btn" type="submit">Submit</button>
-            </form>
+            </div>
+
+            <div class="dashboard-block scroll-fade" id="services-form-container">
+                <h2 class="block-title"><span class="block-icon" aria-hidden="true">📞</span> Contact &amp; Concerns</h2>
+                <p class="block-description">Have a concern or inquiry? Fill out the form below and a barangay representative will get back to you.</p>
+                <form id="services-form" novalidate>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstname">First Name <span class="required" aria-hidden="true">*</span></label>
+                            <input type="text" id="firstname" name="firstname" placeholder="Juan" required autocomplete="given-name">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname">Last Name <span class="required" aria-hidden="true">*</span></label>
+                            <input type="text" id="lastname" name="lastname" placeholder="dela Cruz" required autocomplete="family-name">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="Mobile">Mobile Number <span class="required" aria-hidden="true">*</span></label>
+                            <input type="tel" id="Mobile" name="mobile" placeholder="09XX-XXX-XXXX" required autocomplete="tel">
+                        </div>
+                        <div class="form-group">
+                            <label for="Email">Email Address <span class="required" aria-hidden="true">*</span></label>
+                            <input type="email" id="Email" name="email" placeholder="juan@example.com" required autocomplete="email">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="concern-box">Your Concern <span class="required" aria-hidden="true">*</span></label>
+                        <textarea id="concern-box" name="concern" placeholder="Please describe your concern or inquiry in detail..." required></textarea>
+                    </div>
+                    <button class="submit-btn" type="submit">
+                        <span>Submit Concern</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    </button>
+                </form>
+            </div>
         </main>
     </div>
 
+    <!-- ===== PAGE: OFFICIALS ===== -->
     <div id="officials" class="page-section dashboard-page">
         <main class="dashboard-content">
+            <div class="page-header scroll-fade">
+                <div class="section-label">Leadership</div>
+                <h1 class="page-title">Barangay Council</h1>
+            </div>
+
             <div class="dashboard-block scroll-fade">
-                <h2>⚖️ Barangay Council</h2>
-                <div class="official-resume"><img class="official-image" src="Images/Officials/Padellon.jpg" ><div class="resume-text"><h3>Hon. Jerald J. Padellon</h3><span class="role">Barangay Captain</span><p class="justified-text">Serves as the chief executive officer of the community, responsible for implementing local laws, maintaining public order, and leading the overall administration of the barangay.</p></div></div>
-                <div class="official-resume"><img class="official-image" src="Images/Officials/Quimpano.jpg" ><div class="resume-text"><h3>Hon. Christian Mark B. Quimpano</h3><span class="role">Barangay Kagawad</span><p class="justified-text">Acts as a legislative member of the council, focusing on creating local ordinances and heading specific committees such as health, education, or infrastructure.</p></div></div>
-                <div class="official-resume"><img class="official-image" src="Images/Officials/Javinez.jpg" ><div class="resume-text"><h3>Hon. Princess Angel T. Javinez</h3><span class="role">SK Chairperson</span><p class="justified-text">Leads the youth council and manages community programs specifically designed to promote the social, cultural, and physical development of young residents.</p></div></div>
-                <div class="official-resume"><img class="official-image" src="Images/Officials/Alao.jpg" ><div class="resume-text"><h3>Hon. Mae B. Alao</h3><span class="role">Barangay Secretary</span><p class="justified-text">Handles the official records of the community, prepares meeting minutes, and manages the documentation needed for certificates and clearances.</p></div></div>
-                <div class="official-resume"><img class="official-image" src="Images/Officials/Fortuna.jpeg" ><div class="resume-text"><h3>Hon. Eddieson H. Fortuna</h3><span class="role">Barangay Treasurer</span><p class="justified-text">Manages the barangay’s budget and finances, including the collection of fees and the proper disbursement of funds for community projects.</p></div></div>
+                <h2 class="block-title"><span class="block-icon" aria-hidden="true">⚖️</span> Elected Officials</h2>
+                <div class="officials-list">
+                    <div class="official-card">
+                        <div class="official-img-wrap">
+                            <img src="Images/Officials/Padellon.jpg" alt="Hon. Jerald J. Padellon" class="official-image" loading="lazy">
+                        </div>
+                        <div class="official-info">
+                            <span class="official-role">Barangay Captain</span>
+                            <h3>Hon. Jerald J. Padellon</h3>
+                            <p>Serves as the chief executive officer of the community, responsible for implementing local laws, maintaining public order, and leading the overall administration of the barangay.</p>
+                        </div>
+                    </div>
+                    <div class="official-card">
+                        <div class="official-img-wrap">
+                            <img src="Images/Officials/Quimpano.jpg" alt="Hon. Christian Mark B. Quimpano" class="official-image" loading="lazy">
+                        </div>
+                        <div class="official-info">
+                            <span class="official-role">Barangay Kagawad</span>
+                            <h3>Hon. Christian Mark B. Quimpano</h3>
+                            <p>Acts as a legislative member of the council, focusing on creating local ordinances and heading specific committees such as health, education, or infrastructure.</p>
+                        </div>
+                    </div>
+                    <div class="official-card">
+                        <div class="official-img-wrap">
+                            <img src="Images/Officials/Javinez.jpg" alt="Hon. Princess Angel T. Javinez" class="official-image" loading="lazy">
+                        </div>
+                        <div class="official-info">
+                            <span class="official-role">SK Chairperson</span>
+                            <h3>Hon. Princess Angel T. Javinez</h3>
+                            <p>Leads the youth council and manages community programs specifically designed to promote the social, cultural, and physical development of young residents.</p>
+                        </div>
+                    </div>
+                    <div class="official-card">
+                        <div class="official-img-wrap">
+                            <img src="Images/Officials/Alao.jpg" alt="Hon. Mae B. Alao" class="official-image" loading="lazy">
+                        </div>
+                        <div class="official-info">
+                            <span class="official-role">Barangay Secretary</span>
+                            <h3>Hon. Mae B. Alao</h3>
+                            <p>Handles the official records of the community, prepares meeting minutes, and manages the documentation needed for certificates and clearances.</p>
+                        </div>
+                    </div>
+                    <div class="official-card">
+                        <div class="official-img-wrap">
+                            <img src="Images/Officials/Fortuna.jpeg" alt="Hon. Eddieson H. Fortuna" class="official-image" loading="lazy">
+                        </div>
+                        <div class="official-info">
+                            <span class="official-role">Barangay Treasurer</span>
+                            <h3>Hon. Eddieson H. Fortuna</h3>
+                            <p>Manages the barangay's budget and finances, including the collection of fees and the proper disbursement of funds for community projects.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
 
-    <footer class="main-footer">
-        <div class="footer-container">
-            <div class="footer-column"><h3>Contact</h3><p>📞 (02) 8888-1234<br>📧 info@brgycinco.gov.ph</p></div>
-            <div class="footer-column"><h3>Office</h3><p>Mon-Fri | 8AM-5PM</p></div>
-            <div class="footer-column"><h3>Socials</h3><p>FB: /BarangayCincoOfficial</p></div>
+    <!-- FOOTER -->
+    <footer class="main-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="footer-seal" aria-hidden="true">🏛</div>
+                <div>
+                    <div class="footer-title">Barangay CINCO</div>
+                    <div class="footer-tagline">Official Community Portal</div>
+                </div>
+            </div>
+            <div class="footer-cols">
+                <div class="footer-col">
+                    <h3>Contact</h3>
+                    <p>📞 (02) 8888-1234</p>
+                    <p>📧 info@brgycinco.gov.ph</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Office Hours</h3>
+                    <p>Monday – Friday</p>
+                    <p>8:00 AM – 5:00 PM</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Follow Us</h3>
+                    <p>📘 /BarangayCincoOfficial</p>
+                </div>
+            </div>
         </div>
-        <div class="footer-bottom"><p>© 2026 Barangay CINCO Official Portal.</p></div>
+        <div class="footer-bottom">
+            <p>© 2026 Barangay CINCO Official Portal. All rights reserved.</p>
+        </div>
     </footer>
+
+    <script src="javascript.js" defer></script>
 </body>
 </html>
