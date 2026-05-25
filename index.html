@@ -8,17 +8,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-
-    <!-- =====================================================
-         RECAPTCHA v2 — Replace YOUR_SITE_KEY with actual key
-         Get keys at: https://www.google.com/recaptcha/admin
-    ====================================================== -->
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <!-- reCAPTCHA v2 -->
+    <script src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit" async defer></script>
 </head>
 <body>
 
-    <!-- HEADER WRAPPER -->
+    <!-- ===== FLOATING HEADER WRAPPER ===== -->
     <div class="header-wrapper" id="headerWrapper">
+        <!-- Announcement Ticker -->
         <div class="announcement-bar" aria-label="Community Notices">
             <div class="marquee-track">
                 <span class="marquee-content">
@@ -30,6 +27,7 @@
             </div>
         </div>
 
+        <!-- Modern Floating Navbar -->
         <nav class="navbar" role="navigation" aria-label="Main Navigation">
             <div class="nav-brand">
                 <div class="nav-seal" aria-hidden="true">🏛</div>
@@ -46,27 +44,23 @@
             </button>
 
             <div class="nav-links" id="navLinks" role="menubar">
-                <button id="link-history" role="menuitem" onclick="showPage('history')" aria-current="page">About Us</button>
+                <button id="link-history"       role="menuitem" onclick="showPage('history')">About Us</button>
                 <button id="link-announcements" role="menuitem" onclick="showPage('announcements')">Announcements</button>
-                <button id="link-safety" role="menuitem" onclick="showPage('safety')">Preparedness</button>
-                <div class="nav-dropdown" id="servicesDropdown">
-                    <button id="link-services" role="menuitem" onclick="showPage('services')" class="nav-dropdown-trigger">Services ▾</button>
-                    <div class="nav-dropdown-menu" id="servicesMenu">
-                        <button onclick="showPage('services'); scrollToSection('request-documents-section')" class="dropdown-item">📄 Request Documents</button>
-                        <button onclick="showPage('services'); scrollToSection('schedule-appointment-section')" class="dropdown-item">📅 Schedule Appointment</button>
-                    </div>
-                </div>
-                <button id="link-officials" role="menuitem" onclick="showPage('officials')">Officials</button>
+                <button id="link-faq"           role="menuitem" onclick="showPage('faq')">FAQ</button>
+                <button id="link-safety"        role="menuitem" onclick="showPage('safety')">Preparedness</button>
+                <!-- Services: click only, no hover dropdown -->
+                <button id="link-services"      role="menuitem" onclick="showPage('services')">Services</button>
+                <button id="link-officials"     role="menuitem" onclick="showPage('officials')">Officials</button>
                 <button id="theme-toggle" class="theme-switch-btn" aria-label="Toggle dark mode">🌙 Dark Mode</button>
             </div>
         </nav>
     </div>
 
-    <!-- SUCCESS MODAL — Contact Form -->
+    <!-- ===== SUCCESS MODAL — Contact Form ===== -->
     <div id="submissionModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
         <div class="modal-box">
             <div class="modal-icon-wrap" aria-hidden="true">
-                <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
                     <circle cx="28" cy="28" r="28" fill="#1b5e20" opacity="0.1"/>
                     <circle cx="28" cy="28" r="22" fill="#2e7d32" opacity="0.15"/>
                     <path d="M18 28L24 34L38 20" stroke="#1b5e20" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
@@ -78,7 +72,7 @@
         </div>
     </div>
 
-    <!-- SUCCESS MODAL — Appointment -->
+    <!-- ===== SUCCESS MODAL — Appointment ===== -->
     <div id="appointmentModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="apptModalTitle" aria-hidden="true">
         <div class="modal-box">
             <div class="modal-icon-wrap" aria-hidden="true">
@@ -93,12 +87,13 @@
                 </svg>
             </div>
             <h3 id="apptModalTitle" style="color:#0277bd;">Appointment Scheduled!</h3>
-            <p>Your appointment request has been received. We will confirm your schedule via SMS or email. Please arrive 10 minutes before your scheduled time.</p>
+            <p id="apptModalBody">Your appointment request has been received. We will confirm your schedule via SMS or email. Please arrive 10 minutes before your scheduled time.</p>
+            <div id="apptTrackingNumber" class="tracking-number-display" style="display:none;"></div>
             <button class="modal-close-btn" style="background:#0277bd;" onclick="closeAppointmentModal()">Got it, thank you</button>
         </div>
     </div>
 
-    <!-- DOC REQUEST MODAL -->
+    <!-- ===== DOC REQUEST MODAL ===== -->
     <div id="docRequestModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="docModalTitle" aria-hidden="true">
         <div class="modal-box modal-box--doc">
             <div class="modal-icon-wrap" aria-hidden="true">
@@ -112,12 +107,29 @@
                 </svg>
             </div>
             <h3 id="docModalTitle" class="doc-modal-title"></h3>
-            <p id="docModalBody" class="doc-modal-body"></p>
+            <div id="docModalBody" class="doc-modal-body"></div>
             <button class="modal-close-btn modal-close-btn--maroon" onclick="closeDocModal()">Close</button>
         </div>
     </div>
 
-    <!-- ===== PAGE: ABOUT / HISTORY ===== -->
+    <!-- ===== OFFICIAL DETAIL MODAL ===== -->
+    <div id="officialModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="officialModalTitle" aria-hidden="true">
+        <div class="modal-box modal-box--official">
+            <button class="modal-x-close" onclick="closeOfficialModal()" aria-label="Close">✕</button>
+            <div class="official-modal-img-wrap">
+                <img id="officialModalImg" src="" alt="" class="official-modal-img">
+            </div>
+            <div class="official-modal-content">
+                <span id="officialModalRole" class="official-modal-role"></span>
+                <h3 id="officialModalTitle"></h3>
+                <p id="officialModalDesc"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================
+         PAGE: ABOUT / HISTORY
+    ========================================================= -->
     <article id="history" class="page-section">
         <header class="hero-section scroll-fade">
             <div class="hero-image-container">
@@ -129,6 +141,38 @@
                 <p>A community built on compassion, integrity, and service</p>
             </div>
         </header>
+
+        <!-- ===== GLOBAL SEARCH BAR ===== -->
+        <div class="global-search-section scroll-fade" id="globalSearchSection">
+            <div class="search-bar-wrapper" role="search" aria-label="Search the entire portal">
+                <div class="search-input-wrap">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input
+                        type="search"
+                        id="globalSearchInput"
+                        class="global-search-input"
+                        placeholder="Search services, documents, officials, announcements…"
+                        autocomplete="off"
+                        aria-label="Search the portal"
+                        aria-autocomplete="list"
+                        aria-controls="searchSuggestions"
+                        aria-expanded="false"
+                    >
+                    <button class="search-clear-btn" id="searchClearBtn" aria-label="Clear search" style="display:none;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <!-- Live suggestion dropdown -->
+                <div class="search-suggestions" id="searchSuggestions" role="listbox" aria-label="Search suggestions" style="display:none;">
+                    <div id="searchSuggestionsInner"></div>
+                    <div class="search-no-results" id="searchNoResults" style="display:none;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <p>No results found. Try different keywords.</p>
+                    </div>
+                </div>
+            </div>
+            <p class="search-hint">Try: <button class="search-chip" onclick="doQuickSearch('clearance')">clearance</button> <button class="search-chip" onclick="doQuickSearch('appointment')">appointment</button> <button class="search-chip" onclick="doQuickSearch('hotline')">hotline</button> <button class="search-chip" onclick="doQuickSearch('officials')">officials</button> <button class="search-chip" onclick="doQuickSearch('permit')">permit</button></p>
+        </div>
 
         <div class="logo-overlap scroll-fade">
             <div class="logo-circle">
@@ -220,7 +264,7 @@
                 </div>
                 <p>Barangay CINCO is strategically located at the heart of <strong>Bacoor City, Cavite</strong>, providing residents with easy access to services.</p>
                 <div class="map-responsive">
-                    <iframe 
+                    <iframe
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3863.93104250858!2d120.9681719!3d14.4311375!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397d21386171d05%3A0xf7d5f7f358ed6d9d!2sBacoor%20City%20Hall!5e0!3m2!1sen!2sph!4v1779353247786!5m2!1sen!2sph"
                         title="Barangay CINCO Location Map"
                         allowfullscreen=""
@@ -271,7 +315,7 @@
             </section>
         </div>
 
-        <!-- Stats -->
+        <!-- Stats Band -->
         <div class="stats-band scroll-fade" aria-label="Community Statistics">
             <div class="stats-inner">
                 <div class="stat-item">
@@ -293,12 +337,82 @@
         </div>
     </article>
 
-    <!-- ===== PAGE: ANNOUNCEMENTS ===== -->
+    <!-- ========================================================
+         PAGE: ANNOUNCEMENTS
+    ========================================================= -->
     <div id="announcements" class="page-section dashboard-page">
         <main class="dashboard-content">
             <div class="page-header scroll-fade">
                 <div class="section-label">Stay Informed</div>
                 <h1 class="page-title">Announcements</h1>
+            </div>
+
+            <!-- News & Announcements Cards -->
+            <div class="dashboard-block scroll-fade">
+                <h2 class="block-title"><span class="block-icon" aria-hidden="true">📰</span> Latest News &amp; Notices</h2>
+                <p class="block-description">Stay up-to-date with official announcements, public notices, and news from Bacoor City and Barangay CINCO.</p>
+
+                <!-- Filter Bar -->
+                <div class="news-filter-bar" role="group" aria-label="Filter news by category">
+                    <button class="news-filter-btn active" data-filter="all" onclick="filterNews('all', this)">All</button>
+                    <button class="news-filter-btn" data-filter="announcement" onclick="filterNews('announcement', this)">📢 Announcements</button>
+                    <button class="news-filter-btn" data-filter="alert" onclick="filterNews('alert', this)">🚨 Alerts</button>
+                    <button class="news-filter-btn" data-filter="business" onclick="filterNews('business', this)">💼 Opportunities</button>
+                </div>
+
+                <!-- Slideshow for News -->
+                <div class="slideshow-container" role="region" aria-label="News slideshow">
+                    <div class="news-slide fade" data-category="announcement">
+                        <div class="slide-content">
+                            <span class="news-tag announcement">Announcement</span>
+                            <h3>ICYMI: Crafting the City of Bacoor Cooperative Development Plan: Adopting the Philippines Cooperative Plan 2025–2026</h3>
+                            <p>The City Government of Bacoor formally moves forward with organizing localized strategic guidelines designed to boost community cooperatives, maximize financial sustainability, and integrate local progress blueprints with nationwide micro-economic goals.</p>
+                            <div class="slide-img-wrap">
+                                <img src="Images/news&updates/ICYMI_Crafting the City of Bacoor Cooperative Development Plan_Adopting the Philippines Cooperative Plan_2025-2026.jpg" width="50%" height="50%" alt="Bacoor Cooperative Development Plan" class="slideshow-img">
+                            </div>
+                            <a href="https://bacoor.gov.ph/latest-news/68943/" target="_blank" rel="noopener noreferrer" class="news-readmore-btn">Read Official Report →</a>
+                        </div>
+                    </div>
+
+                    <div class="news-slide fade" data-category="business">
+                        <div class="slide-content">
+                            <span class="news-tag business">Career Opportunities</span>
+                            <h3>Pre-Independence Day Job Fair 2026</h3>
+                            <p>Local residents looking for new employment pathways are invited to participate in the upcoming career assembly. Multiple corporate and local business sectors will hold open desks for direct on-site processing and career placements.</p>
+                            <div class="slide-img-wrap">
+                                <img src="Images/news&updates/Pre-Independence Day Job Fair 2026.jpg" width="50%" height="50%" alt="Pre-Independence Day Job Fair 2026" class="slideshow-img">
+                            </div>
+                            <a href="https://bacoor.gov.ph/announcement/pre-independence-day-job-fair-2026/" target="_blank" rel="noopener noreferrer" class="news-readmore-btn">Read Official Report →</a>
+                        </div>
+                    </div>
+
+                    <div class="news-slide fade" data-category="alert">
+                        <div class="slide-content">
+                            <span class="news-tag alert">Weather Alert</span>
+                            <h3>Heat Index Reached 43°C in Bacoor City</h3>
+                            <p>Public warning advisories are active as severe localized heat values surge across residential areas. Everyone is strongly encouraged to limit outdoor exposure, secure regular hydration, and implement necessary safety protocols against extreme temperatures.</p>
+                            <div class="slide-img-wrap">
+                                <img src="Images/news&updates/Heat Index reached 43 degrees celsius in Bacoor City.jpg" alt="Heat Index Warning Bacoor City" class="slideshow-img">
+                            </div>
+                            <a href="https://bacoor.gov.ph/announcement/heat-index-reached-43-degrees-celsius-in-bacoor-city/" target="_blank" rel="noopener noreferrer" class="news-readmore-btn">Read Official Report →</a>
+                        </div>
+                    </div>
+
+                    <button class="slide-prev" onclick="moveSlides(-1)" aria-label="Previous slide">&#10094;</button>
+                    <button class="slide-next" onclick="moveSlides(1)" aria-label="Next slide">&#10095;</button>
+
+                    <div class="slideshow-dots-container" role="tablist" aria-label="Slide indicators">
+                        <button class="slide-dot" onclick="setCurrentSlide(1)" role="tab" aria-label="Slide 1"></button>
+                        <button class="slide-dot" onclick="setCurrentSlide(2)" role="tab" aria-label="Slide 2"></button>
+                        <button class="slide-dot" onclick="setCurrentSlide(3)" role="tab" aria-label="Slide 3"></button>
+                    </div>
+                </div>
+
+                <div class="news-portal-link">
+                    <a href="https://bacoor.gov.ph/category/latest-news/" target="_blank" rel="noopener noreferrer" class="portal-btn">
+                        🌐 View All Bacoor City News &amp; Announcements
+                    </a>
+                </div>
             </div>
 
             <!-- Upcoming Events -->
@@ -365,102 +479,175 @@
                     <div class="event-card">
                         <div class="event-date-badge"><span class="ev-month">MAY</span><span class="ev-day">18</span></div>
                         <div class="event-details">
-                            <span class="event-tag event-tag--green">Environment</span>
-                            <h4>Tree Planting Activity</h4>
-                            <p>7:00 AM – 10:00 AM · Community Park</p>
+                            <span class="event-tag event-tag--red">Education</span>
+                            <h4>Livelihood Training Workshop</h4>
+                            <p>9:00 AM – 3:00 PM · Barangay Hall</p>
                         </div>
                     </div>
-                    <div class="event-card">
-                        <div class="event-date-badge"><span class="ev-month">MAY</span><span class="ev-day">21</span></div>
-                        <div class="event-details">
-                            <span class="event-tag event-tag--purple">SK Youth</span>
-                            <h4>SK Music and Dance Night</h4>
-                            <p>6:00 PM – 10:00 PM · Covered Court</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ========================================================
+         PAGE: FAQ
+    ========================================================= -->
+    <div id="faq" class="page-section dashboard-page">
+        <main class="dashboard-content">
+            <div class="page-header scroll-fade">
+                <div class="section-label">Help Center</div>
+                <h1 class="page-title">Frequently Asked Questions</h1>
+                <p class="page-subtitle">Find quick answers to the most common questions from residents.</p>
+            </div>
+
+            <div class="dashboard-block scroll-fade">
+                <h2 class="block-title"><span class="block-icon" aria-hidden="true">📋</span> Documents &amp; Certificates</h2>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+                            <span>How do I get a Barangay Clearance?</span>
+                            <span class="faq-chevron" aria-hidden="true">▸</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Visit the Barangay Hall during office hours (Mon–Fri, 8:00 AM – 5:00 PM) and bring the following:</p>
+                            <ul>
+                                <li>One (1) valid government-issued ID with photo and address</li>
+                                <li>Community Tax Certificate (Cedula) — current year</li>
+                                <li>Duly accomplished request form (available at the hall)</li>
+                            </ul>
+                            <p>Processing takes approximately 15–30 minutes. The fee is <strong>₱50.00</strong>.</p>
                         </div>
                     </div>
-                    <div class="event-card">
-                        <div class="event-date-badge"><span class="ev-month">MAY</span><span class="ev-day">25</span></div>
-                        <div class="event-details">
-                            <span class="event-tag event-tag--red">Wellness</span>
-                            <h4>Free Zumba &amp; Wellness Activity</h4>
-                            <p>5:00 AM – 7:00 AM · Plaza</p>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+                            <span>What documents can I request from Barangay CINCO?</span>
+                            <span class="faq-chevron" aria-hidden="true">▸</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>You can request the following documents at the Barangay Hall:</p>
+                            <ul>
+                                <li>Barangay Clearance (₱50 · 15–30 mins)</li>
+                                <li>Certificate of Residency (₱50 · 15–30 mins)</li>
+                                <li>Barangay Indigency Certificate (Free · 20–30 mins)</li>
+                                <li>Business Permit Clearance (₱200–₱500 · 30–60 mins)</li>
+                                <li>Certificate of Good Moral Character (₱50 · 15–20 mins)</li>
+                                <li>Barangay ID (₱100 · 3–5 working days)</li>
+                                <li>Cedula / Community Tax Certificate (Minimum ₱5 · 10–20 mins)</li>
+                            </ul>
                         </div>
                     </div>
-                    <div class="event-card">
-                        <div class="event-date-badge"><span class="ev-month">MAY</span><span class="ev-day">31</span></div>
-                        <div class="event-details">
-                            <span class="event-tag event-tag--orange">Safety</span>
-                            <h4>Disaster Preparedness Drill</h4>
-                            <p>8:00 AM – 12:00 PM · All Puroks</p>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+                            <span>What are the requirements for a Certificate of Residency?</span>
+                            <span class="faq-chevron" aria-hidden="true">▸</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>To obtain a Certificate of Residency, bring:</p>
+                            <ul>
+                                <li>Valid Government-Issued ID with your current Barangay CINCO address</li>
+                                <li>Community Tax Certificate (Cedula) — current year</li>
+                                <li>Proof of residency: utility bill, lease contract, or similar document</li>
+                            </ul>
+                            <p>You must have resided in Barangay CINCO for at least <strong>6 months</strong>. Fee: ₱50.00.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+                            <span>How do I get a Cedula (Community Tax Certificate)?</span>
+                            <span class="faq-chevron" aria-hidden="true">▸</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Present a valid ID and your previous year's Cedula at the Treasurer's window. The fee starts at <strong>₱5.00</strong> and may vary based on income. Processing takes 10–20 minutes. Must be renewed every year.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- News & Updates Slideshow -->
-            <section class="news-section scroll-fade" aria-label="News and Updates">
-                <div class="dashboard-block">
-                    <h2 class="block-title"><span class="block-icon" aria-hidden="true">📰</span> News &amp; Updates</h2>
-                    <p class="news-subtitle">Latest alerts and announcements from Bacoor City Government</p>
-
-                    <div class="slideshow-container" role="region" aria-label="News slideshow" aria-live="polite">
-                        <div class="news-slide fade">
-                            <div class="slide-content">
-                                <span class="news-tag announcement">Announcement</span>
-                                <h3>ICYMI: Crafting the City of Bacoor Cooperative Development Plan: Adopting the Philippines Cooperative Plan 2025–2026</h3>
-                                <p>The City Government of Bacoor formally moves forward with organizing localized strategic guidelines designed to boost community cooperatives, maximize financial sustainability, and integrate local progress blueprints with nationwide micro-economic goals.</p>
-                                <div class="slide-img-wrap">
-                                    <img src="Images/news&updates/ICYMI_Crafting the City of Bacoor Cooperative Development Plan_Adopting the Philippines Cooperative Plan_2025-2026.jpg" width="50%" height="50%" alt="Bacoor Cooperative Development Plan" class="slideshow-img">
-                                </div>
-                                <a href="https://bacoor.gov.ph/latest-news/68943/" target="_blank" rel="noopener noreferrer" class="news-readmore-btn">Read Official Report →</a>
-                            </div>
-                        </div>
-
-                        <div class="news-slide fade">
-                            <div class="slide-content">
-                                <span class="news-tag business">Career Opportunities</span>
-                                <h3>Pre-Independence Day Job Fair 2026</h3>
-                                <p>Local residents looking for new employment pathways are invited to participate in the upcoming career assembly. Multiple corporate and local business sectors will hold open desks for direct on-site processing and career placements.</p>
-                                <div class="slide-img-wrap">
-                                    <img src="Images/news&updates/Pre-Independence Day Job Fair 2026.jpg" width="50%" height="50%" alt="Pre-Independence Day Job Fair 2026" class="slideshow-img">
-                                </div>
-                                <a href="https://bacoor.gov.ph/announcement/pre-independence-day-job-fair-2026/" target="_blank" rel="noopener noreferrer" class="news-readmore-btn">Read Official Report →</a>
-                            </div>
-                        </div>
-
-                        <div class="news-slide fade">
-                            <div class="slide-content">
-                                <span class="news-tag alert">Weather Alert</span>
-                                <h3>Heat Index Reached 43°C in Bacoor City</h3>
-                                <p>Public warning advisories are active as severe localized heat values surge across residential areas. Everyone is strongly encouraged to limit outdoor exposure, secure regular hydration, and implement necessary safety protocols against extreme temperatures.</p>
-                                <div class="slide-img-wrap">
-                                    <img src="Images/news&updates/Heat Index reached 43 degrees celsius in Bacoor City.jpg" alt="Heat Index Warning Bacoor City" class="slideshow-img">
-                                </div>
-                                <a href="https://bacoor.gov.ph/announcement/heat-index-reached-43-degrees-celsius-in-bacoor-city/" target="_blank" rel="noopener noreferrer" class="news-readmore-btn">Read Official Report →</a>
-                            </div>
-                        </div>
-
-                        <button class="slide-prev" onclick="moveSlides(-1)" aria-label="Previous slide">&#10094;</button>
-                        <button class="slide-next" onclick="moveSlides(1)" aria-label="Next slide">&#10095;</button>
-
-                        <div class="slideshow-dots-container" role="tablist" aria-label="Slide indicators">
-                            <button class="slide-dot" onclick="setCurrentSlide(1)" role="tab" aria-label="Slide 1"></button>
-                            <button class="slide-dot" onclick="setCurrentSlide(2)" role="tab" aria-label="Slide 2"></button>
-                            <button class="slide-dot" onclick="setCurrentSlide(3)" role="tab" aria-label="Slide 3"></button>
+            <div class="dashboard-block scroll-fade">
+                <h2 class="block-title"><span class="block-icon" aria-hidden="true">🏛</span> Office &amp; Services</h2>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+                            <span>What are the office hours of Barangay CINCO?</span>
+                            <span class="faq-chevron" aria-hidden="true">▸</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>The Barangay Hall is open <strong>Monday to Friday, 8:00 AM – 5:00 PM</strong>. The office is closed on weekends and public holidays. For emergencies, contact our hotlines which are available 24/7.</p>
                         </div>
                     </div>
-
-                    <div class="news-portal-link">
-                        <a href="https://bacoor.gov.ph/category/latest-news/" target="_blank" rel="noopener noreferrer" class="portal-btn">
-                            🌐 View All Bacoor City News &amp; Announcements
-                        </a>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+                            <span>How do I schedule an appointment at the Barangay Hall?</span>
+                            <span class="faq-chevron" aria-hidden="true">▸</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>You can schedule an appointment online through the <strong>Services</strong> page. Select your preferred date, time slot, and type of request. Fill out your contact details and complete the reCAPTCHA. You will receive a confirmation reference number upon submission.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+                            <span>How do I file a complaint or submit a concern?</span>
+                            <span class="faq-chevron" aria-hidden="true">▸</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Go to the <strong>Officials</strong> page and scroll down to the Contact &amp; Concerns section. Fill in your name, contact details, and describe your concern in the text area. You may also attach a photo. Complete the reCAPTCHA and submit — a barangay representative will follow up with you.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+                            <span>Is there a hotline I can call in case of emergency?</span>
+                            <span class="faq-chevron" aria-hidden="true">▸</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes! Go to the <strong>Preparedness</strong> page and scroll to the Emergency Hotlines section. You can tap any hotline card to call directly. Key numbers include:</p>
+                            <ul>
+                                <li>🚒 Fire Department: (046) 417-4199</li>
+                                <li>🚔 Police Station: (046) 417-6174</li>
+                                <li>🚑 Ambulance: (046) 417-7777</li>
+                                <li>🛟 Rescue Team: (046) 417-8888</li>
+                                <li>🏛 Barangay Hall: (046) 412-5000</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-            </section>
+            </div>
+
+            <div class="dashboard-block scroll-fade">
+                <h2 class="block-title"><span class="block-icon" aria-hidden="true">💼</span> Business &amp; Permits</h2>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+                            <span>What do I need to get a Business Permit Clearance from the barangay?</span>
+                            <span class="faq-chevron" aria-hidden="true">▸</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>For new and renewing businesses, bring the following:</p>
+                            <ul>
+                                <li>DTI / SEC / CDA Registration</li>
+                                <li>Lease contract or proof of business address within Barangay CINCO</li>
+                                <li>Valid Government-Issued ID of the proprietor</li>
+                                <li>Previous year's barangay clearance (for renewal)</li>
+                            </ul>
+                            <p>Fee: <strong>₱200.00 – ₱500.00</strong> depending on business type. Processing takes 30–60 minutes.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+                            <span>When do I need to renew my barangay business clearance?</span>
+                            <span class="faq-chevron" aria-hidden="true">▸</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Barangay business clearances are renewed <strong>annually</strong>. It is recommended to process renewal at the start of the year to avoid penalties on your city business permit application.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
-    <!-- ===== PAGE: SAFETY / PREPAREDNESS ===== -->
+    <!-- ========================================================
+         PAGE: SAFETY / PREPAREDNESS
+    ========================================================= -->
     <div id="safety" class="page-section dashboard-page">
         <main class="dashboard-content">
             <div class="page-header scroll-fade">
@@ -734,11 +921,27 @@
                 </div>
             </div>
 
-            <!-- ===== EMERGENCY HOTLINES — Bacoor, Cavite (REPLACES "What To Do In Midst of Disaster") ===== -->
+            <!-- ===== EMERGENCY HOTLINES (Modern Card Layout) ===== -->
             <div class="dashboard-block scroll-fade emergency-hotlines-block">
                 <h2 class="block-title"><span class="block-icon">🚨</span> Emergency Hotlines — Bacoor, Cavite</h2>
-                <p class="block-description">In case of emergency, contact the appropriate authority immediately. Tap any number to call directly.</p>
+                <p class="block-description">In case of emergency, contact the appropriate authority immediately. Tap any card to call directly.</p>
                 <div class="hotlines-grid">
+
+                    <a href="tel:+6346-417-6174" class="hotline-card hotline-police" aria-label="Call Bacoor Police Station">
+                        <div class="hotline-icon-wrap police-hotline-bg">
+                            <span class="hotline-emoji" aria-hidden="true">🚔</span>
+                        </div>
+                        <div class="hotline-info">
+                            <span class="hotline-category">Police</span>
+                            <h3 class="hotline-name">Bacoor City Police Station</h3>
+                            <div class="hotline-number">(046) 417-6174</div>
+                            <div class="hotline-alt">PNP Bacoor · Available 24/7</div>
+                        </div>
+                        <div class="hotline-call-badge" aria-hidden="true">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            Tap to Call
+                        </div>
+                    </a>
 
                     <a href="tel:+6346-417-4199" class="hotline-card hotline-fire" aria-label="Call Bacoor Fire Department">
                         <div class="hotline-icon-wrap fire-hotline-bg">
@@ -751,125 +954,364 @@
                             <div class="hotline-alt">BFP Cavite · Available 24/7</div>
                         </div>
                         <div class="hotline-call-badge" aria-hidden="true">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                             Tap to Call
                         </div>
                     </a>
 
-                    <a href="tel:+6346-417-6174" class="hotline-card hotline-police" aria-label="Call Bacoor Police Station">
-                        <div class="hotline-icon-wrap police-hotline-bg">
-                            <span class="hotline-emoji" aria-hidden="true">🚔</span>
-                        </div>
-                        <div class="hotline-info">
-                            <span class="hotline-category">Police Station</span>
-                            <h3 class="hotline-name">Bacoor City Police Station</h3>
-                            <div class="hotline-number">(046) 417-6174</div>
-                            <div class="hotline-alt">PNP Bacoor · Available 24/7</div>
-                        </div>
-                        <div class="hotline-call-badge" aria-hidden="true">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                            Tap to Call
-                        </div>
-                    </a>
-
-                    <a href="tel:+911" class="hotline-card hotline-ambulance" aria-label="Call Emergency Ambulance">
+                    <a href="tel:+6346-417-7777" class="hotline-card hotline-ambulance" aria-label="Call Ambulance">
                         <div class="hotline-icon-wrap ambulance-hotline-bg">
                             <span class="hotline-emoji" aria-hidden="true">🚑</span>
                         </div>
                         <div class="hotline-info">
-                            <span class="hotline-category">Ambulance / Rescue</span>
-                            <h3 class="hotline-name">Emergency Medical Response</h3>
-                            <div class="hotline-number">911</div>
-                            <div class="hotline-alt">National Emergency Hotline · 24/7</div>
+                            <span class="hotline-category">Ambulance</span>
+                            <h3 class="hotline-name">Emergency Medical Services</h3>
+                            <div class="hotline-number">(046) 417-7777</div>
+                            <div class="hotline-alt">Bacoor City EMS · Available 24/7</div>
                         </div>
                         <div class="hotline-call-badge" aria-hidden="true">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                             Tap to Call
                         </div>
                     </a>
 
-                    <a href="tel:+6346-417-0000" class="hotline-card hotline-disaster" aria-label="Call Disaster Response Team">
-                        <div class="hotline-icon-wrap disaster-hotline-bg">
-                            <span class="hotline-emoji" aria-hidden="true">⛑️</span>
+                    <a href="tel:+6346-417-8888" class="hotline-card hotline-rescue" aria-label="Call Rescue Team">
+                        <div class="hotline-icon-wrap rescue-hotline-bg">
+                            <span class="hotline-emoji" aria-hidden="true">🛟</span>
                         </div>
                         <div class="hotline-info">
-                            <span class="hotline-category">Disaster Response</span>
-                            <h3 class="hotline-name">Bacoor City CDRRMO</h3>
-                            <div class="hotline-number">(046) 417-0000</div>
-                            <div class="hotline-alt">City Disaster Risk Reduction · 24/7</div>
+                            <span class="hotline-category">Rescue Team</span>
+                            <h3 class="hotline-name">CDRRMO Rescue Operations</h3>
+                            <div class="hotline-number">(046) 417-8888</div>
+                            <div class="hotline-alt">Disaster Response · Available 24/7</div>
                         </div>
                         <div class="hotline-call-badge" aria-hidden="true">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                             Tap to Call
                         </div>
                     </a>
 
-                    <a href="tel:+63-BRGY-CINCO" class="hotline-card hotline-barangay" aria-label="Call Barangay Emergency Hotline">
-                        <div class="hotline-icon-wrap barangay-hotline-bg">
-                            <span class="hotline-emoji" aria-hidden="true">🏛️</span>
+                    <a href="tel:+6346-412-5000" class="hotline-card hotline-brgy" aria-label="Call Barangay Hall">
+                        <div class="hotline-icon-wrap brgy-hotline-bg">
+                            <span class="hotline-emoji" aria-hidden="true">🏛</span>
                         </div>
                         <div class="hotline-info">
-                            <span class="hotline-category">Barangay Emergency</span>
-                            <h3 class="hotline-name">Barangay CINCO Hotline</h3>
-                            <div class="hotline-number">(02) 8888-1234</div>
-                            <div class="hotline-alt">Barangay Hall · Office Hours &amp; On-Call</div>
+                            <span class="hotline-category">Barangay Hall</span>
+                            <h3 class="hotline-name">Barangay CINCO Hall</h3>
+                            <div class="hotline-number">(046) 412-5000</div>
+                            <div class="hotline-alt">Mon–Fri · 8:00 AM – 5:00 PM</div>
                         </div>
                         <div class="hotline-call-badge" aria-hidden="true">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                            Tap to Call
-                        </div>
-                    </a>
-
-                    <a href="tel:+6346-417-5000" class="hotline-card hotline-hospital" aria-label="Call Hospital Emergency">
-                        <div class="hotline-icon-wrap hospital-hotline-bg">
-                            <span class="hotline-emoji" aria-hidden="true">🏥</span>
-                        </div>
-                        <div class="hotline-info">
-                            <span class="hotline-category">Hospital Emergency</span>
-                            <h3 class="hotline-name">Bacoor Doctors Hospital</h3>
-                            <div class="hotline-number">(046) 417-5000</div>
-                            <div class="hotline-alt">Emergency Room · Open 24/7</div>
-                        </div>
-                        <div class="hotline-call-badge" aria-hidden="true">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                             Tap to Call
                         </div>
                     </a>
 
                 </div>
-                <div class="hotlines-note">
-                    <span>⚠️</span>
-                    <p>For life-threatening emergencies, always call <strong>911</strong> first. Verify current hotline numbers with the Barangay Hall as they may be updated periodically.</p>
-                </div>
-            </div>
-
-            <!-- Real-Time Map -->
-            <div class="dashboard-block scroll-fade">
-                <h2 class="block-title"><span class="block-icon" aria-hidden="true">📡</span> Real-Time Environmental Monitoring</h2>
-                <p class="block-description">Stay updated with live weather patterns, wind speeds, and active typhoon tracks directly affecting Bacoor City and the surrounding Calabarzon region.</p>
-                <div class="map-responsive">
-                    <iframe 
-                        src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=11&overlay=satellite&product=satellite&level=surface&lat=14.457&lon=120.93&detailLat=14.459&detailLon=120.94&marker=true"
-                        title="Live Weather Map — Bacoor City"
-                        allowfullscreen=""
-                        loading="lazy">
-                    </iframe>
+                <div class="hotline-note">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span>For life-threatening emergencies, always call <strong>911</strong> first. Hotline numbers are for non-emergency contacts and community concerns.</span>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- ===== PAGE: SERVICES ===== -->
+    <!-- ========================================================
+         PAGE: SERVICES
+    ========================================================= -->
     <div id="services" class="page-section dashboard-page">
         <main class="dashboard-content">
             <div class="page-header scroll-fade">
                 <div class="section-label">Citizen Services</div>
                 <h1 class="page-title">Barangay Services</h1>
+                <p class="page-subtitle">Access official documents, schedule visits, and find processing information.</p>
             </div>
 
-            <!-- How to Get Documents -->
+            <!-- ===== SERVICE CATEGORY TABS ===== -->
+            <div class="service-tabs-wrapper scroll-fade" id="serviceCategoryTabs">
+                <div class="service-tabs-nav" role="tablist" aria-label="Service Categories">
+                    <button class="service-tab-btn active" role="tab" aria-selected="true"  aria-controls="svc-documents"  id="tab-documents"  onclick="switchServiceTab('documents')">
+                        <span class="stab-icon">📋</span>
+                        <span>Documents &amp; Certificates</span>
+                    </button>
+                    <button class="service-tab-btn" role="tab" aria-selected="false" aria-controls="svc-office"     id="tab-office"     onclick="switchServiceTab('office')">
+                        <span class="stab-icon">🏛</span>
+                        <span>Office &amp; Services</span>
+                    </button>
+                    <button class="service-tab-btn" role="tab" aria-selected="false" aria-controls="svc-business"   id="tab-business"   onclick="switchServiceTab('business')">
+                        <span class="stab-icon">💼</span>
+                        <span>Business &amp; Permits</span>
+                    </button>
+                    <button class="service-tab-btn" role="tab" aria-selected="false" aria-controls="svc-community"  id="tab-community"  onclick="switchServiceTab('community')">
+                        <span class="stab-icon">🤝</span>
+                        <span>Community Programs</span>
+                    </button>
+                </div>
+
+                <!-- TAB PANEL: Documents & Certificates -->
+                <div class="service-tab-panel active" id="svc-documents" role="tabpanel" aria-labelledby="tab-documents">
+                    <div class="stab-hero">
+                        <div class="stab-hero-icon">📋</div>
+                        <div>
+                            <h3>Documents &amp; Certificates</h3>
+                            <p>Request official barangay documents and certifications at the hall. All requests require a valid government-issued ID and current Cedula.</p>
+                        </div>
+                    </div>
+                    <div class="stab-doc-grid">
+                        <div class="stab-doc-item" onclick="openDocInfo('clearance')">
+                            <div class="stab-doc-icon">📋</div>
+                            <div class="stab-doc-info">
+                                <h4>Barangay Clearance</h4>
+                                <p>Required for employment, business, and other civic applications.</p>
+                                <div class="stab-doc-meta"><span class="stab-badge stab-badge--green">Available Same Day</span><span class="stab-fee">₱50.00 · 15–30 mins</span></div>
+                            </div>
+                        </div>
+                        <div class="stab-doc-item" onclick="openDocInfo('residency')">
+                            <div class="stab-doc-icon">🏠</div>
+                            <div class="stab-doc-info">
+                                <h4>Certificate of Residency</h4>
+                                <p>Confirms registered residency in Barangay CINCO (min. 6 months).</p>
+                                <div class="stab-doc-meta"><span class="stab-badge stab-badge--green">Available Same Day</span><span class="stab-fee">₱50.00 · 15–30 mins</span></div>
+                            </div>
+                        </div>
+                        <div class="stab-doc-item" onclick="openDocInfo('indigency')">
+                            <div class="stab-doc-icon">📑</div>
+                            <div class="stab-doc-info">
+                                <h4>Indigency Certificate</h4>
+                                <p>For residents applying for government aid or free medical services.</p>
+                                <div class="stab-doc-meta"><span class="stab-badge stab-badge--green">Free · 20–30 mins</span><span class="stab-fee">No fee</span></div>
+                            </div>
+                        </div>
+                        <div class="stab-doc-item" onclick="openDocInfo('moral')">
+                            <div class="stab-doc-icon">🎖️</div>
+                            <div class="stab-doc-info">
+                                <h4>Good Moral Character</h4>
+                                <p>Attests to good conduct for employment or scholarship applications.</p>
+                                <div class="stab-doc-meta"><span class="stab-badge stab-badge--green">Available Same Day</span><span class="stab-fee">₱50.00 · 15–20 mins</span></div>
+                            </div>
+                        </div>
+                        <div class="stab-doc-item" onclick="openDocInfo('cedula')">
+                            <div class="stab-doc-icon">📜</div>
+                            <div class="stab-doc-info">
+                                <h4>Cedula / Community Tax</h4>
+                                <p>Annual tax certificate required for most legal and government transactions.</p>
+                                <div class="stab-doc-meta"><span class="stab-badge stab-badge--green">Available Same Day</span><span class="stab-fee">Min. ₱5.00 · 10–20 mins</span></div>
+                            </div>
+                        </div>
+                        <div class="stab-doc-item" onclick="openDocInfo('id')">
+                            <div class="stab-doc-icon">🪪</div>
+                            <div class="stab-doc-info">
+                                <h4>Barangay ID</h4>
+                                <p>Official alternate identification document for barangay residents.</p>
+                                <div class="stab-doc-meta"><span class="stab-badge stab-badge--orange">3–5 Working Days</span><span class="stab-fee">₱100.00</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stab-note">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <p>Click any document card above for full requirements and fees. All requests are processed <strong>in person</strong> at the Barangay Hall. Office hours: <strong>Mon–Fri, 8:00 AM – 5:00 PM</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- TAB PANEL: Office & Services -->
+                <div class="service-tab-panel" id="svc-office" role="tabpanel" aria-labelledby="tab-office">
+                    <div class="stab-hero">
+                        <div class="stab-hero-icon">🏛</div>
+                        <div>
+                            <h3>Office &amp; Services</h3>
+                            <p>Information about barangay office operations, services available to residents, and how to access them.</p>
+                        </div>
+                    </div>
+                    <div class="stab-service-grid">
+                        <div class="stab-service-card">
+                            <div class="stab-svc-icon-wrap" style="background:rgba(2,119,189,0.1);">🕐</div>
+                            <h4>Office Hours</h4>
+                            <p><strong>Monday – Friday</strong><br>8:00 AM – 5:00 PM</p>
+                            <p class="stab-svc-note">Closed on weekends &amp; public holidays. Emergency hotlines available 24/7.</p>
+                        </div>
+                        <div class="stab-service-card">
+                            <div class="stab-svc-icon-wrap" style="background:rgba(46,125,50,0.1);">📅</div>
+                            <h4>Schedule Appointment</h4>
+                            <p>Book your visit online in advance to reduce wait time at the barangay hall.</p>
+                            <button class="stab-action-btn" onclick="showPage('services'); setTimeout(() => scrollToSection('schedule-appointment-section'), 200);">Book Now →</button>
+                        </div>
+                        <div class="stab-service-card">
+                            <div class="stab-svc-icon-wrap" style="background:rgba(123,13,30,0.1);">📞</div>
+                            <h4>Contact &amp; Concerns</h4>
+                            <p>Submit a concern or inquiry. A barangay representative will follow up via phone or email.</p>
+                            <button class="stab-action-btn" onclick="showPage('officials'); setTimeout(() => scrollToSection('services-form-container'), 200);">Submit Concern →</button>
+                        </div>
+                        <div class="stab-service-card">
+                            <div class="stab-svc-icon-wrap" style="background:rgba(230,81,0,0.1);">❤️</div>
+                            <h4>Health Services</h4>
+                            <p>Free medical consultations and check-ups available at the Barangay Health Center on select days.</p>
+                            <p class="stab-svc-note">Health Center: Mon–Fri, 8:00 AM – 4:00 PM</p>
+                        </div>
+                        <div class="stab-service-card">
+                            <div class="stab-svc-icon-wrap" style="background:rgba(106,27,154,0.1);">👴</div>
+                            <h4>Senior Citizen Assistance</h4>
+                            <p>Benefits, monthly assembly, and priority services for senior citizens registered in the barangay.</p>
+                            <p class="stab-svc-note">Monthly Assembly: Every 1st Monday, 9:00 AM</p>
+                        </div>
+                        <div class="stab-service-card">
+                            <div class="stab-svc-icon-wrap" style="background:rgba(0,96,100,0.1);">♻️</div>
+                            <h4>Waste Management</h4>
+                            <p>Garbage collection schedule, proper waste segregation guidelines, and community clean-up drives.</p>
+                            <p class="stab-svc-note">Collection: Mon, Wed, Fri — 6:00 AM</p>
+                        </div>
+                    </div>
+                    <div class="stab-note">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <p>For urgent concerns outside office hours, please call the Barangay Hall emergency line at <strong>(046) 412-5000</strong> or national emergency <strong>911</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- TAB PANEL: Business & Permits -->
+                <div class="service-tab-panel" id="svc-business" role="tabpanel" aria-labelledby="tab-business">
+                    <div class="stab-hero">
+                        <div class="stab-hero-icon">💼</div>
+                        <div>
+                            <h3>Business &amp; Permits</h3>
+                            <p>Process your business clearances and permits with the Barangay. Required annually for all businesses operating within the barangay jurisdiction.</p>
+                        </div>
+                    </div>
+                    <div class="stab-permit-grid">
+                        <div class="stab-permit-card stab-permit-card--featured" onclick="openDocInfo('business')">
+                            <div class="stab-permit-header">
+                                <span class="stab-permit-icon">🏢</span>
+                                <div>
+                                    <h4>Business Permit Clearance</h4>
+                                    <span class="stab-badge stab-badge--maroon">Required for All Businesses</span>
+                                </div>
+                            </div>
+                            <p>Required for new registrations and annual renewals for all businesses operating within Barangay CINCO.</p>
+                            <div class="stab-permit-details">
+                                <div class="stab-permit-detail"><span>⏱</span> 30–60 minutes processing</div>
+                                <div class="stab-permit-detail"><span>💰</span> ₱200.00 – ₱500.00 (varies by type)</div>
+                                <div class="stab-permit-detail"><span>🔄</span> Annual renewal required</div>
+                            </div>
+                            <button class="stab-action-btn">View Requirements →</button>
+                        </div>
+                        <div class="stab-permit-card">
+                            <div class="stab-permit-header">
+                                <span class="stab-permit-icon">📋</span>
+                                <div><h4>New Business Registration</h4></div>
+                            </div>
+                            <p>Starting a new business? Get your barangay clearance first before proceeding to the City Business Permit office.</p>
+                            <div class="stab-permit-requirements">
+                                <div class="stab-req-title">Requirements:</div>
+                                <ul>
+                                    <li>DTI / SEC / CDA Registration</li>
+                                    <li>Lease contract or proof of business address</li>
+                                    <li>Valid Government-Issued ID</li>
+                                    <li>Accomplished request form</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="stab-permit-card">
+                            <div class="stab-permit-header">
+                                <span class="stab-permit-icon">🔁</span>
+                                <div><h4>Annual Business Renewal</h4></div>
+                            </div>
+                            <p>Renew your barangay business clearance every year. Process early to avoid penalties on your city permit.</p>
+                            <div class="stab-permit-requirements">
+                                <div class="stab-req-title">Additional Requirements:</div>
+                                <ul>
+                                    <li>Previous year's Barangay Business Clearance</li>
+                                    <li>Updated business address (if changed)</li>
+                                    <li>Latest DTI/SEC Registration</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="stab-permit-card">
+                            <div class="stab-permit-header">
+                                <span class="stab-permit-icon">📅</span>
+                                <div><h4>Permit Processing Schedule</h4></div>
+                            </div>
+                            <div class="stab-schedule-grid">
+                                <div class="stab-schedule-item"><strong>Filing Period:</strong><span>January – March (Annual)</span></div>
+                                <div class="stab-schedule-item"><strong>Office Hours:</strong><span>Mon–Fri, 8:00 AM – 5:00 PM</span></div>
+                                <div class="stab-schedule-item"><strong>Processing:</strong><span>30–60 minutes</span></div>
+                                <div class="stab-schedule-item"><strong>Payment:</strong><span>At Treasurer's window</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stab-note">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <p>The Barangay Clearance for Business is a prerequisite for the City Business Permit. Process your barangay clearance before visiting Bacoor City Hall.</p>
+                    </div>
+                </div>
+
+                <!-- TAB PANEL: Community Programs -->
+                <div class="service-tab-panel" id="svc-community" role="tabpanel" aria-labelledby="tab-community">
+                    <div class="stab-hero">
+                        <div class="stab-hero-icon">🤝</div>
+                        <div>
+                            <h3>Community Programs</h3>
+                            <p>Barangay CINCO actively runs community programs for the health, welfare, and empowerment of its residents.</p>
+                        </div>
+                    </div>
+                    <div class="stab-programs-grid">
+                        <div class="stab-program-card" style="--prog-color: #c62828;">
+                            <div class="stab-prog-icon">❤️</div>
+                            <h4>Health &amp; Wellness</h4>
+                            <ul>
+                                <li>Free Medical Consultations</li>
+                                <li>Vaccination Drives</li>
+                                <li>Maternal &amp; Child Health Care</li>
+                                <li>TB/DOTS Program</li>
+                                <li>Mental Health Awareness Sessions</li>
+                            </ul>
+                            <div class="stab-prog-schedule">Health Center · Mon–Fri, 8:00 AM–4:00 PM</div>
+                        </div>
+                        <div class="stab-program-card" style="--prog-color: #6a1b9a;">
+                            <div class="stab-prog-icon">👴</div>
+                            <h4>Senior Citizen &amp; PWD</h4>
+                            <ul>
+                                <li>Monthly Assemblies &amp; Activities</li>
+                                <li>Senior Citizen ID Processing</li>
+                                <li>Benefits &amp; Discount Assistance</li>
+                                <li>PWD Registration &amp; Support</li>
+                                <li>Home Visitation Program</li>
+                            </ul>
+                            <div class="stab-prog-schedule">Monthly · 1st Monday, 9:00 AM</div>
+                        </div>
+                        <div class="stab-program-card" style="--prog-color: #0277bd;">
+                            <div class="stab-prog-icon">🎓</div>
+                            <h4>Youth &amp; Education</h4>
+                            <ul>
+                                <li>SK Programs &amp; Sports Events</li>
+                                <li>Livelihood Training Workshops</li>
+                                <li>Scholarship Assistance Information</li>
+                                <li>Youth Leadership Seminars</li>
+                                <li>Barangay Youth Assembly</li>
+                            </ul>
+                            <div class="stab-prog-schedule">SK Office · Mon–Fri, 8:00 AM–5:00 PM</div>
+                        </div>
+                        <div class="stab-program-card" style="--prog-color: #2e7d32;">
+                            <div class="stab-prog-icon">🌱</div>
+                            <h4>Environment &amp; Livelihood</h4>
+                            <ul>
+                                <li>Community Clean-up Drives</li>
+                                <li>Waste Segregation Campaigns</li>
+                                <li>Urban Gardening Program</li>
+                                <li>Livelihood Skills Training</li>
+                                <li>Solo Parent Welfare Program</li>
+                            </ul>
+                            <div class="stab-prog-schedule">Quarterly · See Announcements</div>
+                        </div>
+                    </div>
+                    <div class="stab-note">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <p>For more information on any community program, visit the Barangay Hall during office hours or check the <button class="stab-inline-link" onclick="showPage('announcements')">Announcements page</button> for upcoming activities.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How to Get Documents — Step Guide -->
             <div class="dashboard-block scroll-fade">
-                <h2 class="block-title"><span class="block-icon" aria-hidden="true">📄</span> Document Application Guide</h2>
+                <h2 class="block-title"><span class="block-icon" aria-hidden="true">📖</span> How to Get Your Documents</h2>
+                <p class="block-description">Walk-in service at the Barangay Hall. Follow these four steps to get your requested document smoothly.</p>
                 <div class="steps-list">
                     <div class="step-item">
                         <div class="step-number" aria-hidden="true">01</div>
@@ -905,10 +1347,10 @@
             <!-- REQUEST DOCUMENTS SECTION -->
             <div class="dashboard-block scroll-fade" id="request-documents-section">
                 <h2 class="block-title"><span class="block-icon" aria-hidden="true">🗂️</span> Request Documents</h2>
-                <p class="block-description">Select a document type below to view requirements, processing time, and to start your request.</p>
+                <p class="block-description">Select a document type below to view requirements, processing time, and fees.</p>
                 <div class="doc-request-grid">
 
-                    <div class="doc-card" onclick="openDocInfo('clearance')">
+                    <div class="doc-card" onclick="openDocInfo('clearance')" role="button" tabindex="0" aria-label="Barangay Clearance - Click for details">
                         <div class="doc-card-icon">📋</div>
                         <div class="doc-card-body">
                             <h4>Barangay Clearance</h4>
@@ -920,7 +1362,7 @@
                         </div>
                     </div>
 
-                    <div class="doc-card" onclick="openDocInfo('residency')">
+                    <div class="doc-card" onclick="openDocInfo('residency')" role="button" tabindex="0" aria-label="Certificate of Residency - Click for details">
                         <div class="doc-card-icon">🏠</div>
                         <div class="doc-card-body">
                             <h4>Certificate of Residency</h4>
@@ -932,7 +1374,7 @@
                         </div>
                     </div>
 
-                    <div class="doc-card" onclick="openDocInfo('indigency')">
+                    <div class="doc-card" onclick="openDocInfo('indigency')" role="button" tabindex="0" aria-label="Barangay Indigency Certificate - Click for details">
                         <div class="doc-card-icon">📑</div>
                         <div class="doc-card-body">
                             <h4>Barangay Indigency Certificate</h4>
@@ -944,7 +1386,7 @@
                         </div>
                     </div>
 
-                    <div class="doc-card" onclick="openDocInfo('business')">
+                    <div class="doc-card" onclick="openDocInfo('business')" role="button" tabindex="0" aria-label="Business Permit Clearance - Click for details">
                         <div class="doc-card-icon">🏢</div>
                         <div class="doc-card-body">
                             <h4>Business Permit Clearance</h4>
@@ -956,7 +1398,7 @@
                         </div>
                     </div>
 
-                    <div class="doc-card" onclick="openDocInfo('moral')">
+                    <div class="doc-card" onclick="openDocInfo('moral')" role="button" tabindex="0" aria-label="Certificate of Good Moral - Click for details">
                         <div class="doc-card-icon">🎖️</div>
                         <div class="doc-card-body">
                             <h4>Certificate of Good Moral</h4>
@@ -968,7 +1410,7 @@
                         </div>
                     </div>
 
-                    <div class="doc-card" onclick="openDocInfo('id')">
+                    <div class="doc-card" onclick="openDocInfo('id')" role="button" tabindex="0" aria-label="Barangay ID Request - Click for details">
                         <div class="doc-card-icon">🪪</div>
                         <div class="doc-card-body">
                             <h4>Barangay ID Request</h4>
@@ -980,7 +1422,7 @@
                         </div>
                     </div>
 
-                    <div class="doc-card" onclick="openDocInfo('cedula')">
+                    <div class="doc-card" onclick="openDocInfo('cedula')" role="button" tabindex="0" aria-label="Cedula / Community Tax Certificate - Click for details">
                         <div class="doc-card-icon">📜</div>
                         <div class="doc-card-body">
                             <h4>Cedula / Community Tax Certificate</h4>
@@ -1000,7 +1442,7 @@
                 </div>
             </div>
 
-            <!-- ===== SCHEDULE APPOINTMENT SECTION ===== -->
+            <!-- SCHEDULE APPOINTMENT SECTION -->
             <div class="dashboard-block scroll-fade" id="schedule-appointment-section">
                 <h2 class="block-title"><span class="block-icon" aria-hidden="true">📅</span> Schedule an Appointment</h2>
                 <p class="block-description">Book your visit in advance to reduce wait time at the Barangay Hall. Fill out the form below and we will confirm your appointment via SMS or email.</p>
@@ -1035,35 +1477,54 @@
                             </div>
                         </div>
 
+                        <!-- Calendar-style date & time selection -->
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="appt-date">Preferred Date <span class="required" aria-hidden="true">*</span></label>
-                                <input type="date" id="appt-date" name="appt_date" required>
+                                <div class="date-input-wrapper">
+                                    <input type="date" id="appt-date" name="appt_date" required>
+                                    <span class="date-icon" aria-hidden="true">📆</span>
+                                </div>
+                                <p class="field-hint">Weekdays only · Mon–Fri</p>
                             </div>
                             <div class="form-group">
-                                <label for="appt-time">Preferred Time <span class="required" aria-hidden="true">*</span></label>
-                                <div class="select-wrapper">
-                                    <select id="appt-time" name="appt_time" required>
-                                        <option value="" disabled selected>— Select a time slot —</option>
-                                        <option value="8:00 AM">8:00 AM</option>
-                                        <option value="8:30 AM">8:30 AM</option>
-                                        <option value="9:00 AM">9:00 AM</option>
-                                        <option value="9:30 AM">9:30 AM</option>
-                                        <option value="10:00 AM">10:00 AM</option>
-                                        <option value="10:30 AM">10:30 AM</option>
-                                        <option value="11:00 AM">11:00 AM</option>
-                                        <option value="11:30 AM">11:30 AM</option>
-                                        <option value="1:00 PM">1:00 PM</option>
-                                        <option value="1:30 PM">1:30 PM</option>
-                                        <option value="2:00 PM">2:00 PM</option>
-                                        <option value="2:30 PM">2:30 PM</option>
-                                        <option value="3:00 PM">3:00 PM</option>
-                                        <option value="3:30 PM">3:30 PM</option>
-                                        <option value="4:00 PM">4:00 PM</option>
-                                        <option value="4:30 PM">4:30 PM</option>
-                                    </select>
-                                    <span class="select-arrow" aria-hidden="true">▾</span>
+                                <label>Preferred Time Slot <span class="required" aria-hidden="true">*</span></label>
+                                <div class="timeslot-grid" id="timeslotGrid" role="radiogroup" aria-label="Select time slot">
+                                    <label class="timeslot-option">
+                                        <input type="radio" name="appt_time" value="8:00 AM" required>
+                                        <span>8:00 AM</span>
+                                    </label>
+                                    <label class="timeslot-option">
+                                        <input type="radio" name="appt_time" value="9:00 AM">
+                                        <span>9:00 AM</span>
+                                    </label>
+                                    <label class="timeslot-option">
+                                        <input type="radio" name="appt_time" value="10:00 AM">
+                                        <span>10:00 AM</span>
+                                    </label>
+                                    <label class="timeslot-option">
+                                        <input type="radio" name="appt_time" value="11:00 AM">
+                                        <span>11:00 AM</span>
+                                    </label>
+                                    <label class="timeslot-option">
+                                        <input type="radio" name="appt_time" value="1:00 PM">
+                                        <span>1:00 PM</span>
+                                    </label>
+                                    <label class="timeslot-option">
+                                        <input type="radio" name="appt_time" value="2:00 PM">
+                                        <span>2:00 PM</span>
+                                    </label>
+                                    <label class="timeslot-option">
+                                        <input type="radio" name="appt_time" value="3:00 PM">
+                                        <span>3:00 PM</span>
+                                    </label>
+                                    <label class="timeslot-option">
+                                        <input type="radio" name="appt_time" value="4:00 PM">
+                                        <span>4:00 PM</span>
+                                    </label>
                                 </div>
+                                <input type="hidden" id="appt-time-hidden" name="appt_time_selected">
+                                <p id="timeslot-error" class="field-error-msg" style="display:none;">Please select a time slot.</p>
                             </div>
                         </div>
                     </div>
@@ -1095,10 +1556,11 @@
                         </div>
                     </div>
 
-                    <!-- reCAPTCHA v2 — Replace YOUR_SITE_KEY with actual key from https://www.google.com/recaptcha/admin -->
+                    <!-- reCAPTCHA v2 -->
                     <div class="recaptcha-wrapper">
-                        <div class="g-recaptcha" data-sitekey="6LeBevosAAAAABz58r9cTLM-Zt-FCiPMAGf9jKqa" data-theme="light"></div>
+                        <div class="g-recaptcha"  data-theme="light" id="appt-recaptcha"></div>
                         <p class="recaptcha-note">Complete the reCAPTCHA to confirm you are not a robot.</p>
+                        <p id="appt-recaptcha-error" class="field-error-msg" style="display:none;">Please complete the reCAPTCHA verification.</p>
                     </div>
 
                     <div class="appt-form-footer">
@@ -1117,7 +1579,9 @@
         </main>
     </div>
 
-    <!-- ===== PAGE: OFFICIALS ===== -->
+    <!-- ========================================================
+         PAGE: OFFICIALS
+    ========================================================= -->
     <div id="officials" class="page-section dashboard-page">
         <main class="dashboard-content">
             <div class="page-header scroll-fade">
@@ -1125,63 +1589,76 @@
                 <h1 class="page-title">Barangay Council</h1>
             </div>
 
+            <!-- Officials Grid with improved cards -->
             <div class="dashboard-block scroll-fade">
                 <h2 class="block-title"><span class="block-icon" aria-hidden="true">⚖️</span> Elected Officials</h2>
-                <div class="officials-list">
-                    <div class="official-card">
+                <p class="block-description">Click on any official's card to view their full profile and responsibilities.</p>
+                <div class="officials-grid">
+
+                    <div class="official-card" onclick="openOfficialModal('Images/Officials/Padellon.jpg','Barangay Captain','Hon. Jerald J. Padellon','Serves as the chief executive officer of the community, responsible for implementing local laws, maintaining public order, and leading the overall administration of the barangay.')" role="button" tabindex="0" aria-label="View profile of Hon. Jerald J. Padellon">
                         <div class="official-img-wrap">
                             <img src="Images/Officials/Padellon.jpg" alt="Hon. Jerald J. Padellon" class="official-image" loading="lazy">
+                            <div class="official-img-overlay" aria-hidden="true"><span>View Profile</span></div>
                         </div>
                         <div class="official-info">
-                            <span class="official-role">Barangay Captain</span>
+                            <span class="official-role official-role--captain">Barangay Captain</span>
                             <h3>Hon. Jerald J. Padellon</h3>
-                            <p>Serves as the chief executive officer of the community, responsible for implementing local laws, maintaining public order, and leading the overall administration of the barangay.</p>
+                            <p>Chief executive officer of the community, leading overall administration.</p>
                         </div>
                     </div>
-                    <div class="official-card">
+
+                    <div class="official-card" onclick="openOfficialModal('Images/Officials/Quimpano.jpg','Barangay Kagawad','Hon. Christian Mark B. Quimpano','Acts as a legislative member of the council, focusing on creating local ordinances and heading specific committees such as health, education, or infrastructure.')" role="button" tabindex="0" aria-label="View profile of Hon. Christian Mark B. Quimpano">
                         <div class="official-img-wrap">
                             <img src="Images/Officials/Quimpano.jpg" alt="Hon. Christian Mark B. Quimpano" class="official-image" loading="lazy">
+                            <div class="official-img-overlay" aria-hidden="true"><span>View Profile</span></div>
                         </div>
                         <div class="official-info">
                             <span class="official-role">Barangay Kagawad</span>
                             <h3>Hon. Christian Mark B. Quimpano</h3>
-                            <p>Acts as a legislative member of the council, focusing on creating local ordinances and heading specific committees such as health, education, or infrastructure.</p>
+                            <p>Legislative member creating ordinances for health, education, and infrastructure.</p>
                         </div>
                     </div>
-                    <div class="official-card">
+
+                    <div class="official-card" onclick="openOfficialModal('Images/Officials/Javinez.jpg','SK Chairperson','Hon. Princess Angel T. Javinez','Leads the youth council and manages community programs specifically designed to promote the social, cultural, and physical development of young residents.')" role="button" tabindex="0" aria-label="View profile of Hon. Princess Angel T. Javinez">
                         <div class="official-img-wrap">
                             <img src="Images/Officials/Javinez.jpg" alt="Hon. Princess Angel T. Javinez" class="official-image" loading="lazy">
+                            <div class="official-img-overlay" aria-hidden="true"><span>View Profile</span></div>
                         </div>
                         <div class="official-info">
-                            <span class="official-role">SK Chairperson</span>
+                            <span class="official-role official-role--sk">SK Chairperson</span>
                             <h3>Hon. Princess Angel T. Javinez</h3>
-                            <p>Leads the youth council and manages community programs specifically designed to promote the social, cultural, and physical development of young residents.</p>
+                            <p>Leads the youth council, managing youth development programs.</p>
                         </div>
                     </div>
-                    <div class="official-card">
+
+                    <div class="official-card" onclick="openOfficialModal('Images/Officials/Alao.jpg','Barangay Secretary','Hon. Mae B. Alao','Handles the official records of the community, prepares meeting minutes, and manages the documentation needed for certificates and clearances.')" role="button" tabindex="0" aria-label="View profile of Hon. Mae B. Alao">
                         <div class="official-img-wrap">
                             <img src="Images/Officials/Alao.jpg" alt="Hon. Mae B. Alao" class="official-image" loading="lazy">
+                            <div class="official-img-overlay" aria-hidden="true"><span>View Profile</span></div>
                         </div>
                         <div class="official-info">
-                            <span class="official-role">Barangay Secretary</span>
+                            <span class="official-role official-role--secretary">Barangay Secretary</span>
                             <h3>Hon. Mae B. Alao</h3>
-                            <p>Handles the official records of the community, prepares meeting minutes, and manages the documentation needed for certificates and clearances.</p>
+                            <p>Manages official records, meeting minutes, and documentation.</p>
                         </div>
                     </div>
-                    <div class="official-card">
+
+                    <div class="official-card" onclick="openOfficialModal('Images/Officials/Fortuna.jpeg','Barangay Treasurer','Hon. Eddieson H. Fortuna','Manages the barangay\u2019s budget and finances, including the collection of fees and the proper disbursement of funds for community projects.')" role="button" tabindex="0" aria-label="View profile of Hon. Eddieson H. Fortuna">
                         <div class="official-img-wrap">
                             <img src="Images/Officials/Fortuna.jpeg" alt="Hon. Eddieson H. Fortuna" class="official-image" loading="lazy">
+                            <div class="official-img-overlay" aria-hidden="true"><span>View Profile</span></div>
                         </div>
                         <div class="official-info">
-                            <span class="official-role">Barangay Treasurer</span>
+                            <span class="official-role official-role--treasurer">Barangay Treasurer</span>
                             <h3>Hon. Eddieson H. Fortuna</h3>
-                            <p>Manages the barangay's budget and finances, including the collection of fees and the proper disbursement of funds for community projects.</p>
+                            <p>Manages the barangay's budget, fee collection, and fund disbursements.</p>
                         </div>
                     </div>
+
                 </div>
             </div>
 
-            <!-- ===== CONTACT & CONCERNS — Moved to bottom of Officials page ===== -->
+            <!-- Contact & Concerns Form -->
             <div class="dashboard-block scroll-fade" id="services-form-container">
                 <h2 class="block-title"><span class="block-icon" aria-hidden="true">📞</span> Contact &amp; Concerns</h2>
                 <p class="block-description">Have a concern or inquiry? Fill out the form below and a barangay representative will get back to you.</p>
@@ -1228,10 +1705,11 @@
                         </div>
                     </div>
 
-                    <!-- reCAPTCHA v2 — Replace YOUR_SITE_KEY with actual key from https://www.google.com/recaptcha/admin -->
+                    <!-- reCAPTCHA v2 -->
                     <div class="recaptcha-wrapper">
-                        <div class="g-recaptcha" data-sitekey="6LeBevosAAAAABz58r9cTLM-Zt-FCiPMAGf9jKqa" data-theme="light"></div>
+                        <div class="g-recaptcha" data-theme="light" id="contact-recaptcha"></div>
                         <p class="recaptcha-note">Complete the reCAPTCHA to confirm you are not a robot.</p>
+                        <p id="contact-recaptcha-error" class="field-error-msg" style="display:none;">Please complete the reCAPTCHA verification.</p>
                     </div>
 
                     <button class="submit-btn" type="submit">
@@ -1244,7 +1722,7 @@
         </main>
     </div>
 
-    <!-- FOOTER -->
+    <!-- ===== FOOTER ===== -->
     <footer class="main-footer" role="contentinfo">
         <div class="footer-inner">
             <div class="footer-brand">
@@ -1257,7 +1735,7 @@
             <div class="footer-cols">
                 <div class="footer-col">
                     <h3>Contact</h3>
-                    <p>📞 (02) 8888-1234</p>
+                    <p>📞 (046) 412-5000</p>
                     <p>📧 info@brgycinco.gov.ph</p>
                 </div>
                 <div class="footer-col">
