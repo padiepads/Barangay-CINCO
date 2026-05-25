@@ -1,10 +1,11 @@
 /**
  * Barangay CINCO — Digital Community Portal
  * javascript.js — Complete Implementation
- * Covers: routing, dark mode, mobile nav, forms, reCAPTCHA,
+ * Covers: routing, dark mode, mobile nav, forms,
  *         appointment, modals, FAQ, scroll effects, slideshow,
  *         image upload, disaster accordion, officials modal,
- *         document request, date validation, tracking numbers.
+ *         document request, date validation, tracking numbers,
+ *         event card modals, toast notifications, search bar toggle.
  */
 
 'use strict';
@@ -13,49 +14,32 @@
 // SINGLE PAGE ROUTER
 // ============================================================
 
-/**
- * Switches the visible page section and updates nav state.
- * @param {string} pageId - The id of the section to show.
- */
 function showPage(pageId) {
-    // Hide all page sections
     document.querySelectorAll('.page-section').forEach(section => {
         section.classList.remove('active');
     });
 
-    // Show the target section
     const target = document.getElementById(pageId);
     if (target) {
         target.classList.add('active');
     }
 
-    // Clear all active-link states
     document.querySelectorAll('.nav-links button[id^="link-"]').forEach(btn => {
         btn.classList.remove('active-link');
         btn.removeAttribute('aria-current');
     });
 
-    // Set active-link on the matching nav button
     const activeBtn = document.getElementById(`link-${pageId}`);
     if (activeBtn) {
         activeBtn.classList.add('active-link');
         activeBtn.setAttribute('aria-current', 'page');
     }
 
-    // Close mobile menu when navigating
     closeMobileNav();
-
-    // Scroll to top of page
     window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    // Trigger scroll observer for newly revealed elements
     setTimeout(observeScrollElements, 100);
 }
 
-/**
- * Scroll to a specific section within the current page.
- * @param {string} sectionId
- */
 function scrollToSection(sectionId) {
     setTimeout(() => {
         const el = document.getElementById(sectionId);
@@ -109,27 +93,23 @@ function renderSlides(targetIndex) {
 
     if (!slides.length) return;
 
-    // Wrap around
     if (targetIndex > slides.length) activeSlideIndex = 1;
     if (targetIndex < 1)             activeSlideIndex = slides.length;
 
-    // Hide all slides and deselect dots
     Array.from(slides).forEach(s => { s.style.display = 'none'; });
     Array.from(dots).forEach(d => {
         d.classList.remove('slide-active');
         d.removeAttribute('aria-selected');
     });
 
-    // Show active slide with fade animation
     const activeSlide = slides[activeSlideIndex - 1];
     if (activeSlide) {
         activeSlide.style.display = 'block';
         activeSlide.classList.remove('fade');
-        void activeSlide.offsetWidth; // Force reflow for animation restart
+        void activeSlide.offsetWidth;
         activeSlide.classList.add('fade');
     }
 
-    // Highlight active dot
     const activeDot = dots[activeSlideIndex - 1];
     if (activeDot) {
         activeDot.classList.add('slide-active');
@@ -137,7 +117,6 @@ function renderSlides(targetIndex) {
     }
 }
 
-// Pause slideshow when tab is hidden to save resources
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
         stopSlideshowTimer();
@@ -166,21 +145,18 @@ function initMobileNav() {
 
     if (!menuToggle || !navLinks) return;
 
-    // Toggle menu on hamburger click
     menuToggle.addEventListener('click', (e) => {
         e.stopPropagation();
         const isOpen = navLinks.classList.toggle('show');
         menuToggle.setAttribute('aria-expanded', String(isOpen));
     });
 
-    // Close when clicking outside the nav
     document.addEventListener('click', (e) => {
         if (!menuToggle.contains(e.target) && !navLinks.contains(e.target)) {
             closeMobileNav();
         }
     });
 
-    // Close on Escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && navLinks.classList.contains('show')) {
             closeMobileNav();
@@ -196,7 +172,6 @@ function initMobileNav() {
 
 function initTheme() {
     const themeBtn = document.getElementById('theme-toggle');
-    // Default to light; respect saved preference
     const saved = localStorage.getItem('theme') || 'light';
 
     applyTheme(saved, themeBtn);
@@ -221,12 +196,72 @@ function applyTheme(theme, btn) {
 
 
 // ============================================================
+// SEARCH BAR TOGGLE (expand/collapse on icon click)
+// ============================================================
+
+function initSearchBarToggle() {
+    const toggleBtn    = document.getElementById('navSearchToggle');
+    const expandPanel  = document.getElementById('navSearchExpand');
+    const closeBtn     = document.getElementById('navSearchClose');
+    const searchInput  = document.getElementById('navSearchInput');
+    const wrapper      = document.getElementById('navSearchWrapper');
+
+    if (!toggleBtn || !expandPanel) return;
+
+    function openNavSearch() {
+        expandPanel.classList.add('expanded');
+        expandPanel.setAttribute('aria-hidden', 'false');
+        toggleBtn.setAttribute('aria-expanded', 'true');
+        setTimeout(() => { if (searchInput) searchInput.focus(); }, 60);
+    }
+
+    function closeNavSearch() {
+        expandPanel.classList.remove('expanded');
+        expandPanel.setAttribute('aria-hidden', 'true');
+        toggleBtn.setAttribute('aria-expanded', 'false');
+        if (searchInput) searchInput.value = '';
+    }
+
+    toggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isExpanded = expandPanel.classList.contains('expanded');
+        if (isExpanded) {
+            closeNavSearch();
+        } else {
+            openNavSearch();
+        }
+    });
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeNavSearch();
+        });
+    }
+
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+        if (wrapper && !wrapper.contains(e.target)) {
+            closeNavSearch();
+        }
+    });
+
+    // Close on Escape
+    if (searchInput) {
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeNavSearch();
+                toggleBtn.focus();
+            }
+        });
+    }
+}
+
+
+// ============================================================
 // MODAL UTILITIES
 // ============================================================
 
-/**
- * Generic modal opener — adds .active, sets aria-hidden=false, focuses close button.
- */
 function openModalById(modalId, focusBtnSelector = '.modal-close-btn') {
     const modal = document.getElementById(modalId);
     if (!modal) return;
@@ -236,9 +271,6 @@ function openModalById(modalId, focusBtnSelector = '.modal-close-btn') {
     if (btn) setTimeout(() => btn.focus(), 60);
 }
 
-/**
- * Generic modal closer — removes .active, sets aria-hidden=true.
- */
 function closeModalById(modalId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
@@ -248,7 +280,7 @@ function closeModalById(modalId) {
 
 // Close modal when clicking the overlay backdrop
 document.addEventListener('click', (e) => {
-    ['submissionModal', 'appointmentModal', 'docRequestModal', 'officialModal'].forEach(id => {
+    ['submissionModal', 'appointmentModal', 'docRequestModal', 'officialModal', 'eventDetailModal'].forEach(id => {
         const modal = document.getElementById(id);
         if (modal && modal.classList.contains('active') && e.target === modal) {
             closeModalById(id);
@@ -259,7 +291,7 @@ document.addEventListener('click', (e) => {
 // Close any open modal with Escape key
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-        ['submissionModal', 'appointmentModal', 'docRequestModal', 'officialModal'].forEach(id => {
+        ['submissionModal', 'appointmentModal', 'docRequestModal', 'officialModal', 'eventDetailModal'].forEach(id => {
             const modal = document.getElementById(id);
             if (modal && modal.classList.contains('active')) {
                 closeModalById(id);
@@ -270,23 +302,117 @@ document.addEventListener('keydown', (e) => {
 
 
 // ============================================================
+// TOAST / SUBMISSION POPUP NOTIFICATION
+// ============================================================
+
+function showToast(message, duration = 4000) {
+    // Remove any existing toast
+    const existing = document.getElementById('submissionToast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.id = 'submissionToast';
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
+    toast.innerHTML = `
+        <span class="toast-icon">✅</span>
+        <span class="toast-message">${escapeHtml(message)}</span>
+        <button class="toast-close" aria-label="Close notification" onclick="dismissToast()">✕</button>
+    `;
+    document.body.appendChild(toast);
+
+    // Trigger animation
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => toast.classList.add('toast-visible'));
+    });
+
+    // Auto-dismiss
+    if (duration > 0) {
+        setTimeout(() => dismissToast(), duration);
+    }
+}
+
+function dismissToast() {
+    const toast = document.getElementById('submissionToast');
+    if (!toast) return;
+    toast.classList.remove('toast-visible');
+    toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+}
+
+// Inject toast styles dynamically if not already in CSS
+function injectToastStyles() {
+    if (document.getElementById('toastStyleTag')) return;
+    const style = document.createElement('style');
+    style.id = 'toastStyleTag';
+    style.textContent = `
+        #submissionToast {
+            position: fixed;
+            bottom: 28px;
+            right: 24px;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--color-primary, #8B1A1A);
+            color: #fff;
+            padding: 14px 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+            font-size: 0.95rem;
+            font-weight: 500;
+            max-width: 380px;
+            min-width: 260px;
+            opacity: 0;
+            transform: translateY(20px) scale(0.97);
+            transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+            pointer-events: none;
+        }
+        #submissionToast.toast-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+        .toast-icon { font-size: 1.2rem; flex-shrink: 0; }
+        .toast-message { flex: 1; line-height: 1.4; }
+        .toast-close {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.75);
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 0 0 0 4px;
+            line-height: 1;
+            flex-shrink: 0;
+            transition: color 0.2s;
+        }
+        .toast-close:hover { color: #fff; }
+        @media (max-width: 480px) {
+            #submissionToast {
+                bottom: 16px;
+                right: 12px;
+                left: 12px;
+                max-width: 100%;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+
+// ============================================================
 // CONTACT FORM MODAL (Success)
 // ============================================================
 
 function openModal() {
     openModalById('submissionModal');
+    showToast('Your form has been submitted successfully.');
 }
 
 function closeModal() {
     closeModalById('submissionModal');
-    // Reset form and image preview
     const form = document.getElementById('services-form');
     if (form) form.reset();
     resetImageUpload();
-    // Reset reCAPTCHA if loaded
-    if (typeof grecaptcha !== 'undefined') {
-        try { grecaptcha.reset(contactRecaptchaWidgetId); } catch (err) { /* not yet rendered */ }
-    }
 }
 
 
@@ -313,23 +439,189 @@ function openAppointmentModal(trackingNumber, apptSummary) {
     }
 
     openModalById('appointmentModal');
+    showToast('Your appointment has been submitted successfully.');
 }
 
 function closeAppointmentModal() {
     closeModalById('appointmentModal');
     const form = document.getElementById('appointment-form');
     if (form) form.reset();
-    // Hide "Other Concern" field
     const otherGroup = document.getElementById('appt-other-group');
     if (otherGroup) otherGroup.style.display = 'none';
-    // Deselect time slots
     document.querySelectorAll('.timeslot-option').forEach(opt => opt.classList.remove('selected'));
-    // Reset reCAPTCHA
-    if (typeof grecaptcha !== 'undefined') {
-        try { grecaptcha.reset(apptRecaptchaWidgetId); } catch (err) { /* not yet rendered */ }
-    }
-    // Reset min date on date picker
     initAppointmentDateConstraints();
+}
+
+
+// ============================================================
+// EVENT CARD MODAL
+// ============================================================
+
+function openEventModal(title, date, time, location, description) {
+    const modal    = document.getElementById('eventDetailModal');
+    const titleEl  = document.getElementById('eventModalTitle');
+    const dateEl   = document.getElementById('eventModalDate');
+    const timeEl   = document.getElementById('eventModalTime');
+    const locEl    = document.getElementById('eventModalLocation');
+    const descEl   = document.getElementById('eventModalDesc');
+
+    // If modal doesn't exist yet, create it dynamically
+    if (!modal) {
+        createEventModal();
+        return openEventModal(title, date, time, location, description);
+    }
+
+    if (titleEl)  titleEl.textContent  = title       || '';
+    if (dateEl)   dateEl.textContent   = date        || '';
+    if (timeEl)   timeEl.textContent   = time        || '';
+    if (locEl)    locEl.textContent    = location    || '';
+    if (descEl)   descEl.innerHTML     = description || '';
+
+    openModalById('eventDetailModal', '.event-modal-close');
+}
+
+function closeEventModal() {
+    closeModalById('eventDetailModal');
+}
+
+function createEventModal() {
+    if (document.getElementById('eventDetailModal')) return;
+
+    const modal = document.createElement('div');
+    modal.id = 'eventDetailModal';
+    modal.className = 'modal-overlay';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-hidden', 'true');
+    modal.setAttribute('aria-labelledby', 'eventModalTitle');
+
+    modal.innerHTML = `
+        <div class="modal-box event-modal-box">
+            <button class="modal-x-close event-modal-close" onclick="closeEventModal()" aria-label="Close event details">✕</button>
+            <div class="event-modal-header">
+                <h2 id="eventModalTitle" class="event-modal-title"></h2>
+            </div>
+            <div class="event-modal-meta">
+                <div class="event-meta-row">
+                    <span class="event-meta-icon">📅</span>
+                    <span id="eventModalDate"></span>
+                </div>
+                <div class="event-meta-row">
+                    <span class="event-meta-icon">🕐</span>
+                    <span id="eventModalTime"></span>
+                </div>
+                <div class="event-meta-row">
+                    <span class="event-meta-icon">📍</span>
+                    <span id="eventModalLocation"></span>
+                </div>
+            </div>
+            <div id="eventModalDesc" class="event-modal-desc"></div>
+        </div>
+    `;
+
+    // Close on backdrop click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeEventModal();
+    });
+
+    document.body.appendChild(modal);
+
+    // Inject event modal styles
+    if (!document.getElementById('eventModalStyleTag')) {
+        const style = document.createElement('style');
+        style.id = 'eventModalStyleTag';
+        style.textContent = `
+            .event-modal-box {
+                max-width: 540px;
+                width: 92%;
+                border-radius: 16px;
+                padding: 0;
+                overflow: hidden;
+            }
+            .event-modal-header {
+                background: var(--color-primary, #8B1A1A);
+                color: #fff;
+                padding: 28px 32px 20px;
+            }
+            .event-modal-title {
+                margin: 0;
+                font-size: 1.25rem;
+                font-weight: 700;
+                line-height: 1.4;
+                color: #fff;
+            }
+            .event-modal-meta {
+                padding: 20px 32px 12px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                border-bottom: 1px solid var(--color-border, #e5e5e5);
+            }
+            .event-meta-row {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                font-size: 0.95rem;
+                color: var(--color-text, #333);
+            }
+            .event-meta-icon { flex-shrink: 0; }
+            .event-modal-desc {
+                padding: 20px 32px 28px;
+                font-size: 0.93rem;
+                line-height: 1.65;
+                color: var(--color-text-secondary, #555);
+            }
+            .event-modal-close {
+                position: absolute;
+                top: 14px;
+                right: 16px;
+                background: rgba(255,255,255,0.2);
+                color: #fff;
+                border: none;
+                border-radius: 50%;
+                width: 32px;
+                height: 32px;
+                font-size: 1rem;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background 0.2s;
+                z-index: 10;
+            }
+            .event-modal-close:hover { background: rgba(255,255,255,0.35); }
+            @media (max-width: 540px) {
+                .event-modal-header,
+                .event-modal-meta,
+                .event-modal-desc { padding-left: 20px; padding-right: 20px; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+// Make event cards clickable — wire up any existing cards in the DOM
+function initEventCards() {
+    document.querySelectorAll('.event-card[data-event-title], .event-card[onclick]').forEach(card => {
+        // Already wired via onclick attribute — skip
+        if (card.getAttribute('onclick')) return;
+
+        card.style.cursor = 'pointer';
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'button');
+
+        const title    = card.dataset.eventTitle    || card.querySelector('.event-title, h3, h4')?.textContent?.trim() || 'Event';
+        const date     = card.dataset.eventDate     || card.querySelector('.event-date')?.textContent?.trim()          || '';
+        const time     = card.dataset.eventTime     || card.querySelector('.event-time')?.textContent?.trim()          || '';
+        const location = card.dataset.eventLocation || card.querySelector('.event-location')?.textContent?.trim()      || '';
+        const desc     = card.dataset.eventDesc     || card.querySelector('.event-desc, p')?.innerHTML?.trim()         || '';
+
+        const handler = () => openEventModal(title, date, time, location, desc);
+        card.addEventListener('click', handler);
+        card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handler(); }
+        });
+    });
 }
 
 
@@ -451,7 +743,7 @@ function openDocInfo(docType) {
     if (!modal || !title || !body) return;
 
     title.textContent = info.title;
-    body.innerHTML    = info.body; // Use innerHTML for rich formatting
+    body.innerHTML    = info.body;
 
     openModalById('docRequestModal', '.modal-close-btn--maroon');
 }
@@ -465,13 +757,6 @@ function closeDocModal() {
 // OFFICIAL DETAIL MODAL
 // ============================================================
 
-/**
- * Opens the official's profile modal.
- * @param {string} imgSrc   - Path to the official's photo
- * @param {string} role     - Official's role/title
- * @param {string} name     - Official's full name
- * @param {string} desc     - Description / responsibilities
- */
 function openOfficialModal(imgSrc, role, name, desc) {
     const modal    = document.getElementById('officialModal');
     const imgEl    = document.getElementById('officialModalImg');
@@ -481,10 +766,24 @@ function openOfficialModal(imgSrc, role, name, desc) {
 
     if (!modal) return;
 
-    if (imgEl)   { imgEl.src = imgSrc; imgEl.alt = name; }
+    if (imgEl) {
+        imgEl.src = imgSrc;
+        imgEl.alt = name;
+        // Ensure image displays fully without cropping
+        imgEl.style.width       = '100%';
+        imgEl.style.height      = 'auto';
+        imgEl.style.maxHeight   = '320px';
+        imgEl.style.objectFit   = 'contain';
+        imgEl.style.objectPosition = 'top center';
+        imgEl.style.display     = 'block';
+        imgEl.style.borderRadius = '8px';
+    }
     if (roleEl)  roleEl.textContent  = role;
     if (titleEl) titleEl.textContent = name;
-    if (descEl)  descEl.textContent  = desc;
+    if (descEl) {
+        descEl.textContent  = desc;
+        descEl.style.textAlign = 'justify';
+    }
 
     openModalById('officialModal', '.modal-x-close');
 }
@@ -493,7 +792,6 @@ function closeOfficialModal() {
     closeModalById('officialModal');
 }
 
-// Allow keyboard activation on official cards (Enter / Space)
 document.addEventListener('keydown', (e) => {
     if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('official-card')) {
         e.preventDefault();
@@ -513,7 +811,6 @@ function toggleDisaster(id) {
     const isOpen = card.classList.contains('is-open');
     const btn    = card.querySelector('.disaster-header');
 
-    // Close all other open cards
     document.querySelectorAll('.disaster-card.is-open').forEach(c => {
         if (c !== card) {
             c.classList.remove('is-open');
@@ -522,7 +819,6 @@ function toggleDisaster(id) {
         }
     });
 
-    // Toggle this one
     if (isOpen) {
         card.classList.remove('is-open');
         if (btn) btn.setAttribute('aria-expanded', 'false');
@@ -543,7 +839,6 @@ function toggleFaq(btn) {
     const chevron  = btn.querySelector('.faq-chevron');
     const isOpen   = btn.getAttribute('aria-expanded') === 'true';
 
-    // Collapse all other FAQ items
     document.querySelectorAll('.faq-question[aria-expanded="true"]').forEach(otherBtn => {
         if (otherBtn !== btn) {
             otherBtn.setAttribute('aria-expanded', 'false');
@@ -556,7 +851,6 @@ function toggleFaq(btn) {
         }
     });
 
-    // Toggle this item
     btn.setAttribute('aria-expanded', String(!isOpen));
     if (item)    item.classList.toggle('is-open', !isOpen);
     if (answer)  answer.classList.toggle('open', !isOpen);
@@ -598,7 +892,7 @@ function displayImagePreview(file) {
 }
 
 function removeImage(event) {
-    event.stopPropagation(); // Prevent re-opening file dialog
+    event.stopPropagation();
     resetImageUpload();
 }
 
@@ -651,7 +945,6 @@ let scrollObserver = null;
 
 function observeScrollElements() {
     if (scrollObserver) {
-        // Observer already created — just watch any new un-revealed elements
         document.querySelectorAll('.scroll-fade:not(.reveal-visible)').forEach(el => {
             scrollObserver.observe(el);
         });
@@ -688,11 +981,9 @@ function initScrollHeader() {
                 const currentY = window.scrollY;
 
                 if (currentY > lastY && currentY > 140) {
-                    // Scrolling down — hide header
                     header.classList.add('scroll-hide');
-                    closeMobileNav(); // Also close nav if open
+                    closeMobileNav();
                 } else {
-                    // Scrolling up — show header
                     header.classList.remove('scroll-hide');
                 }
 
@@ -723,7 +1014,6 @@ function filterSelection(category) {
         }
     });
 
-    // Update active filter button
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-filter') === category);
     });
@@ -731,59 +1021,8 @@ function filterSelection(category) {
 
 
 // ============================================================
-// RECAPTCHA WIDGET IDs (for multi-form reset support)
-// ============================================================
-
-let contactRecaptchaWidgetId = null;
-let apptRecaptchaWidgetId    = null;
-
-/**
- * Called by the reCAPTCHA API after it loads (via onload callback).
- * Explicitly renders reCAPTCHA widgets so we can track widget IDs.
- */
-function onRecaptchaLoad() {
-    const contactContainer = document.getElementById('contact-recaptcha');
-    const apptContainer    = document.getElementById('appt-recaptcha');
-
-    if (contactContainer && typeof grecaptcha !== 'undefined') {
-        contactRecaptchaWidgetId = grecaptcha.render(contactContainer, {
-            sitekey: '6LeBevosAAAAABz58r9cTLM-Zt-FCiPMAGf9jKqa',
-            theme:   getRecaptchaTheme()
-        });
-    }
-
-    if (apptContainer && typeof grecaptcha !== 'undefined') {
-        apptRecaptchaWidgetId = grecaptcha.render(apptContainer, {
-            sitekey: '6LeBevosAAAAABz58r9cTLM-Zt-FCiPMAGf9jKqa',
-            theme:   getRecaptchaTheme()
-        });
-    }
-}
-
-function getRecaptchaTheme() {
-    return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-}
-
-/**
- * Checks whether a reCAPTCHA widget has been completed.
- * @param {number|null} widgetId
- * @returns {boolean}
- */
-function isRecaptchaVerified(widgetId) {
-    if (typeof grecaptcha === 'undefined') return false;
-    try {
-        const response = widgetId !== null
-            ? grecaptcha.getResponse(widgetId)
-            : grecaptcha.getResponse();
-        return response.length > 0;
-    } catch (err) {
-        return false;
-    }
-}
-
-
-// ============================================================
 // CONTACT / CONCERN FORM VALIDATION & SUBMISSION
+// (reCAPTCHA removed — form submits without CAPTCHA check)
 // ============================================================
 
 function initContactForm() {
@@ -795,7 +1034,6 @@ function initContactForm() {
 
         let valid = true;
 
-        // Validate required text/textarea/select fields
         form.querySelectorAll('[required]').forEach(field => {
             clearFieldError(field);
             if (!field.value.trim()) {
@@ -804,69 +1042,39 @@ function initContactForm() {
             }
         });
 
-        // Email format check
         const emailField = form.querySelector('#Email');
         if (emailField && emailField.value.trim() && !isValidEmail(emailField.value)) {
             showFieldError(emailField, 'Please enter a valid email address.');
             valid = false;
         }
 
-        // Philippine mobile number format check
         const mobileField = form.querySelector('#Mobile');
         if (mobileField && mobileField.value.trim() && !isValidPHMobile(mobileField.value)) {
             showFieldError(mobileField, 'Please enter a valid Philippine mobile number (e.g. 09XX-XXX-XXXX).');
             valid = false;
         }
 
-        // reCAPTCHA check
-        const captchaError = document.getElementById('contact-recaptcha-error');
-        if (!isRecaptchaVerified(contactRecaptchaWidgetId)) {
-            if (captchaError) captchaError.style.display = 'block';
-            valid = false;
-        } else {
-            if (captchaError) captchaError.style.display = 'none';
-        }
-
         if (valid) {
             openModal();
         } else {
-            // Focus first error
             const firstError = form.querySelector('.field-error');
             if (firstError) firstError.focus();
         }
     });
 
-    // Remove error state on input
     form.querySelectorAll('input, textarea').forEach(field => {
         field.addEventListener('input', () => clearFieldError(field));
     });
-
-    // Hide captcha error when completed
-    const captchaEl = document.getElementById('contact-recaptcha');
-    if (captchaEl) {
-        // Observe attribute changes (reCAPTCHA sets data-* when completed)
-        const observer = new MutationObserver(() => {
-            if (isRecaptchaVerified(contactRecaptchaWidgetId)) {
-                const errEl = document.getElementById('contact-recaptcha-error');
-                if (errEl) errEl.style.display = 'none';
-            }
-        });
-        observer.observe(captchaEl, { attributes: true, subtree: true, childList: true });
-    }
 }
 
 
 // ============================================================
 // APPOINTMENT FORM — VALIDATION & SUBMISSION
+// (reCAPTCHA removed — form submits without CAPTCHA check)
 // ============================================================
 
-/**
- * Shows/hides the "Other Concern" textarea based on appointment type selection.
- * Called via inline onchange in the HTML.
- * @param {string} value - Selected option value
- */
 function handleApptTypeChange(value) {
-    const otherGroup = document.getElementById('appt-other-group');
+    const otherGroup    = document.getElementById('appt-other-group');
     const otherTextarea = document.getElementById('appt-other-concern');
     if (!otherGroup) return;
 
@@ -882,17 +1090,11 @@ function handleApptTypeChange(value) {
     }
 }
 
-/**
- * Sets date constraints on the appointment date picker:
- * - Minimum date: next business day (or today if before 4PM)
- * - Disable weekends via oninput validation
- */
 function initAppointmentDateConstraints() {
     const dateInput = document.getElementById('appt-date');
     if (!dateInput) return;
 
-    const today = new Date();
-    // Cutoff at 4:00 PM — next day if after cutoff
+    const today     = new Date();
     const cutoffHour = 16;
     let minDate = new Date(today);
 
@@ -900,19 +1102,16 @@ function initAppointmentDateConstraints() {
         minDate.setDate(minDate.getDate() + 1);
     }
 
-    // Skip to Monday if min date falls on weekend
     while (minDate.getDay() === 0 || minDate.getDay() === 6) {
         minDate.setDate(minDate.getDate() + 1);
     }
 
-    // Set max date: 60 days from today
     const maxDate = new Date(today);
     maxDate.setDate(maxDate.getDate() + 60);
 
     dateInput.min = formatDateInput(minDate);
     dateInput.max = formatDateInput(maxDate);
 
-    // Validate that selected date is a weekday
     dateInput.addEventListener('change', () => {
         const selected = new Date(dateInput.value + 'T00:00:00');
         const day = selected.getDay();
@@ -932,22 +1131,15 @@ function formatDateInput(date) {
     return `${y}-${m}-${d}`;
 }
 
-/**
- * Handles time slot selection UI (radio button group styled as cards).
- * Highlights the selected slot visually.
- */
 function initTimeslotSelection() {
     const grid = document.getElementById('timeslotGrid');
     if (!grid) return;
 
     grid.addEventListener('change', (e) => {
         if (e.target.type === 'radio' && e.target.name === 'appt_time') {
-            // Remove selected class from all options
             grid.querySelectorAll('.timeslot-option').forEach(opt => opt.classList.remove('selected'));
-            // Add to the parent label of the checked radio
             e.target.closest('.timeslot-option')?.classList.add('selected');
 
-            // Update hidden input and clear error
             const hiddenInput = document.getElementById('appt-time-hidden');
             if (hiddenInput) hiddenInput.value = e.target.value;
             const timeslotErr = document.getElementById('timeslot-error');
@@ -956,10 +1148,6 @@ function initTimeslotSelection() {
     });
 }
 
-/**
- * Generates a random appointment tracking number.
- * Format: BC5-YYYYMMDD-XXXX (e.g. BC5-20260524-7A3F)
- */
 function generateTrackingNumber() {
     const now     = new Date();
     const dateStr = formatDateInput(now).replace(/-/g, '');
@@ -976,7 +1164,6 @@ function initAppointmentForm() {
 
         let valid = true;
 
-        // Validate required fields
         form.querySelectorAll('[required]').forEach(field => {
             clearFieldError(field);
             if (!field.value.trim()) {
@@ -985,14 +1172,12 @@ function initAppointmentForm() {
             }
         });
 
-        // Appointment type
         const apptType = form.querySelector('#appt-type');
         if (apptType && !apptType.value) {
             showFieldError(apptType, 'Please select a request type.');
             valid = false;
         }
 
-        // Date validation
         const dateInput = form.querySelector('#appt-date');
         if (dateInput && dateInput.value) {
             const selected = new Date(dateInput.value + 'T00:00:00');
@@ -1003,7 +1188,6 @@ function initAppointmentForm() {
             }
         }
 
-        // Time slot
         const selectedTime = form.querySelector('input[name="appt_time"]:checked');
         const timeslotErr  = document.getElementById('timeslot-error');
         if (!selectedTime) {
@@ -1013,27 +1197,16 @@ function initAppointmentForm() {
             if (timeslotErr) timeslotErr.style.display = 'none';
         }
 
-        // Contact number
         const contactField = form.querySelector('#appt-contact');
         if (contactField && contactField.value.trim() && !isValidPHMobile(contactField.value)) {
             showFieldError(contactField, 'Please enter a valid Philippine mobile number.');
             valid = false;
         }
 
-        // Email (optional but validated if provided)
         const emailField = form.querySelector('#appt-email');
         if (emailField && emailField.value.trim() && !isValidEmail(emailField.value)) {
             showFieldError(emailField, 'Please enter a valid email address.');
             valid = false;
-        }
-
-        // reCAPTCHA check
-        const captchaError = document.getElementById('appt-recaptcha-error');
-        if (!isRecaptchaVerified(apptRecaptchaWidgetId)) {
-            if (captchaError) captchaError.style.display = 'block';
-            valid = false;
-        } else {
-            if (captchaError) captchaError.style.display = 'none';
         }
 
         if (!valid) {
@@ -1042,7 +1215,6 @@ function initAppointmentForm() {
             return;
         }
 
-        // Build confirmation summary
         const nameVal    = form.querySelector('#appt-name')?.value || '';
         const typeVal    = apptType?.options[apptType?.selectedIndex]?.text || '';
         const dateVal    = dateInput?.value
@@ -1064,23 +1236,10 @@ function initAppointmentForm() {
         openAppointmentModal(trackingNo, summary);
     });
 
-    // Live error clearing on input
     form.querySelectorAll('input, textarea, select').forEach(field => {
         field.addEventListener('input', () => clearFieldError(field));
         field.addEventListener('change', () => clearFieldError(field));
     });
-
-    // Hide captcha error when completed
-    const captchaEl = document.getElementById('appt-recaptcha');
-    if (captchaEl) {
-        const observer = new MutationObserver(() => {
-            if (isRecaptchaVerified(apptRecaptchaWidgetId)) {
-                const errEl = document.getElementById('appt-recaptcha-error');
-                if (errEl) errEl.style.display = 'none';
-            }
-        });
-        observer.observe(captchaEl, { attributes: true, subtree: true, childList: true });
-    }
 }
 
 
@@ -1088,16 +1247,10 @@ function initAppointmentForm() {
 // FORM HELPER UTILITIES
 // ============================================================
 
-/**
- * Marks a form field as invalid and shows a message.
- * @param {HTMLElement} field
- * @param {string} message
- */
 function showFieldError(field, message) {
     field.classList.add('field-error');
     field.setAttribute('aria-invalid', 'true');
 
-    // Look for an existing error message element just after the field
     let errEl = field.nextElementSibling;
     if (!errEl || !errEl.classList.contains('inline-error')) {
         errEl = document.createElement('p');
@@ -1108,10 +1261,6 @@ function showFieldError(field, message) {
     errEl.style.display = 'block';
 }
 
-/**
- * Removes error state from a field.
- * @param {HTMLElement} field
- */
 function clearFieldError(field) {
     field.classList.remove('field-error');
     field.removeAttribute('aria-invalid');
@@ -1123,25 +1272,15 @@ function clearFieldError(field) {
     }
 }
 
-/**
- * Validates a Philippine mobile number format.
- * Accepts: 09XXXXXXXXX, +639XXXXXXXXX, 09XX-XXX-XXXX
- */
 function isValidPHMobile(value) {
     const cleaned = value.replace(/[\s\-()]/g, '');
     return /^(09|\+639)\d{9}$/.test(cleaned);
 }
 
-/**
- * Basic email format validation.
- */
 function isValidEmail(value) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
-/**
- * Escapes HTML special characters to prevent XSS in innerHTML.
- */
 function escapeHtml(str) {
     const div = document.createElement('div');
     div.appendChild(document.createTextNode(str));
@@ -1153,30 +1292,22 @@ function escapeHtml(str) {
 // SERVICE CATEGORY TABS
 // ============================================================
 
-/**
- * Switches the active service category tab panel.
- * @param {string} tabId - 'documents' | 'office' | 'business' | 'community'
- */
 function switchServiceTab(tabId) {
-    // Deactivate all tab buttons
     document.querySelectorAll('.service-tab-btn').forEach(btn => {
         btn.classList.remove('active');
         btn.setAttribute('aria-selected', 'false');
     });
 
-    // Hide all tab panels (with fade-out)
     document.querySelectorAll('.service-tab-panel').forEach(panel => {
         panel.classList.remove('active');
     });
 
-    // Activate selected tab button
     const activeBtn = document.getElementById(`tab-${tabId}`);
     if (activeBtn) {
         activeBtn.classList.add('active');
         activeBtn.setAttribute('aria-selected', 'true');
     }
 
-    // Show selected panel (with slight delay for smooth transition)
     const activePanel = document.getElementById(`svc-${tabId}`);
     if (activePanel) {
         requestAnimationFrame(() => {
@@ -1190,10 +1321,6 @@ function switchServiceTab(tabId) {
 // GLOBAL SEARCH ENGINE
 // ============================================================
 
-/**
- * Search index — each entry maps keywords to a destination page + section.
- * The system also performs live text searches across all visible page content.
- */
 const SEARCH_INDEX = [
     // Documents & Certificates
     { keywords: ['clearance','barangay clearance','cedula','residency','certificate','indigency','good moral','moral','id','barangay id','document','documents'], page: 'services', section: 'request-documents-section', label: 'Barangay Clearance & Documents', desc: 'Request official documents at the Barangay Hall', icon: '📋' },
@@ -1236,7 +1363,6 @@ const SEARCH_INDEX = [
 let searchDebounceTimer = null;
 let currentSearchQuery  = '';
 
-/** Called by quick search chips below the search bar */
 function doQuickSearch(query) {
     const input = document.getElementById('globalSearchInput');
     if (input) {
@@ -1246,7 +1372,6 @@ function doQuickSearch(query) {
     }
 }
 
-/** Initialize global search bar listeners */
 function initGlobalSearch() {
     const input     = document.getElementById('globalSearchInput');
     const clearBtn  = document.getElementById('searchClearBtn');
@@ -1256,21 +1381,20 @@ function initGlobalSearch() {
 
     input.addEventListener('input', (e) => {
         const q = e.target.value.trim();
-        clearBtn.style.display = q ? 'flex' : 'none';
+        if (clearBtn) clearBtn.style.display = q ? 'flex' : 'none';
 
         clearTimeout(searchDebounceTimer);
         searchDebounceTimer = setTimeout(() => handleGlobalSearch(q), 180);
     });
 
     input.addEventListener('focus', () => {
-        if (currentSearchQuery) {
-            showSuggestions();
-        }
+        if (currentSearchQuery) showSuggestions();
     });
 
     // Keyboard navigation for suggestions
     input.addEventListener('keydown', (e) => {
-        const items = dropdown.querySelectorAll('.search-suggestion-item');
+        if (!dropdown) return;
+        const items      = dropdown.querySelectorAll('.search-suggestion-item');
         const activeItem = dropdown.querySelector('.search-suggestion-item.focused');
         let idx = Array.from(items).indexOf(activeItem);
 
@@ -1297,18 +1421,24 @@ function initGlobalSearch() {
         }
     });
 
-    clearBtn.addEventListener('click', () => {
-        input.value = '';
-        clearBtn.style.display = 'none';
-        hideSuggestions();
-        currentSearchQuery = '';
-        input.focus();
-    });
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            input.value = '';
+            clearBtn.style.display = 'none';
+            hideSuggestions();
+            currentSearchQuery = '';
+            input.focus();
+        });
+    }
 
-    // Close dropdown on outside click
     document.addEventListener('click', (e) => {
         const searchSection = document.getElementById('globalSearchSection');
-        if (searchSection && !searchSection.contains(e.target)) {
+        const navSearchWrapper = document.getElementById('navSearchWrapper');
+        const target = e.target;
+        if (
+            (searchSection && !searchSection.contains(target)) &&
+            (navSearchWrapper && !navSearchWrapper.contains(target))
+        ) {
             hideSuggestions();
         }
     });
@@ -1331,7 +1461,6 @@ function getSearchResults(query) {
     const results = [];
     const seen    = new Set();
 
-    // First pass: keyword-based index matches (exact and partial)
     SEARCH_INDEX.forEach(entry => {
         const match = entry.keywords.some(kw => kw.includes(query) || query.includes(kw) || kw.startsWith(query.split(' ')[0]));
         if (match && !seen.has(entry.label)) {
@@ -1340,19 +1469,16 @@ function getSearchResults(query) {
         }
     });
 
-    // Second pass: text search across all section headings and content
     const allSections = document.querySelectorAll('.dashboard-block, .history-section, .disaster-card, .hotline-card, .doc-card, .event-card, .official-card');
     allSections.forEach(section => {
         const text = section.innerText.toLowerCase();
         if (text.includes(query)) {
-            // Find the closest heading for label
             const heading = section.querySelector('h2, h3, h4, .block-title, .disaster-title, .hotline-name');
             const label   = heading ? heading.textContent.trim() : 'Section';
 
-            // Determine which page this section is in
             const page = section.closest('.page-section');
             if (page && !seen.has(label)) {
-                const pageId = page.id;
+                const pageId    = page.id;
                 const sectionId = section.id || null;
                 results.push({ label, desc: 'Match found in page content', icon: '🔍', page: pageId, section: sectionId, matchType: 'content' });
                 seen.add(label);
@@ -1360,7 +1486,7 @@ function getSearchResults(query) {
         }
     });
 
-    return results.slice(0, 8); // Cap at 8 results
+    return results.slice(0, 8);
 }
 
 function renderSuggestions(results, query) {
@@ -1371,11 +1497,11 @@ function renderSuggestions(results, query) {
     inner.innerHTML = '';
 
     if (!results.length) {
-        noResult.style.display = 'flex';
+        if (noResult) noResult.style.display = 'flex';
         return;
     }
 
-    noResult.style.display = 'none';
+    if (noResult) noResult.style.display = 'none';
 
     results.forEach((result, i) => {
         const item = document.createElement('div');
@@ -1385,7 +1511,9 @@ function renderSuggestions(results, query) {
         item.setAttribute('tabindex', '-1');
 
         const highlightedLabel = highlightMatch(result.label, query);
-        const badge = result.matchType === 'index' ? `<span class="search-badge search-badge--${result.page}">${getPageBadge(result.page)}</span>` : '<span class="search-badge search-badge--content">Content</span>';
+        const badge = result.matchType === 'index'
+            ? `<span class="search-badge search-badge--${result.page}">${getPageBadge(result.page)}</span>`
+            : '<span class="search-badge search-badge--content">Content</span>';
 
         item.innerHTML = `
             <span class="search-sug-icon">${result.icon || '🔍'}</span>
@@ -1423,20 +1551,16 @@ function navigateToResult(result) {
     const input = document.getElementById('globalSearchInput');
     if (input) input.blur();
 
-    // Switch to the correct page
     showPage(result.page);
 
-    // If a service tab needs to be activated
     if (result.tab) {
         setTimeout(() => switchServiceTab(result.tab), 100);
     }
 
-    // Scroll to specific section
     if (result.section) {
         scrollToSection(result.section);
     }
 
-    // Highlight matching sections briefly
     setTimeout(() => highlightSearchResult(result.section || result.page), 400);
 }
 
@@ -1469,14 +1593,9 @@ function hideSuggestions() {
 
 
 // ============================================================
-// ANNOUNCEMENTS SECTION — Optional filter/search
+// ANNOUNCEMENTS SECTION
 // ============================================================
 
-/**
- * Filters announcement cards by category tag.
- * Expects cards with data-category attribute.
- * @param {string} category - 'all' or specific category
- */
 function filterAnnouncements(category) {
     const cards = document.querySelectorAll('.announcement-card');
 
@@ -1490,16 +1609,11 @@ function filterAnnouncements(category) {
         }
     });
 
-    // Update active state on filter buttons
     document.querySelectorAll('.announcement-filter-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.filter === category);
     });
 }
 
-/**
- * Search through announcement cards by text content.
- * @param {string} query
- */
 function searchAnnouncements(query) {
     const q     = query.toLowerCase().trim();
     const cards = document.querySelectorAll('.announcement-card');
@@ -1516,7 +1630,6 @@ function initAnnouncementsSection() {
         searchInput.addEventListener('input', (e) => searchAnnouncements(e.target.value));
     }
 
-    // Attach filter buttons if present
     document.querySelectorAll('.announcement-filter-btn').forEach(btn => {
         btn.addEventListener('click', () => filterAnnouncements(btn.dataset.filter || 'all'));
     });
@@ -1527,9 +1640,6 @@ function initAnnouncementsSection() {
 // KEYBOARD ACCESSIBILITY HELPERS
 // ============================================================
 
-/**
- * Allow Enter/Space to trigger click on elements with role="button".
- */
 function initKeyboardAccessibility() {
     document.addEventListener('keydown', (e) => {
         const el = e.target;
@@ -1542,7 +1652,7 @@ function initKeyboardAccessibility() {
 
 
 // ============================================================
-// LOADING ANIMATION (Optional page reveal)
+// LOADING ANIMATION
 // ============================================================
 
 function initPageLoadAnimation() {
@@ -1565,6 +1675,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initScrollHeader();
     initKeyboardAccessibility();
     initPageLoadAnimation();
+    injectToastStyles();
 
     // Features
     initializeNewsSlideshow();
@@ -1575,4 +1686,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initTimeslotSelection();
     initAnnouncementsSection();
     initGlobalSearch();
+    initSearchBarToggle();
+    initEventCards();
+    createEventModal();
 });
