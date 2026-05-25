@@ -1489,6 +1489,7 @@ a {
 .hotline-ambulance:hover { border-color: #c62828; }
 .hotline-rescue:hover  { border-color: #2e7d32; }
 .hotline-brgy:hover    { border-color: var(--maroon); }
+.hotline-hospital:hover { border-color: #00695c; }
 
 .hotline-icon-wrap {
     width: 52px;
@@ -1510,6 +1511,7 @@ a {
 .ambulance-hotline-bg { background: rgba(198, 40, 40, 0.12); }
 .rescue-hotline-bg    { background: rgba(46, 125, 50, 0.12); }
 .brgy-hotline-bg      { background: rgba(123, 13, 30, 0.12); }
+.hospital-hotline-bg  { background: rgba(0, 105, 92, 0.12); }
 
 .hotline-info { flex: 1; min-width: 0; }
 

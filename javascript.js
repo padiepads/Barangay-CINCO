@@ -208,6 +208,123 @@ function initSearchBarToggle() {
 
     if (!toggleBtn || !expandPanel) return;
 
+    // Create nav search dropdown (appended to body for z-index)
+    let navDropdown = document.getElementById('navSearchDropdown');
+    if (!navDropdown) {
+        navDropdown = document.createElement('div');
+        navDropdown.id = 'navSearchDropdown';
+        navDropdown.className = 'nav-search-dropdown';
+        navDropdown.setAttribute('role', 'listbox');
+        navDropdown.setAttribute('aria-label', 'Search suggestions');
+        navDropdown.style.display = 'none';
+        document.body.appendChild(navDropdown);
+
+        if (!document.getElementById('navSearchDropdownStyles')) {
+            const style = document.createElement('style');
+            style.id = 'navSearchDropdownStyles';
+            style.textContent = `
+                .nav-search-dropdown {
+                    position: fixed;
+                    background: var(--surface, #fff);
+                    border: 1.5px solid var(--border, #eceae3);
+                    border-radius: 12px;
+                    box-shadow: 0 16px 48px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
+                    z-index: 99999;
+                    overflow: hidden;
+                    min-width: 300px;
+                    max-width: 420px;
+                    animation: navDropIn 0.18s cubic-bezier(0.16,1,0.3,1) both;
+                }
+                @keyframes navDropIn {
+                    from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+                    to   { opacity: 1; transform: none; }
+                }
+                .nav-search-dropdown .search-suggestion-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 11px 16px;
+                    cursor: pointer;
+                    border-bottom: 1px solid var(--border, #eceae3);
+                    transition: background 0.15s ease;
+                    font-family: 'DM Sans', system-ui, sans-serif;
+                }
+                .nav-search-dropdown .search-suggestion-item:last-child { border-bottom: none; }
+                .nav-search-dropdown .search-suggestion-item:hover,
+                .nav-search-dropdown .search-suggestion-item.focused {
+                    background: var(--surface-alt, #f5f4f0);
+                }
+                .nav-search-dropdown .search-sug-icon {
+                    font-size: 1.2rem;
+                    width: 32px;
+                    height: 32px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: var(--surface-alt, #f5f4f0);
+                    border-radius: 8px;
+                    flex-shrink: 0;
+                }
+                .nav-search-dropdown .search-sug-body { flex: 1; min-width: 0; }
+                .nav-search-dropdown .search-sug-label {
+                    font-size: 0.875rem;
+                    font-weight: 600;
+                    color: var(--text-heading, #1a1a1a);
+                    margin-bottom: 2px;
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    flex-wrap: wrap;
+                    white-space: normal;
+                }
+                .nav-search-dropdown .search-sug-desc {
+                    font-size: 0.75rem;
+                    color: var(--text-secondary, #6b6660);
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                .nav-search-dropdown .search-sug-arrow { color: var(--text-secondary, #6b6660); flex-shrink: 0; }
+                .nav-search-dropdown .search-suggestion-item:hover .search-sug-arrow,
+                .nav-search-dropdown .search-suggestion-item.focused .search-sug-arrow { color: #7b0d1e; }
+                .nav-search-dropdown .search-no-results {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    padding: 22px 16px;
+                    color: var(--text-secondary, #6b6660);
+                    font-size: 0.875rem;
+                    gap: 8px;
+                    text-align: center;
+                    font-family: 'DM Sans', system-ui, sans-serif;
+                }
+                .nav-search-dropdown .search-highlight {
+                    background: rgba(200,147,42,0.25);
+                    color: #7b0d1e;
+                    border-radius: 2px;
+                    padding: 0 2px;
+                    font-weight: 700;
+                }
+                [data-theme="dark"] .nav-search-dropdown { background: #1e1c19; border-color: #2e2c28; box-shadow: 0 16px 48px rgba(0,0,0,0.5); }
+                [data-theme="dark"] .nav-search-dropdown .search-suggestion-item:hover,
+                [data-theme="dark"] .nav-search-dropdown .search-suggestion-item.focused { background: #252320; }
+                [data-theme="dark"] .nav-search-dropdown .search-sug-icon { background: #252320; }
+                [data-theme="dark"] .nav-search-dropdown .search-sug-label { color: #f0ece4; }
+                [data-theme="dark"] .nav-search-dropdown .search-highlight { background: rgba(200,147,42,0.2); color: #e6aa3a; }
+                [data-theme="dark"] .nav-search-dropdown .search-suggestion-item:hover .search-sug-arrow,
+                [data-theme="dark"] .nav-search-dropdown .search-suggestion-item.focused .search-sug-arrow { color: #d4a040; }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+
+    function positionNavDropdown() {
+        const rect = expandPanel.getBoundingClientRect();
+        navDropdown.style.top   = (rect.bottom + 8) + 'px';
+        navDropdown.style.right = (window.innerWidth - rect.right) + 'px';
+        navDropdown.style.left  = 'auto';
+    }
+
     function openNavSearch() {
         expandPanel.classList.add('expanded');
         expandPanel.setAttribute('aria-hidden', 'false');
@@ -220,41 +337,116 @@ function initSearchBarToggle() {
         expandPanel.setAttribute('aria-hidden', 'true');
         toggleBtn.setAttribute('aria-expanded', 'false');
         if (searchInput) searchInput.value = '';
+        hideNavDropdown();
+    }
+
+    function hideNavDropdown() { navDropdown.style.display = 'none'; }
+
+    function showNavDropdown() {
+        positionNavDropdown();
+        navDropdown.style.display = 'block';
+    }
+
+    function renderNavSuggestions(results, query) {
+        navDropdown.innerHTML = '';
+        if (!results.length) {
+            navDropdown.innerHTML = `
+                <div class="search-no-results">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.4"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <span>No results found for "<strong>${escapeHtml(query)}</strong>"</span>
+                    <span style="font-size:0.75rem;">Try a different keyword</span>
+                </div>`;
+            showNavDropdown();
+            return;
+        }
+        results.forEach((result, i) => {
+            const item = document.createElement('div');
+            item.className = 'search-suggestion-item' + (i === 0 ? ' focused' : '');
+            item.setAttribute('role', 'option');
+            item.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+            item.setAttribute('tabindex', '-1');
+            const badge = result.matchType === 'index'
+                ? `<span class="search-badge search-badge--${result.page}">${getPageBadge(result.page)}</span>`
+                : '<span class="search-badge search-badge--content">Match</span>';
+            item.innerHTML = `
+                <span class="search-sug-icon">${result.icon || '&#128269;'}</span>
+                <div class="search-sug-body">
+                    <div class="search-sug-label">${highlightMatch(result.label, query)} ${badge}</div>
+                    <div class="search-sug-desc">${escapeHtml(result.desc || '')}</div>
+                </div>
+                <svg class="search-sug-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>`;
+            item.addEventListener('click', () => { closeNavSearch(); navigateToResult(result); });
+            item.addEventListener('mouseenter', () => {
+                navDropdown.querySelectorAll('.search-suggestion-item').forEach(el => {
+                    el.classList.remove('focused'); el.setAttribute('aria-selected', 'false');
+                });
+                item.classList.add('focused'); item.setAttribute('aria-selected', 'true');
+            });
+            navDropdown.appendChild(item);
+        });
+        showNavDropdown();
+    }
+
+    function handleNavSearch(query) {
+        const q = query.toLowerCase().trim();
+        if (!q) { hideNavDropdown(); return; }
+        const results = getSearchResults(q);
+        renderNavSuggestions(results, q);
+    }
+
+    if (searchInput) {
+        let navSearchTimer = null;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(navSearchTimer);
+            navSearchTimer = setTimeout(() => handleNavSearch(e.target.value), 180);
+        });
+        searchInput.addEventListener('keydown', (e) => {
+            const items  = navDropdown.querySelectorAll('.search-suggestion-item');
+            const focused = navDropdown.querySelector('.search-suggestion-item.focused');
+            let idx = Array.from(items).indexOf(focused);
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                idx = Math.min(idx + 1, items.length - 1);
+                items.forEach(el => { el.classList.remove('focused'); el.setAttribute('aria-selected', 'false'); });
+                if (items[idx]) { items[idx].classList.add('focused'); items[idx].setAttribute('aria-selected', 'true'); }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                idx = Math.max(idx - 1, 0);
+                items.forEach(el => { el.classList.remove('focused'); el.setAttribute('aria-selected', 'false'); });
+                if (items[idx]) { items[idx].classList.add('focused'); items[idx].setAttribute('aria-selected', 'true'); }
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (focused) { focused.click(); }
+                else if (searchInput.value.trim()) {
+                    const q = searchInput.value.toLowerCase().trim();
+                    const results = getSearchResults(q);
+                    if (results.length) { closeNavSearch(); navigateToResult(results[0]); }
+                }
+            } else if (e.key === 'Escape') {
+                closeNavSearch(); toggleBtn.focus();
+            }
+        });
     }
 
     toggleBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         const isExpanded = expandPanel.classList.contains('expanded');
-        if (isExpanded) {
-            closeNavSearch();
-        } else {
-            openNavSearch();
-        }
+        isExpanded ? closeNavSearch() : openNavSearch();
     });
 
     if (closeBtn) {
-        closeBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            closeNavSearch();
-        });
+        closeBtn.addEventListener('click', (e) => { e.stopPropagation(); closeNavSearch(); });
     }
 
-    // Close on outside click
     document.addEventListener('click', (e) => {
-        if (wrapper && !wrapper.contains(e.target)) {
+        if (wrapper && !wrapper.contains(e.target) && !navDropdown.contains(e.target)) {
             closeNavSearch();
         }
     });
 
-    // Close on Escape
-    if (searchInput) {
-        searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeNavSearch();
-                toggleBtn.focus();
-            }
-        });
-    }
+    window.addEventListener('resize', () => {
+        if (navDropdown.style.display !== 'none') positionNavDropdown();
+    });
 }
 
 
@@ -457,7 +649,59 @@ function closeAppointmentModal() {
 // EVENT CARD MODAL
 // ============================================================
 
-function openEventModal(title, date, time, location, description) {
+// Legacy 7-arg call signature used in HTML onclick attributes:
+// openEventModal(month, day, category, tagClass, title, timeLocation, desc)
+// New 5-arg signature: openEventModal(title, date, time, location, description)
+// This function handles both.
+function openEventModal(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
+    let title, dateStr, timeStr, locationStr, description;
+
+    // Detect 7-arg legacy call: arg4 starts with 'event-tag--'
+    if (arg4 && typeof arg4 === 'string' && arg4.startsWith('event-tag--')) {
+        // arg1=month, arg2=day, arg3=category, arg4=tagClass, arg5=title, arg6=timeLocation, arg7=desc
+        const month = arg1 || '';
+        const day   = arg2 || '';
+        const category = arg3 || '';
+        // arg6 is like "8:00 AM – 5:00 PM · Barangay Hall" or "All day · Health Center · Open to all residents"
+        const timeLocation = arg6 || '';
+        dateStr = `${month} ${day}`;
+
+        // Split timeLocation on ' · ' to extract time and location separately
+        const parts = timeLocation.split(' · ');
+        if (parts.length >= 2) {
+            timeStr     = parts[0].trim();
+            locationStr = parts.slice(1).join(' · ').trim();
+        } else {
+            timeStr     = timeLocation;
+            locationStr = '';
+        }
+
+        // If locationStr is still empty, assign a facility based on category
+        if (!locationStr) {
+            const facilityMap = {
+                'Maintenance':  'Barangay Hall',
+                'Assembly':     'Barangay Hall',
+                'Health':       'Health Center',
+                'Program':      'Multi-Purpose Hall',
+                'Environment':  'All Puroks',
+                'Sports':       'Covered Court',
+                'Governance':   'Session Hall',
+                'Education':    'Barangay Hall'
+            };
+            locationStr = facilityMap[category] || 'Barangay Hall';
+        }
+
+        title       = arg5 || '';
+        description = arg7 || '';
+    } else {
+        // 5-arg new signature
+        title       = arg1 || '';
+        dateStr     = arg2 || '';
+        timeStr     = arg3 || '';
+        locationStr = arg4 || '';
+        description = arg5 || '';
+    }
+
     const modal    = document.getElementById('eventDetailModal');
     const titleEl  = document.getElementById('eventModalTitle');
     const dateEl   = document.getElementById('eventModalDate');
@@ -468,13 +712,15 @@ function openEventModal(title, date, time, location, description) {
     // If modal doesn't exist yet, create it dynamically
     if (!modal) {
         createEventModal();
-        return openEventModal(title, date, time, location, description);
+        // Re-call after modal is created
+        setTimeout(() => openEventModal(arg1, arg2, arg3, arg4, arg5, arg6, arg7), 50);
+        return;
     }
 
     if (titleEl)  titleEl.textContent  = title       || '';
-    if (dateEl)   dateEl.textContent   = date        || '';
-    if (timeEl)   timeEl.textContent   = time        || '';
-    if (locEl)    locEl.textContent    = location    || '';
+    if (dateEl)   dateEl.textContent   = dateStr     || '';
+    if (timeEl)   timeEl.textContent   = timeStr     || '';
+    if (locEl)    locEl.textContent    = locationStr || '';
     if (descEl)   descEl.innerHTML     = description || '';
 
     openModalById('eventDetailModal', '.event-modal-close');
