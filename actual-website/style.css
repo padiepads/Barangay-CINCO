@@ -1,3 +1,15 @@
+/* ================================================
+   BARANGAY CINCO — DIGITAL COMMUNITY PORTAL
+   Redesigned CSS — Modern Civic Aesthetic v2
+   Palette: Deep Maroon, Gold, Off-White, Ink
+   Updated: Floating navbar, FAQ, dark mode, hotlines,
+            nav search, footer social, event modal,
+            officials modal fix, form toast, recaptcha removed
+================================================ */
+
+/* ============================================
+   DESIGN TOKENS
+============================================ */
 :root {
     /* Brand */
     --maroon:         #7b0d1e;
@@ -3634,4 +3646,37 @@ a {
     .nav-subtitle { display: none; }
     .officials-grid { grid-template-columns: 1fr; }
     .timeslot-grid  { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ============================================================
+   EMAILJS INTEGRATION — Submit Button Loading & Error States
+   Added for EmailJS contact form integration
+============================================================ */
+
+/* Loading/disabled state for the submit button while EmailJS sends */
+.submit-btn:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+    pointer-events: none;
+    background: var(--maroon, #7b0d1e);
+}
+
+/* Spinner animation for the sending state icon */
+.submit-btn:disabled svg {
+    animation: emailjs-spin 0.9s linear infinite;
+}
+
+@keyframes emailjs-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* Mobile responsive: error toast full-width */
+@media (max-width: 480px) {
+    #emailErrorToast {
+        bottom: 16px !important;
+        right: 12px !important;
+        left: 12px !important;
+        max-width: 100% !important;
+    }
 }

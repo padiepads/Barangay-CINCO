@@ -1,3 +1,13 @@
+/**
+ * Barangay CINCO — Digital Community Portal
+ * javascript.js — Complete Implementation
+ * Covers: routing, dark mode, mobile nav, forms,
+ *         appointment, modals, FAQ, scroll effects, slideshow,
+ *         image upload, disaster accordion, officials modal,
+ *         document request, date validation, tracking numbers,
+ *         event card modals, toast notifications, search bar toggle.
+ */
+
 'use strict';
 
 // ============================================================
@@ -1257,50 +1267,214 @@ function filterSelection(category) {
 
 
 // ============================================================
-// CONTACT / CONCERN FORM VALIDATION & SUBMISSION
-// (reCAPTCHA removed — form submits without CAPTCHA check)
+// EMAILJS CONFIGURATION
+// Barangay CINCO — Digital Community Portal
+// Service: Gmail (baranggaycinco@gmail.com)
+// ============================================================
+
+const EMAILJS_CONFIG = {
+    serviceId:  'service_izu4ocj',   // EmailJS Gmail service ID
+    templateId: 'template_l5brjon', // EmailJS template ID
+    publicKey:  'S-jDeoijBJnwV0FO-' // EmailJS public key (also set in HTML)
+};
+
+
+// ============================================================
+// CONTACT / CONCERN FORM — VALIDATION & EMAILJS SUBMISSION
+// Uses async/await. Sends email to baranggaycinco@gmail.com
+// via EmailJS when the user submits the contact/concern form.
 // ============================================================
 
 function initContactForm() {
     const form = document.getElementById('services-form');
     if (!form) return;
 
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
+    // Wire the submit event to the async handler
+    form.addEventListener('submit', handleContactFormSubmit);
 
-        let valid = true;
-
-        form.querySelectorAll('[required]').forEach(field => {
-            clearFieldError(field);
-            if (!field.value.trim()) {
-                showFieldError(field, 'This field is required.');
-                valid = false;
-            }
-        });
-
-        const emailField = form.querySelector('#Email');
-        if (emailField && emailField.value.trim() && !isValidEmail(emailField.value)) {
-            showFieldError(emailField, 'Please enter a valid email address.');
-            valid = false;
-        }
-
-        const mobileField = form.querySelector('#Mobile');
-        if (mobileField && mobileField.value.trim() && !isValidPHMobile(mobileField.value)) {
-            showFieldError(mobileField, 'Please enter a valid Philippine mobile number (e.g. 09XX-XXX-XXXX).');
-            valid = false;
-        }
-
-        if (valid) {
-            openModal();
-        } else {
-            const firstError = form.querySelector('.field-error');
-            if (firstError) firstError.focus();
-        }
-    });
-
+    // Live clear field errors as user types
     form.querySelectorAll('input, textarea').forEach(field => {
         field.addEventListener('input', () => clearFieldError(field));
     });
+}
+
+/**
+ * Handles the contact form submission with EmailJS.
+ * Validates all fields, shows loading state, sends the email,
+ * then shows success modal or error toast accordingly.
+ * @param {Event} e - The form submit event
+ */
+async function handleContactFormSubmit(e) {
+    e.preventDefault();
+
+    const form = e.currentTarget;
+
+    // ── 1. Validate all required fields ──────────────────────
+    let valid = true;
+
+    form.querySelectorAll('[required]').forEach(field => {
+        clearFieldError(field);
+        if (!field.value.trim()) {
+            showFieldError(field, 'This field is required.');
+            valid = false;
+        }
+    });
+
+    // Validate email format
+    const emailField = form.querySelector('#Email');
+    if (emailField && emailField.value.trim() && !isValidEmail(emailField.value)) {
+        showFieldError(emailField, 'Please enter a valid email address.');
+        valid = false;
+    }
+
+    // Validate Philippine mobile number format
+    const mobileField = form.querySelector('#Mobile');
+    if (mobileField && mobileField.value.trim() && !isValidPHMobile(mobileField.value)) {
+        showFieldError(mobileField, 'Please enter a valid Philippine mobile number (e.g. 09XX-XXX-XXXX).');
+        valid = false;
+    }
+
+    // If any field is invalid, focus the first error and stop
+    if (!valid) {
+        const firstError = form.querySelector('.field-error');
+        if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+    }
+
+    // ── 2. Gather form values ─────────────────────────────────
+    const firstname = (form.querySelector('#firstname')?.value || '').trim();
+    const lastname  = (form.querySelector('#lastname')?.value  || '').trim();
+    const fullName  = `${firstname} ${lastname}`.trim();
+    const email     = emailField?.value.trim()  || '';
+    const mobile    = mobileField?.value.trim() || '';
+    const concern   = (form.querySelector('#concern-box')?.value || '').trim();
+
+    // ── 3. Show loading state on submit button ────────────────
+    const submitBtn = form.querySelector('.submit-btn');
+    const originalBtnHTML = submitBtn ? submitBtn.innerHTML : '';
+
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `
+            <span>Sending…</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 style="animation: spin 0.9s linear infinite;" aria-hidden="true">
+                <path d="M12 2a10 10 0 1 0 10 10" />
+            </svg>`;
+    }
+
+    // Inject spinner keyframe once
+    if (!document.getElementById('spinnerKeyframe')) {
+        const kf = document.createElement('style');
+        kf.id = 'spinnerKeyframe';
+        kf.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+        document.head.appendChild(kf);
+    }
+
+    // ── 4. Build EmailJS template parameters ─────────────────
+    // These keys must match the variables in your EmailJS template:
+    //   {{name}}, {{email}}, {{mobile}}, {{message}}
+    const templateParams = {
+        name:    fullName,   // maps to {{name}} in the email template
+        email:   email,      // maps to {{email}} — used as Reply-To / To
+        mobile:  mobile,     // maps to {{mobile}}
+        message: concern     // maps to {{message}} — the resident's concern
+    };
+
+    // ── 5. Send the email via EmailJS ─────────────────────────
+    try {
+        // emailjs.send(serviceID, templateID, templateParams)
+        // The public key was already initialised in home.html
+        await emailjs.send(
+            EMAILJS_CONFIG.serviceId,
+            EMAILJS_CONFIG.templateId,
+            templateParams
+        );
+
+        // ── 6a. SUCCESS: show modal + toast, reset form ───────
+        openModal();                          // success modal (already in HTML)
+        resetImageUpload();                   // clear any attached image
+        form.reset();                         // clear all input fields
+
+    } catch (error) {
+        // ── 6b. ERROR: log it and show an error toast ─────────
+        console.error('EmailJS send error:', error);
+
+        showEmailErrorToast(
+            'Failed to send your concern. Please try again or contact the barangay directly.'
+        );
+
+    } finally {
+        // ── 7. Always restore the submit button ───────────────
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnHTML;
+        }
+    }
+}
+
+/**
+ * Shows a red error toast for email send failures.
+ * @param {string} message - The error message to display
+ */
+function showEmailErrorToast(message) {
+    // Remove any existing error toast
+    const existing = document.getElementById('emailErrorToast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.id = 'emailErrorToast';
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'assertive');
+    toast.innerHTML = `
+        <span style="font-size:1.2rem;flex-shrink:0;">❌</span>
+        <span style="flex:1;line-height:1.4;">${escapeHtml(message)}</span>
+        <button aria-label="Close" onclick="this.closest('#emailErrorToast').remove()"
+                style="background:none;border:none;color:rgba(255,255,255,0.8);font-size:1rem;cursor:pointer;padding:0 0 0 4px;">✕</button>
+    `;
+
+    // Style the error toast
+    Object.assign(toast.style, {
+        position:   'fixed',
+        bottom:     '28px',
+        right:      '24px',
+        zIndex:     '99999',
+        display:    'flex',
+        alignItems: 'center',
+        gap:        '12px',
+        background: '#b71c1c',
+        color:      '#fff',
+        padding:    '14px 20px',
+        borderRadius: '12px',
+        boxShadow:  '0 8px 32px rgba(0,0,0,0.28)',
+        fontSize:   '0.93rem',
+        fontWeight: '500',
+        maxWidth:   '400px',
+        minWidth:   '260px',
+        opacity:    '0',
+        transform:  'translateY(20px) scale(0.97)',
+        transition: 'opacity 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1)'
+    });
+
+    document.body.appendChild(toast);
+
+    // Trigger animation
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            toast.style.opacity   = '1';
+            toast.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+
+    // Auto-dismiss after 6 seconds
+    setTimeout(() => {
+        if (toast && toast.parentNode) {
+            toast.style.opacity   = '0';
+            toast.style.transform = 'translateY(20px) scale(0.97)';
+            toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+        }
+    }, 6000);
 }
 
 
