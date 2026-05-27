@@ -1270,19 +1270,33 @@ function filterSelection(category) {
 // EMAILJS CONFIGURATION
 // Barangay CINCO — Digital Community Portal
 // Service: Gmail (baranggaycinco@gmail.com)
+//
+// Two templates are used on Contact Form submission:
+//   1. template_e25h4g5 — Sends submitted concern TO the barangay
+//   2. template_l5brjon — Sends auto-reply confirmation TO the resident
+// Both are sent sequentially via async/await.
 // ============================================================
 
 const EMAILJS_CONFIG = {
-    serviceId:  'service_izu4ocj',   // EmailJS Gmail service ID
-    templateId: 'template_e25h4g5', // EmailJS template ID
-    publicKey:  'S-jDeoijBJnwV0FO-' // EmailJS public key (also set in HTML)
+    serviceId:          'service_izu4ocj',   // EmailJS Gmail service ID
+    barangayTemplateId: 'template_e25h4g5', // Sends concern to barangay inbox
+    autoReplyTemplateId:'template_l5brjon', // Auto-reply confirmation to resident
+    publicKey:          'S-jDeoijBJnwV0FO-' // EmailJS public key (also initialised in home.html)
 };
 
 
 // ============================================================
-// CONTACT / CONCERN FORM — VALIDATION & EMAILJS SUBMISSION
-// Uses async/await. Sends email to baranggaycinco@gmail.com
-// via EmailJS when the user submits the contact/concern form.
+// CONTACT / CONCERN FORM — VALIDATION & DUAL EMAILJS SUBMISSION
+//
+// On a valid submission this function:
+//   Step 1 — Sends the resident's concern to the barangay inbox
+//             using template_e25h4g5 (BARANGAY NOTIFICATION TEMPLATE).
+//   Step 2 — Sends an auto-reply confirmation back to the resident
+//             using template_l5brjon (AUTO-REPLY TEMPLATE).
+//
+// Both sends use async/await. If either fails the catch block
+// shows an error toast and the submit button is always restored
+// via the finally block regardless of outcome.
 // ============================================================
 
 function initContactForm() {
@@ -1299,12 +1313,21 @@ function initContactForm() {
 }
 
 /**
- * Handles the contact form submission with EmailJS.
- * Validates all fields, shows loading state, sends the email,
- * then shows success modal or error toast accordingly.
+ * Handles the contact form submission with dual EmailJS sends.
+ *
+ * Flow:
+ *  1. Validate all required fields (inline error messages).
+ *  2. Show loading spinner on the submit button.
+ *  3. Send BARANGAY NOTIFICATION (template_e25h4g5) — concern arrives in barangay inbox.
+ *  4. Send AUTO-REPLY CONFIRMATION (template_l5brjon) — resident gets a confirmation email.
+ *  5. On full success: open the success modal and reset the form.
+ *  6. On any failure: show a red error toast with instructions.
+ *  7. Always restore the submit button (finally block).
+ *
  * @param {Event} e - The form submit event
  */
 async function handleContactFormSubmit(e) {
+    // ── 0. Block default page reload ─────────────────────────
     e.preventDefault();
 
     const form = e.currentTarget;
@@ -1334,7 +1357,7 @@ async function handleContactFormSubmit(e) {
         valid = false;
     }
 
-    // If any field is invalid, focus the first error and stop
+    // If any field is invalid, scroll to the first error and stop
     if (!valid) {
         const firstError = form.querySelector('.field-error');
         if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1349,7 +1372,7 @@ async function handleContactFormSubmit(e) {
     const mobile    = mobileField?.value.trim() || '';
     const concern   = (form.querySelector('#concern-box')?.value || '').trim();
 
-    // ── 3. Show loading state on submit button ────────────────
+    // ── 3. Show loading state on the submit button ────────────
     const submitBtn = form.querySelector('.submit-btn');
     const originalBtnHTML = submitBtn ? submitBtn.innerHTML : '';
 
@@ -1364,7 +1387,7 @@ async function handleContactFormSubmit(e) {
             </svg>`;
     }
 
-    // Inject spinner keyframe once
+    // Inject the spinner keyframe style once so the loading SVG animates
     if (!document.getElementById('spinnerKeyframe')) {
         const kf = document.createElement('style');
         kf.id = 'spinnerKeyframe';
@@ -1372,41 +1395,62 @@ async function handleContactFormSubmit(e) {
         document.head.appendChild(kf);
     }
 
-    // ── 4. Build EmailJS template parameters ─────────────────
-    // These keys must match the variables in your EmailJS template:
-    //   {{name}}, {{email}}, {{mobile}}, {{message}}
+    // ── 4. Build shared EmailJS template parameters ───────────
+    // These variable names MUST match the placeholders in both EmailJS templates:
+    //   {{name}}    — resident's full name
+    //   {{email}}   — resident's email address (used as To / Reply-To in auto-reply)
+    //   {{mobile}}  — resident's mobile number
+    //   {{message}} — the full concern text
     const templateParams = {
-        name:    fullName,   // maps to {{name}} in the email template
-        email:   email,      // maps to {{email}} — used as Reply-To / To
-        mobile:  mobile,     // maps to {{mobile}}
-        message: concern     // maps to {{message}} — the resident's concern
+        name:    fullName,  // {{name}}    used in both templates
+        email:   email,     // {{email}}   used in both templates
+        mobile:  mobile,    // {{mobile}}  used in barangay notification template
+        message: concern    // {{message}} used in both templates
     };
 
-    // ── 5. Send the email via EmailJS ─────────────────────────
+    // ── 5. Send both emails via EmailJS ──────────────────────
     try {
-        // emailjs.send(serviceID, templateID, templateParams)
-        // The public key was already initialised in home.html
+        // ── 5a. FIRST: Notify the barangay ───────────────────
+        // template_e25h4g5 → "BARANGAY NOTIFICATION TEMPLATE"
+        // Delivers the resident's full name, email, mobile and concern
+        // to the barangay Gmail inbox (baranggaycinco@gmail.com).
         await emailjs.send(
             EMAILJS_CONFIG.serviceId,
-            EMAILJS_CONFIG.templateId,
+            EMAILJS_CONFIG.barangayTemplateId,  // template_e25h4g5
             templateParams
         );
 
-        // ── 6a. SUCCESS: show modal + toast, reset form ───────
-        openModal();                          // success modal (already in HTML)
-        resetImageUpload();                   // clear any attached image
-        form.reset();                         // clear all input fields
+        // ── 5b. SECOND: Send auto-reply to the resident ──────
+        // template_l5brjon → "AUTO-REPLY TEMPLATE"
+        // Delivers a personalised Tagalog confirmation back to the
+        // resident's own email address with a copy of their message.
+        // EmailJS uses {{email}} as the recipient (set in the template's
+        // "To Email" field in the EmailJS dashboard).
+        await emailjs.send(
+            EMAILJS_CONFIG.serviceId,
+            EMAILJS_CONFIG.autoReplyTemplateId, // template_l5brjon
+            templateParams
+        );
+
+        // ── 6a. BOTH EMAILS SENT — show success UI ───────────
+        openModal();          // opens the "Concern Submitted!" success modal
+        resetImageUpload();   // clears any attached image preview
+        form.reset();         // clears all form fields for the next use
 
     } catch (error) {
-        // ── 6b. ERROR: log it and show an error toast ─────────
-        console.error('EmailJS send error:', error);
+        // ── 6b. ONE OR BOTH EMAILS FAILED ────────────────────
+        // Log the full error object so developers can diagnose in DevTools.
+        console.error('[EmailJS] Send error:', error);
 
+        // Show a red error toast with friendly guidance for the resident.
         showEmailErrorToast(
-            'Failed to send your concern. Please try again or contact the barangay directly.'
+            'Failed to send your concern. Please try again or contact the barangay directly at (046) 412-5000.'
         );
 
     } finally {
-        // ── 7. Always restore the submit button ───────────────
+        // ── 7. ALWAYS restore the submit button ───────────────
+        // Runs regardless of success or failure so the form is never
+        // stuck in a disabled/loading state.
         if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalBtnHTML;
