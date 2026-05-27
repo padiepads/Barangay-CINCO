@@ -1274,7 +1274,7 @@ function filterSelection(category) {
 
 const EMAILJS_CONFIG = {
     serviceId:  'service_izu4ocj',   // EmailJS Gmail service ID
-    templateId: 'template_l5brjon', // EmailJS template ID
+    templateId: 'template_e25h4g5', // EmailJS template ID
     publicKey:  'S-jDeoijBJnwV0FO-' // EmailJS public key (also set in HTML)
 };
 
