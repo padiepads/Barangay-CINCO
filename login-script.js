@@ -204,7 +204,7 @@ loginForm.addEventListener('submit', function (e) {
             showSuccessToast();
             setTimeout(() => {
                 // Redirect to main portal after toast
-                window.location.href = 'actual-website/index.html';
+                window.location.href = 'actual-website/home.html';
             }, 1500);
         } else {
             // Failed login
