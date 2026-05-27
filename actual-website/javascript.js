@@ -1278,7 +1278,7 @@ function filterSelection(category) {
 // ============================================================
 
 const EMAILJS_CONFIG = {
-    serviceId:          'service_izu4ocj',   // EmailJS Gmail service ID
+    serviceId:          'service_c77b4pn',   // EmailJS Gmail service ID
     barangayTemplateId: 'template_e25h4g5', // Sends concern to barangay inbox
     autoReplyTemplateId:'template_l5brjon', // Auto-reply confirmation to resident
     publicKey:          'S-jDeoijBJnwV0FO-' // EmailJS public key (also initialised in home.html)
