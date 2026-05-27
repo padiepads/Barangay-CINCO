@@ -1,13 +1,3 @@
-/**
- * Barangay CINCO — Digital Community Portal
- * javascript.js — Complete Implementation
- * Covers: routing, dark mode, mobile nav, forms,
- *         appointment, modals, FAQ, scroll effects, slideshow,
- *         image upload, disaster accordion, officials modal,
- *         document request, date validation, tracking numbers,
- *         event card modals, toast notifications, search bar toggle.
- */
-
 'use strict';
 
 // ============================================================

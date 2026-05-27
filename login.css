@@ -1,14 +1,3 @@
-/* ================================================
-   BARANGAY CINCO — LOGIN PAGE
-   login.css — Matching Civic Aesthetic v2
-   Palette: Deep Maroon, Gold, Dark Ink, Off-White
-   Features: Glassmorphism card, animated background,
-             responsive, dark-themed, accessible
-================================================ */
-
-/* ============================================
-   DESIGN TOKENS (mirrors style.css)
-============================================ */
 :root {
     /* Brand */
     --maroon:         #7b0d1e;

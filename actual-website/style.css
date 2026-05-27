@@ -1,15 +1,3 @@
-/* ================================================
-   BARANGAY CINCO — DIGITAL COMMUNITY PORTAL
-   Redesigned CSS — Modern Civic Aesthetic v2
-   Palette: Deep Maroon, Gold, Off-White, Ink
-   Updated: Floating navbar, FAQ, dark mode, hotlines,
-            nav search, footer social, event modal,
-            officials modal fix, form toast, recaptcha removed
-================================================ */
-
-/* ============================================
-   DESIGN TOKENS
-============================================ */
 :root {
     /* Brand */
     --maroon:         #7b0d1e;
