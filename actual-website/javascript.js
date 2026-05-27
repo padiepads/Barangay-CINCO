@@ -1613,71 +1613,185 @@ function initAppointmentForm() {
     const form = document.getElementById('appointment-form');
     if (!form) return;
 
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
+    // Wire to async handler so EmailJS can use await
+    form.addEventListener('submit', handleAppointmentFormSubmit);
 
-        let valid = true;
+    form.querySelectorAll('input, textarea, select').forEach(field => {
+        field.addEventListener('input', () => clearFieldError(field));
+        field.addEventListener('change', () => clearFieldError(field));
+    });
+}
 
-        form.querySelectorAll('[required]').forEach(field => {
-            clearFieldError(field);
-            if (!field.value.trim()) {
-                showFieldError(field, 'This field is required.');
-                valid = false;
-            }
-        });
+// ============================================================
+// APPOINTMENT FORM — ASYNC EMAILJS SUBMISSION
+//
+// On a valid submission this function:
+//   Step 1 — Sends the appointment request to the barangay inbox
+//             using template_e25h4g5 (BARANGAY NOTIFICATION TEMPLATE).
+//             The {{message}} variable carries a formatted appointment
+//             summary (type, date, time, notes) so the template content
+//             still works correctly with shared variables.
+//   Step 2 — If the resident provided an email address, sends an
+//             auto-reply confirmation using template_l5brjon
+//             (AUTO-REPLY TEMPLATE). Skipped if email is blank since
+//             the field is optional on the appointment form.
+//   Step 3 — On full success: show the existing appointment modal
+//             (with tracking number) and toast, then reset the form.
+//   Step 4 — On failure: show a red error toast.
+//   Step 5 — Always restore the submit button via finally.
+// ============================================================
 
-        const apptType = form.querySelector('#appt-type');
-        if (apptType && !apptType.value) {
-            showFieldError(apptType, 'Please select a request type.');
+/**
+ * Async submit handler for the appointment form.
+ * Validates fields, sends EmailJS notifications, and shows the success modal.
+ * @param {Event} e - The form submit event
+ */
+async function handleAppointmentFormSubmit(e) {
+    // ── 0. Prevent page reload ────────────────────────────────
+    e.preventDefault();
+
+    const form = e.currentTarget;
+
+    // ── 1. Validate all required fields ──────────────────────
+    let valid = true;
+
+    form.querySelectorAll('[required]').forEach(field => {
+        clearFieldError(field);
+        if (!field.value.trim()) {
+            showFieldError(field, 'This field is required.');
             valid = false;
         }
+    });
 
-        const dateInput = form.querySelector('#appt-date');
-        if (dateInput && dateInput.value) {
-            const selected = new Date(dateInput.value + 'T00:00:00');
-            const day = selected.getDay();
-            if (day === 0 || day === 6) {
-                showFieldError(dateInput, 'Please select a weekday (Monday – Friday).');
-                valid = false;
-            }
-        }
+    const apptType = form.querySelector('#appt-type');
+    if (apptType && !apptType.value) {
+        showFieldError(apptType, 'Please select a request type.');
+        valid = false;
+    }
 
-        const selectedTime = form.querySelector('input[name="appt_time"]:checked');
-        const timeslotErr  = document.getElementById('timeslot-error');
-        if (!selectedTime) {
-            if (timeslotErr) timeslotErr.style.display = 'block';
-            valid = false;
-        } else {
-            if (timeslotErr) timeslotErr.style.display = 'none';
-        }
-
-        const contactField = form.querySelector('#appt-contact');
-        if (contactField && contactField.value.trim() && !isValidPHMobile(contactField.value)) {
-            showFieldError(contactField, 'Please enter a valid Philippine mobile number.');
+    const dateInput = form.querySelector('#appt-date');
+    if (dateInput && dateInput.value) {
+        const selected = new Date(dateInput.value + 'T00:00:00');
+        const day = selected.getDay();
+        if (day === 0 || day === 6) {
+            showFieldError(dateInput, 'Please select a weekday (Monday – Friday).');
             valid = false;
         }
+    }
 
-        const emailField = form.querySelector('#appt-email');
-        if (emailField && emailField.value.trim() && !isValidEmail(emailField.value)) {
-            showFieldError(emailField, 'Please enter a valid email address.');
-            valid = false;
+    const selectedTime = form.querySelector('input[name="appt_time"]:checked');
+    const timeslotErr  = document.getElementById('timeslot-error');
+    if (!selectedTime) {
+        if (timeslotErr) timeslotErr.style.display = 'block';
+        valid = false;
+    } else {
+        if (timeslotErr) timeslotErr.style.display = 'none';
+    }
+
+    const contactField = form.querySelector('#appt-contact');
+    if (contactField && contactField.value.trim() && !isValidPHMobile(contactField.value)) {
+        showFieldError(contactField, 'Please enter a valid Philippine mobile number.');
+        valid = false;
+    }
+
+    const emailField = form.querySelector('#appt-email');
+    if (emailField && emailField.value.trim() && !isValidEmail(emailField.value)) {
+        showFieldError(emailField, 'Please enter a valid email address.');
+        valid = false;
+    }
+
+    if (!valid) {
+        const firstError = form.querySelector('.field-error');
+        if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+    }
+
+    // ── 2. Gather form values ─────────────────────────────────
+    const nameVal    = (form.querySelector('#appt-name')?.value    || '').trim();
+    const contactVal = (form.querySelector('#appt-contact')?.value || '').trim();
+    const emailVal   = (emailField?.value || '').trim();
+    const typeVal    = apptType?.options[apptType?.selectedIndex]?.text || '';
+    const dateVal    = dateInput?.value
+        ? new Date(dateInput.value + 'T00:00:00').toLocaleDateString('en-PH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+        : '';
+    const timeVal    = selectedTime?.value || '';
+    const notesVal   = (form.querySelector('#appt-notes')?.value         || '').trim();
+    const otherVal   = (form.querySelector('#appt-other-concern')?.value || '').trim();
+    const trackingNo = generateTrackingNumber();
+
+    // Build a plain-text appointment summary for the {{message}} variable.
+    // Both templates use {{message}}, so this keeps them reusable for both
+    // the concern form and the appointment form without needing separate templates.
+    const appointmentSummary =
+        `Request Type  : ${typeVal}\n` +
+        `Date          : ${dateVal}\n` +
+        `Time Slot     : ${timeVal}\n` +
+        `Mobile        : ${contactVal}\n` +
+        (otherVal ? `Concern Detail: ${otherVal}\n` : '') +
+        (notesVal ? `Notes         : ${notesVal}\n`  : '') +
+        `Tracking No.  : ${trackingNo}`;
+
+    // ── 3. Show loading state on the submit button ────────────
+    const submitBtn = form.querySelector('.appt-submit-btn, .submit-btn');
+    const originalBtnHTML = submitBtn ? submitBtn.innerHTML : '';
+
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `
+            <span>Sending…</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 style="animation: spin 0.9s linear infinite;" aria-hidden="true">
+                <path d="M12 2a10 10 0 1 0 10 10" />
+            </svg>`;
+    }
+
+    // Inject the spinner keyframe once (may already exist from contact form)
+    if (!document.getElementById('spinnerKeyframe')) {
+        const kf = document.createElement('style');
+        kf.id = 'spinnerKeyframe';
+        kf.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+        document.head.appendChild(kf);
+    }
+
+    // ── 4. Build EmailJS template parameters ─────────────────
+    // {{name}}    — resident full name
+    // {{email}}   — resident email (used as To / Reply-To in auto-reply)
+    // {{mobile}}  — contact number
+    // {{message}} — formatted appointment summary block
+    const templateParams = {
+        name:    nameVal,
+        email:   emailVal || 'N/A (not provided)',
+        mobile:  contactVal,
+        message: appointmentSummary
+    };
+
+    // ── 5. Send emails via EmailJS ────────────────────────────
+    try {
+        // ── 5a. Notify the barangay (always sent) ─────────────
+        // template_e25h4g5 → "BARANGAY NOTIFICATION TEMPLATE"
+        // Delivers the appointment details to baranggaycinco@gmail.com.
+        await emailjs.send(
+            EMAILJS_CONFIG.serviceId,
+            EMAILJS_CONFIG.barangayTemplateId,  // template_e25h4g5
+            templateParams
+        );
+
+        // ── 5b. Auto-reply to resident (only if email provided) ─
+        // template_l5brjon → "AUTO-REPLY TEMPLATE"
+        // The appointment email field is optional, so only send the
+        // auto-reply if the resident actually gave an email address.
+        if (emailVal) {
+            await emailjs.send(
+                EMAILJS_CONFIG.serviceId,
+                EMAILJS_CONFIG.autoReplyTemplateId, // template_l5brjon
+                templateParams
+            );
         }
 
-        if (!valid) {
-            const firstError = form.querySelector('.field-error');
-            if (firstError) firstError.focus();
-            return;
-        }
-
-        const nameVal    = form.querySelector('#appt-name')?.value || '';
-        const typeVal    = apptType?.options[apptType?.selectedIndex]?.text || '';
-        const dateVal    = dateInput?.value
-            ? new Date(dateInput.value + 'T00:00:00').toLocaleDateString('en-PH', { weekday:'long', year:'numeric', month:'long', day:'numeric' })
-            : '';
-        const timeVal    = selectedTime?.value || '';
-        const trackingNo = generateTrackingNumber();
-
-        const summary = `
+        // ── 6a. SUCCESS — show the existing appointment modal ─
+        // Build the HTML summary for the modal body (same as before)
+        const modalSummary = `
             <p>Thank you, <strong>${escapeHtml(nameVal)}</strong>! Your appointment has been received.</p>
             <div class="appt-confirm-grid">
                 <div class="appt-confirm-row"><span>Request:</span><strong>${escapeHtml(typeVal)}</strong></div>
@@ -1687,13 +1801,28 @@ function initAppointmentForm() {
             <p class="appt-confirm-note">We will confirm your schedule via SMS or email. Please arrive 10 minutes before your scheduled time.</p>
         `;
 
-        openAppointmentModal(trackingNo, summary);
-    });
+        openAppointmentModal(trackingNo, modalSummary); // shows modal + toast
+        form.reset();                                   // clear all fields
+        document.querySelectorAll('.timeslot-option').forEach(opt => opt.classList.remove('selected'));
+        const otherGroup = document.getElementById('appt-other-group');
+        if (otherGroup) otherGroup.style.display = 'none';
+        initAppointmentDateConstraints();               // reset date constraints
 
-    form.querySelectorAll('input, textarea, select').forEach(field => {
-        field.addEventListener('input', () => clearFieldError(field));
-        field.addEventListener('change', () => clearFieldError(field));
-    });
+    } catch (error) {
+        // ── 6b. FAILURE — log and show red error toast ────────
+        console.error('[EmailJS] Appointment send error:', error);
+
+        showEmailErrorToast(
+            'Failed to submit your appointment. Please try again or call us at (046) 412-5000.'
+        );
+
+    } finally {
+        // ── 7. Always restore the submit button ───────────────
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnHTML;
+        }
+    }
 }
 
 
