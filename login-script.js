@@ -192,12 +192,14 @@ loginForm.addEventListener('submit', function (e) {
         const password = loginPassword.value.trim();
 
         const validUsers = [
-            { username: 'admin',     password: 'admin123' },
-            { username: 'secretary', password: 'brgycinco2026' },
-            { username: 'captain',   password: 'kapitan001' },
+            { username: 'quimpano, christian mark', password: '1-3.CINCO' },
+            { username: 'padellon, jerald',         password: '1-3.CINCO' },
+            { username: 'javinez, princess angel',  password: '1-3.CINCO' },
+            { username: 'alao, mae',                password: '1-3.CINCO' },
+            { username: 'fortuna, eddieson',        password: '1-3.CINCO' },
         ];
 
-        const match = validUsers.find(u => u.username === username && u.password === password);
+        const match = validUsers.find(u => u.username === username.toLowerCase() && u.password === password);
 
         if (match) {
             // Successful login
